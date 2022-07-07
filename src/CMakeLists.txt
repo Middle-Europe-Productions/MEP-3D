@@ -11,14 +11,23 @@ SET(HEADERS
   common.hpp
   drawable.hpp
   pyramid.hpp
-  shader_wrap.hpp
+  shader.hpp
   space_action.hpp
   triangle.hpp
   utils.hpp
 )
 
+SET(SHADERS
+  shaders/shader.frag
+  shaders/shader.vert
+)
+
+source_group("Shader Files" FILES ${SHADERS})
+
 source_group("Header Files" FILES ${HEADERS})
 
-add_executable(OpenGL-Basis ${SOURCE} ${HEADERS})
+add_executable(${PROJECT_NAME} ${SOURCE} ${HEADERS} ${SHADERS})
 
-target_link_libraries(OpenGL-Basis glfw libglew_static glm glog)
+set_target_properties(${PROJECT_NAME} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
+target_link_libraries(${PROJECT_NAME} glfw libglew_static glm glog)

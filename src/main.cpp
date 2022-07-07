@@ -6,32 +6,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include"triangle.hpp"
 #include"pyramid.hpp"
-
-// Vertex Shader code
-static const char* vShader = "                                                \n\
-#version 330                                                                  \n\
-                                                                              \n\
-layout (location = 0) in vec3 pos;											  \n\
-out vec4 local_color;                                                         \n\
-                                                                              \n\
-uniform mat4 model;                                                           \n\
-void main()                                                                   \n\
-{                                                                             \n\
-    gl_Position = model * vec4(pos, 1.0);		                              \n\
-    local_color = vec4(clamp(pos, 0.0f, 1.0f), 1.0);                          \n\
-}";
-
-// Fragment Shader
-static const char* fShader = "                                                \n\
-#version 330                                                                  \n\
-                                                                              \n\
-out vec4 colour;                                                              \n\
-in vec4 local_color;                                                          \n\
-                                                                              \n\
-void main()                                                                   \n\
-{                                                                             \n\
-    colour = local_color;                                                     \n\
-}";
+#include"shader.hpp"
 
 int main()
 {
@@ -45,7 +20,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     
-    GLFWwindow* window = glfwCreateWindow(300, 300, "Test", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(1280, 720, "Test", NULL, NULL);
     if (!window) {
         std::cout << "GLFW window failed";
         glfwTerminate();
@@ -68,20 +43,27 @@ int main()
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, buffer_X, buffer_Y);
 
+    Shader shader;
+    shader.CreateFromFile("shaders/shader.vert", "shaders/shader.frag");
+
     Pyramid a({
         -1.0f, -1.0f, 0.0f,
         0.0f, -1.0f, 1.0f,
         1.0f, -1.0f, 0.0f,
         0.0f, 1.0f, 0.0f
-     });
-
-     a.AddShader(vShader, GL_VERTEX_SHADER);
-     a.AddShader(fShader, GL_FRAGMENT_SHADER);
-     a.CompileShaders();
-     //a.AddSpaceAction(std::make_unique<Scale>(0.5, 0.5, 1.0));
-     //a.AddSpaceAction(std::make_unique<Transform>(1.0, 0.0, 0.0));
-     //a.AddSpaceAction(std::make_unique<Rotate>(105, Axis::X));
-     float curAngle = 0.0f;
+    });
+    Pyramid b({
+        -1.0f, -1.0f, 0.0f,
+        0.0f, -1.0f, 1.0f,
+        1.0f, -1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f
+    });
+    a.Bind(&shader);
+    b.Bind(&shader);
+    //a.AddSpaceAction(std::make_unique<Scale>(0.5, 0.5, 1.0));
+    //a.AddSpaceAction(std::make_unique<Transform>(1.0, 0.0, 0.0));
+    //a.AddSpaceAction(std::make_unique<Rotate>(105, Axis::X));
+    float curAngle = 0.0f;
     while (!glfwWindowShouldClose(window)) {
         curAngle += 0.0001f;
         if (curAngle >= 360)
@@ -89,10 +71,14 @@ int main()
             curAngle -= 360;
         }
         glfwPollEvents();
+        shader.StartUsing();
         a.AddSpaceAction(std::make_unique<Rotate>(curAngle, Axis::Y));
+        b.AddSpaceAction(std::make_unique<Rotate>(curAngle, Axis::Z));
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         a.Draw();
+        b.Draw();
+        shader.StopUsing();
         glfwSwapBuffers(window);
     }
 }
