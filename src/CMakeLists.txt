@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.8)
 
 SET(SOURCE
   main.cpp
+  glfw-window.cpp
 )
 
 SET(HEADERS
@@ -15,6 +16,7 @@ SET(HEADERS
   space_action.hpp
   triangle.hpp
   utils.hpp
+  window.hpp
 )
 
 SET(SHADERS

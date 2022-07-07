@@ -7,41 +7,12 @@
 #include"triangle.hpp"
 #include"pyramid.hpp"
 #include"shader.hpp"
+#include"window.hpp"
 
 int main()
 {
-    if (!glfwInit()) {
-        std::cout << "GLFW Error";
-        glfwTerminate();
-        return 1;
-    }
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    
-    GLFWwindow* window = glfwCreateWindow(1280, 720, "Test", NULL, NULL);
-    if (!window) {
-        std::cout << "GLFW window failed";
-        glfwTerminate();
-        return 1;
-    }
-    int buffer_X, buffer_Y;
-    glfwGetFramebufferSize(window, &buffer_X, &buffer_Y);
-
-    glfwMakeContextCurrent(window);
-
-    glewExperimental = GL_TRUE;
-
-    GLenum err = glewInit();
-    if (GLEW_OK != err) {
-        std::cout << "GLEW failed: " << glewGetErrorString(err);
-        glfwDestroyWindow(window);
-        glfwTerminate();
-        return 1;
-    }
-    glEnable(GL_DEPTH_TEST);
-    glViewport(0, 0, buffer_X, buffer_Y);
+    auto window = Window::GetInstance({ 1280, 720, "Example" });
+    window->Init();
 
     Shader shader;
     shader.CreateFromFile("shaders/shader.vert", "shaders/shader.frag");
@@ -64,7 +35,7 @@ int main()
     //a.AddSpaceAction(std::make_unique<Transform>(1.0, 0.0, 0.0));
     //a.AddSpaceAction(std::make_unique<Rotate>(105, Axis::X));
     float curAngle = 0.0f;
-    while (!glfwWindowShouldClose(window)) {
+    while (window->IsOpen()) {
         curAngle += 0.0001f;
         if (curAngle >= 360)
         {
@@ -79,6 +50,6 @@ int main()
         a.Draw();
         b.Draw();
         shader.StopUsing();
-        glfwSwapBuffers(window);
+        window->FinishLoop();
     }
 }
