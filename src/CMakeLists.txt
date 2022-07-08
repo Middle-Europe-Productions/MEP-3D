@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.8)
 
 SET(SOURCE
+  glfw_window.cpp
   main.cpp
-  glfw-window.cpp
 )
 
 SET(HEADERS
@@ -17,6 +17,10 @@ SET(HEADERS
   triangle.hpp
   utils.hpp
   window.hpp
+  window_observer.hpp
+  observer_list.hpp
+  key_event.hpp
+  mouse_event.hpp
 )
 
 SET(SHADERS

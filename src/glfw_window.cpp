@@ -62,7 +62,8 @@ public:
         return config_.height;
 	}
 	~GLFWWindow() {
-
+        glfwDestroyWindow(main_window_);
+        glfwTerminate();
 	}
 
 private:

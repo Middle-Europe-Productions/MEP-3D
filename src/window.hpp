@@ -4,13 +4,16 @@
 #include<memory>
 #include<string>
 
+#include "observer_list.hpp"
+#include "window_observer.hpp"
+
 struct WindowConfig {
 	std::size_t width;
 	std::size_t height;
 	std::string name;
 };
 
-class Window {
+class Window: public ObserverList<WindowObserver> {
 public:
 	virtual bool Init() = 0;
 	virtual void Close() = 0;
@@ -21,5 +24,6 @@ public:
 	virtual ~Window() = default;
 	static std::unique_ptr<Window> GetInstance(WindowConfig config);
 };
+using WindowPtr = std::unique_ptr<Window>;
 
 #endif
