@@ -15,6 +15,7 @@ public:
 	}
 	virtual GLuint GetProjectionLocation() = 0;
 	virtual GLuint GetModelLocation() = 0;
+	virtual GLuint GetViewLocation() = 0;
 	virtual ~ShaderBase() = default;
 
 protected:
@@ -51,6 +52,7 @@ public:
 		shader_id_ = 0;
 		uniform_projection_ = 0;
 		uniform_model_ = 0;
+		uniform_view_ = 0;
 	}
 	bool Compile(const std::string& vertex_code, const std::string& fragment_code) override {
 		SetStatus(false);
@@ -86,6 +88,7 @@ public:
 
 		uniform_projection_ = glGetUniformLocation(shader_id_, "projection");
 		uniform_model_ = glGetUniformLocation(shader_id_, "model");
+		uniform_view_ = glGetUniformLocation(shader_id_, "view");
 
 		SetStatus(true);
 		return true;
@@ -116,6 +119,7 @@ public:
 			glDeleteProgram(shader_id_);
 			shader_id_ = 0;
 		}
+		uniform_view_ = 0;
 		uniform_model_ = 0;
 		uniform_projection_ = 0;
 		SetStatus(false);
@@ -126,6 +130,10 @@ public:
 	}
 
 	GLuint GetModelLocation() override {
+		return uniform_model_;
+	}
+
+	GLuint GetViewLocation() override {
 		return uniform_model_;
 	}
 
@@ -152,6 +160,7 @@ protected:
 	GLuint shader_id_;
 	GLuint uniform_projection_;
 	GLuint uniform_model_;
+	GLuint uniform_view_;
 
 private:
 	bool AddShader(GLuint program, const std::string& shader_code, GLenum shader_type) {

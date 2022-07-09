@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.8)
 
 SET(SOURCE
+  glfw_time_delta.cpp
   glfw_window.cpp
   main.cpp
 )
@@ -21,6 +22,12 @@ SET(HEADERS
   observer_list.hpp
   key_event.hpp
   mouse_event.hpp
+  camera.hpp
+  render_target.hpp
+  three_dim_view.hpp
+  time_delta.hpp
+  updatable.hpp
+  view_base.hpp
 )
 
 SET(SHADERS

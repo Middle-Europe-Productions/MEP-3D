@@ -16,7 +16,7 @@ public:
 		if (obs)
 			observer_list_.remove(obs);
 	}
-	void ForAll(ObserverCallback callback) {
+	void ForAllObservers(ObserverCallback callback) {
 		for (auto* obs : observer_list_) {
 			callback(obs);
 		}

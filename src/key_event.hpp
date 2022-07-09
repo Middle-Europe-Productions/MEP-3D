@@ -27,16 +27,23 @@ enum Keyboard {
 	W,
 	X,
 	Y,
-	Z
+	Z,
+	UnknownKey
 };
 
 enum Action {
 	Pressed = 0,
-	Released
+	Released,
+	UnknownAction
 };
 struct KeyEvent{
-	Keyboard code;
-	Action action;
+	Keyboard code = Keyboard::UnknownKey;
+	Action action = Action::UnknownAction;
+};
+
+struct MouseEvent {
+	double x;
+	double y;
 };
 
 #endif

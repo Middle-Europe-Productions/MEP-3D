@@ -3,9 +3,11 @@
 
 #include <glog/logging.h>
 
+#include "render_target.hpp"
+
 class Drawable {
 public:
-	virtual void Draw() = 0;
+	virtual void Draw(RenderTarget& render_target) = 0;
 	virtual ~Drawable() = default;
 };
 

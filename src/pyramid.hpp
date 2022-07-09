@@ -15,7 +15,7 @@ public:
 		});
 	}
 
-	void Draw() {
+	void Draw(RenderTarget& render_target) {
 		if (!Get()) {
 			return;
 		}
@@ -25,6 +25,12 @@ public:
 		glm::mat4 model(1.0f);
 		Update(model);
 		glUniformMatrix4fv(shader->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
+		if (render_target.GetView())
+			glUniformMatrix4fv(shader->GetProjectionLocation(), 1, GL_FALSE,
+				glm::value_ptr(render_target.GetView()->GetProjection()));
+		if (render_target.GetCamera())
+			glUniformMatrix4fv(shader->GetViewLocation(), 1, GL_FALSE,
+				glm::value_ptr(render_target.GetCamera()->GetViewMatrix()));
 
 		glBindVertexArray(vertex_array_object_);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_boject_);

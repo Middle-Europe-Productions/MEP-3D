@@ -6,6 +6,7 @@
 
 #include "observer_list.hpp"
 #include "window_observer.hpp"
+#include "render_target.hpp"
 
 struct WindowConfig {
 	std::size_t width;
@@ -13,14 +14,17 @@ struct WindowConfig {
 	std::string name;
 };
 
-class Window: public ObserverList<WindowObserver> {
+class Window: public ObserverList<WindowObserver>, public RenderTarget {
 public:
 	virtual bool Init() = 0;
 	virtual void Close() = 0;
 	virtual bool IsOpen() = 0;
+	virtual void Clear() = 0;
 	virtual void FinishLoop() = 0;
 	virtual std::size_t GetHight() = 0;
 	virtual std::size_t GetWidth() = 0;
+	virtual std::size_t GetBufferHight() = 0;
+	virtual std::size_t GetBufferWidth() = 0;
 	virtual ~Window() = default;
 	static std::unique_ptr<Window> GetInstance(WindowConfig config);
 };

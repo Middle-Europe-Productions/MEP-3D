@@ -21,7 +21,7 @@ public:
 	Triangle(const std::vector<GLfloat>& vertices) {
 		Init(vertices);
 	}
-	void Draw() override {
+	void Draw(RenderTarget& render_target) override {
 		if (!Get()) {
 			return;
 		}
@@ -29,7 +29,13 @@ public:
 		//TODO: Implement caching
 		glm::mat4 model(1.0f);
 		Update(model);
-		glUniformMatrix4fv(shader->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(model));;
+		glUniformMatrix4fv(shader->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
+		if (render_target.GetView())
+			glUniformMatrix4fv(shader->GetProjectionLocation(), 1, GL_FALSE,
+								glm::value_ptr(render_target.GetView()->GetProjection()));
+		if (render_target.GetCamera())
+			glUniformMatrix4fv(shader->GetViewLocation(), 1, GL_FALSE,
+				glm::value_ptr(render_target.GetCamera()->GetViewMatrix()));
 
 		glBindVertexArray(vertex_array_object_);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
