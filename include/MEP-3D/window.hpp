@@ -4,9 +4,9 @@
 #include<memory>
 #include<string>
 
-#include "observer_list.hpp"
-#include "window_observer.hpp"
-#include "render_target.hpp"
+#include<MEP-3D/observer_list.hpp>
+#include<MEP-3D/window_observer.hpp>
+#include<MEP-3D/render_target.hpp>
 
 struct WindowConfig {
 	std::size_t width;

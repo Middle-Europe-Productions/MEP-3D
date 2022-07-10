@@ -1,6 +1,6 @@
-#include "window.hpp"
-#include "glog/logging.h"
-#include "GL/glew.h"
+#include<MEP-3D/window.hpp>
+#include<glog/logging.h>
+#include<GL/glew.h>
 #include<GLFW/glfw3.h>
 
 class GLFWWindowController: public Window {

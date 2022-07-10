@@ -1,9 +1,9 @@
 #ifndef DRAWABLE_HPP
 #define DRAWABLE_HPP
 
-#include <glog/logging.h>
+#include<glog/logging.h>
 
-#include "render_target.hpp"
+#include<MEP-3D/render_target.hpp>
 
 class Drawable {
 public:

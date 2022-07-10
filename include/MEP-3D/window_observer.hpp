@@ -1,7 +1,7 @@
 #ifndef WINDOW_OBSERVER_HPP
 #define WINDOW_OBSERVER_HPP
 
-#include "key_event.hpp"
+#include<MEP-3D/key_event.hpp>
 
 class WindowObserver {
 public:

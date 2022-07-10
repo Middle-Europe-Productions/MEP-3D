@@ -7,20 +7,20 @@
 #include<glm/gtc/matrix_transform.hpp>
 #include<glm/gtc/type_ptr.hpp>
 
-#include"triangle.hpp"
-#include"pyramid.hpp"
-#include"shader.hpp"
-#include"window.hpp"
-#include"three_dim_view.hpp"
-#include"window_observer.hpp"
+#include<MEP-3D/triangle.hpp>
+#include<MEP-3D/pyramid.hpp>
+#include<MEP-3D/shader.hpp>
+#include<MEP-3D/window.hpp>
+#include<MEP-3D/three_dim_view.hpp>
+#include<MEP-3D/window_observer.hpp>
 
 class Game: private WindowObserver {
 public:
     Game() {
-        window_ = Window::GetInstance({ 1280, 720, "Example" });
-        view_ = std::make_unique<ThreeDimView>(ThreeDimView::Config({ 45.0f,
+        window_ = Window::GetInstance({ 800, 600, "Example" });
+        view_ = std::make_unique<ThreeDimView>(ThreeDimView::Config({ glm::radians(45.0f),
             (GLfloat)window_->GetBufferWidth() / (GLfloat)window_->GetBufferHight(), 0.1f, 100.0f }));
-        CameraConfig config = { glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f), 45.0f, 0.0f, 5.0f, 0.5f };
+        CameraConfig config = { glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 180.0f, 5.0f, 0.5f };
         camera_ = std::make_unique<Camera>(config);
 
         window_->Init();
@@ -30,7 +30,7 @@ public:
         window_->AddObserver(camera_.get());
     }
     void Init() {
-        shader_.CreateFromFile("shaders/shader.vert", "shaders/shader.frag");
+        shader_.CreateFromFile("shader.vert", "shader.frag");
         std::vector<GLfloat> vec = {
             -1.0f, -1.0f, 0.0f,
             0.0f, -1.0f, 1.0f,
@@ -44,19 +44,21 @@ public:
     }
     void RunUntilStopped() {
         float curAngle = 0;
-        pyramids[0]->AddSpaceAction(std::make_unique<Transform>(0.0f, 1.0f, -5.0f));
-        pyramids[1]->AddSpaceAction(std::make_unique<Transform>(0.0f, -1.0f, -5.0f));
+        pyramids[0]->PushObjectAction(std::make_unique<Transform>(0.0f, 1.0f, 0.0f));
+        pyramids[1]->PushObjectAction(std::make_unique<Transform>(0.0f, -1.0f, 0.0f));
         while (window_->IsOpen()) {
-            curAngle += 0.0001f;
-            if (curAngle >= 360)
+            curAngle_ += 0.0001f;
+            if (curAngle_ >= 360)
             {
-                curAngle -= 360;
+                curAngle_ -= 360;
             }
+            //LOG(INFO) << camera_->ToString();
             glfwPollEvents();
             camera_->Update();
             shader_.StartUsing();
-            pyramids[0]->AddSpaceAction(std::make_unique<Rotate>(curAngle, Axis::Y));
-            pyramids[1]->AddSpaceAction(std::make_unique<Rotate>(curAngle, Axis::Y));
+            pyramids[0]->PushObjectAction(std::make_unique<Rotate>(0.01f, Axis::Y));
+            LOG(INFO) << pyramids[0]->ToString();
+           // pyramids[1]->SetSpaceAction(std::make_unique<Rotate>(curAngle, Axis::Y));
             window_->Clear();
             pyramids[0]->Draw(*window_);
             pyramids[1]->Draw(*window_);
@@ -66,6 +68,14 @@ public:
     }
     void OnKeyEvent(KeyEvent event) override {
         LOG(INFO) << event.code << ", action: " << (event.action == Action::Pressed ? "Pressed" : "Released");
+        if (event.code == Keyboard::Z) {
+            pyramids[0]->PushObjectAction(std::make_unique<Rotate>(1.0f, Axis::Z));
+            pyramids[0]->Update();
+        }
+        else if (event.code == Keyboard::R)
+        {
+            pyramids[0]->ResetModel();
+        }
     }
     void OnMouseEvent(MouseEvent event) override {
         LOG(INFO) << "Mouse event, x: " << event.x << ", y: " << event.y;
@@ -76,6 +86,7 @@ private:
     std::unique_ptr<ThreeDimView> view_;
     std::unique_ptr<Camera> camera_;
     Shader shader_;
+    float curAngle_;
 };
 
 

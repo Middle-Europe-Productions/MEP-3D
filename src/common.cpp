@@ -1,9 +1,4 @@
-#ifndef COMMON_HPP
-#define COMMON_HPP
-
-#include <iostream>
-
-enum class Axis { X, Y, Z };
+#include<MEP-3D/common.hpp>
 
 std::ostream& operator<<(std::ostream& out, Axis axis) {
 	switch (axis) {
@@ -16,5 +11,3 @@ std::ostream& operator<<(std::ostream& out, Axis axis) {
 	}
 	return out;
 }
-
-#endif

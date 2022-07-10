@@ -1,5 +1,5 @@
-#include "time_delta.hpp"
-#include <GLFW\glfw3.h>
+#include<MEP-3D/time_delta.hpp>
+#include<GLFW\glfw3.h>
 
 class GlfwTimeDelta: public TimeDelta {
 public:
