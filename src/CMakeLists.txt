@@ -42,7 +42,19 @@ SET(HEADERS
   ${INC_ROOT}/time_delta.hpp
   ${INC_ROOT}/updatable.hpp
   ${INC_ROOT}/view_base.hpp
+  ${INC_ROOT}/image.hpp
 )
+
+if (MEP_USE_STB)
+  list(APPEND SOURCE 
+    ${INC_ROOT}/stb_image.cpp
+  )
+  target_include_directories(${MEP_LIBRARY_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/third-party/stb)
+else()
+  list(APPEND SOURCE 
+    ${INC_ROOT}/default_image.cpp
+  )
+endif()
 
 source_group("Header Files" FILES ${HEADERS})
 

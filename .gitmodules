@@ -10,3 +10,6 @@
 [submodule "third-party/glog"]
 	path = third-party/glog
 	url = https://github.com/google/glog.git
+[submodule "third-party/stb"]
+	path = third-party/stb
+	url = https://github.com/nothings/stb.git

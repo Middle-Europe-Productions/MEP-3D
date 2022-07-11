@@ -13,10 +13,13 @@
 #include<MEP-3D/window.hpp>
 #include<MEP-3D/three_dim_view.hpp>
 #include<MEP-3D/window_observer.hpp>
+#include<MEP-3D/image.hpp>
 
 class Game: private WindowObserver {
 public:
     Game() {
+        Image image;
+        image.LoadFromFile("tetures/texture.png");
         window_ = Window::GetInstance({ 800, 600, "Example" });
         view_ = std::make_unique<ThreeDimView>(ThreeDimView::Config({ glm::radians(45.0f),
             (GLfloat)window_->GetBufferWidth() / (GLfloat)window_->GetBufferHight(), 0.1f, 100.0f }));
