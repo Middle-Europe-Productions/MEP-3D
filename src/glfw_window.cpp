@@ -56,8 +56,8 @@ public:
         return init_ && !glfwWindowShouldClose(main_window_);
 	}
 
-    void Clear() override {
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    void Clear(Color color = Black) override {
+        glClearColor(color.Rf(), color.Gf(), color.Bf(), color.Af());
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 

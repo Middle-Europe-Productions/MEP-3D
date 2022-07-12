@@ -6,7 +6,7 @@
 #include<functional>
 #include<GL/glew.h>
 
-class ThreeDimView : public ViewBase {
+class PerspectiveView : public ViewBase {
 public:
 	struct Config {
 		GLfloat field_of_view;
@@ -14,7 +14,7 @@ public:
 		GLfloat near_ignore;
 		GLfloat far_ignore;
 	};
-	ThreeDimView(Config config);
+	PerspectiveView(Config config);
 	void UpdateConfig(Config config);
 	const glm::mat4& GetProjection() const override;
 

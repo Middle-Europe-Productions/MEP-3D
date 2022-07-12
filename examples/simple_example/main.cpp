@@ -11,34 +11,38 @@
 #include<MEP-3D/pyramid.hpp>
 #include<MEP-3D/shader.hpp>
 #include<MEP-3D/window.hpp>
-#include<MEP-3D/three_dim_view.hpp>
+#include<MEP-3D/perspective_view.hpp>
 #include<MEP-3D/window_observer.hpp>
 #include<MEP-3D/image.hpp>
+#include<MEP-3D/vector.hpp>
+#include<MEP-3D/texture.hpp>
 
 class Game: private WindowObserver {
 public:
     Game() {
-        Image image;
-        image.LoadFromFile("tetures/texture.png");
         window_ = Window::GetInstance({ 800, 600, "Example" });
-        view_ = std::make_unique<ThreeDimView>(ThreeDimView::Config({ glm::radians(45.0f),
+        view_ = std::make_unique<PerspectiveView>(PerspectiveView::Config({ glm::radians(45.0f),
             (GLfloat)window_->GetBufferWidth() / (GLfloat)window_->GetBufferHight(), 0.1f, 100.0f }));
         CameraConfig config = { glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 180.0f, 5.0f, 0.5f };
         camera_ = std::make_unique<Camera>(config);
-
         window_->Init();
+
+        Image image;
+        image.LoadFromFile("textures/dirt.png");
+        tex.Create(image);
+
         window_->AddView(view_.get());
         window_->AddCamera(camera_.get());
         window_->AddObserver(this);
         window_->AddObserver(camera_.get());
     }
     void Init() {
-        shader_.CreateFromFile("shader.vert", "shader.frag");
+        shader_.CreateFromFile("shaders/shader.vert", "shaders/shader.frag");
         std::vector<GLfloat> vec = {
-            -1.0f, -1.0f, 0.0f,
-            0.0f, -1.0f, 1.0f,
-            1.0f, -1.0f, 0.0f,
-            0.0f, 1.0f, 0.0f
+            -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, -1.0f, 1.0f, 0.5f, 0.0f,
+            1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f, 0.5f, 1.0f
         };
         pyramids.emplace_back(std::make_unique<Pyramid>(vec));
         pyramids.back()->Bind(&shader_);
@@ -60,9 +64,10 @@ public:
             camera_->Update();
             shader_.StartUsing();
             pyramids[0]->PushObjectAction(std::make_unique<Rotate>(0.01f, Axis::Y));
-            LOG(INFO) << pyramids[0]->ToString();
+            //LOG(INFO) << pyramids[0]->ToString();
            // pyramids[1]->SetSpaceAction(std::make_unique<Rotate>(curAngle, Axis::Y));
-            window_->Clear();
+            window_->Clear(White);
+            //tex.Use();
             pyramids[0]->Draw(*window_);
             pyramids[1]->Draw(*window_);
             shader_.StopUsing();
@@ -86,8 +91,9 @@ public:
 private:
     std::vector<std::unique_ptr<Pyramid>> pyramids;
     WindowPtr window_;
-    std::unique_ptr<ThreeDimView> view_;
+    std::unique_ptr<PerspectiveView> view_;
     std::unique_ptr<Camera> camera_;
+    Texture tex;
     Shader shader_;
     float curAngle_;
 };
@@ -95,6 +101,7 @@ private:
 
 int main()
 {
+    glEnable(GL_TEXTURE_2D);
     Game game;
     game.Init();
     game.RunUntilStopped();
