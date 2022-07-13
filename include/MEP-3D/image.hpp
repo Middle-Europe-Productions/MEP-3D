@@ -3,15 +3,16 @@
 
 #include<string>
 #include<vector>
+#include<GL/glew.h>
 #include<MEP-3D/vector.hpp>
 #include<MEP-3D/color.hpp>
 
 class Image {
 public:
-    enum Type {
-        RGBA,
-        RGB,
-        Unknown
+    enum class Type : int {
+        RGBA = GL_RGBA,
+        RGB = GL_RGB,
+        Unknown = 0
     };
     Image();
     bool LoadFromFile(const std::string& name);

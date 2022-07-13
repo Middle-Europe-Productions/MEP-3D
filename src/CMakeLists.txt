@@ -12,19 +12,18 @@ set(SOURCE
   ${SRC_ROOT}/pyramid.cpp
   ${SRC_ROOT}/render_target.cpp
   ${SRC_ROOT}/shader.cpp
-  ${SRC_ROOT}/three_dim_mesh.cpp
+  ${SRC_ROOT}/mesh.cpp
   ${SRC_ROOT}/perspective_view.cpp
   ${SRC_ROOT}/triangle.cpp
-  ${SRC_ROOT}/two_dim_mesh.cpp
   ${SRC_ROOT}/updatable.cpp
   ${SRC_ROOT}/utils.cpp
   ${SRC_ROOT}/texture.cpp
+  ${SRC_ROOT}/identity.cpp
 )
 
 set(HEADERS
   ${INC_ROOT}/mesh_base.hpp
-  ${INC_ROOT}/two_dim_mesh.hpp
-  ${INC_ROOT}/three_dim_mesh.hpp
+  ${INC_ROOT}/mesh.hpp
   ${INC_ROOT}/common.hpp
   ${INC_ROOT}/drawable.hpp
   ${INC_ROOT}/pyramid.hpp
@@ -47,6 +46,7 @@ set(HEADERS
   ${INC_ROOT}/vector.hpp
   ${INC_ROOT}/texture.hpp
   ${INC_ROOT}/color.hpp
+  ${INC_ROOT}/identity.hpp
 )
 
 set(INCLUDE_DIRECTORIES

@@ -1,3 +1,4 @@
+#include<glm/gtc/type_ptr.hpp>
 #include<MEP-3D/shader.hpp>
 #include<glog/logging.h>
 
@@ -113,6 +114,48 @@ GLuint Shader::GetViewLocation() {
 	return uniform_view_;
 }
 
+bool Shader::SetUniformExt(GLuint uniform_location, const glm::mat4& matrix) {
+	glUniformMatrix4fv(uniform_location, 1, GL_FALSE, glm::value_ptr(matrix));
+	return true;
+}
+
+bool Shader::SetUniformExt(GLuint uniform_location, float value) {
+	glUniform1f(uniform_location, value);
+	return true;
+}
+
+bool Shader::SetUniformExt(GLuint uniform_location, int value) {
+	glUniform1i(uniform_location, value);
+	return true;
+}
+
+bool Shader::SetUniform(const std::string& name, const glm::mat4& matrix) {
+	GLuint uni_location = glGetUniformLocation(shader_id_, name.c_str());
+	if (!GetUniformLocation(uni_location, name)) {
+		return false;
+	}
+	glUniformMatrix4fv(uni_location, 1, GL_FALSE, glm::value_ptr(matrix));
+	return true;
+}
+
+bool Shader::SetUniform(const std::string &name, float value) {
+	GLuint uni_location = glGetUniformLocation(shader_id_, name.c_str());
+	if (!GetUniformLocation(uni_location, name)) {
+		return false;
+	}
+	glUniform1f(uni_location, value);
+	return true;
+}
+
+bool Shader::SetUniform(const std::string& name, int value) {
+	GLuint uni_location = glGetUniformLocation(shader_id_, name.c_str());
+	if (!GetUniformLocation(uni_location, name)) {
+		return false;
+	}
+	glUniform1i(uni_location, value);
+	return true;
+}
+
 std::string Shader::LoadFromFile(const std::string& path) {
 	std::ifstream file_stream(path, std::ios::in);
 	if (!file_stream.is_open()) {
@@ -150,5 +193,15 @@ bool Shader::AddShader(GLuint program, const std::string& shader_code, GLenum sh
 		return false;
 	}
 	glAttachShader(program, gl_shader);
+	return true;
+}
+
+bool Shader::GetUniformLocation(GLuint &location, const std::string &name) {
+	GLuint local_loc = glGetUniformLocation(shader_id_, name.c_str());
+	if (local_loc == -1) {
+		LOG(ERROR) << "Value: " + name + " does not exist in shader id: " + std::to_string(GetId());
+		return false;
+	}
+	location = local_loc;
 	return true;
 }

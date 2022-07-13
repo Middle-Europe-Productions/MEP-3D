@@ -59,15 +59,15 @@ public:
             {
                 curAngle_ -= 360;
             }
-            //LOG(INFO) << camera_->ToString();
             glfwPollEvents();
             camera_->Update();
             shader_.StartUsing();
             pyramids[0]->PushObjectAction(std::make_unique<Rotate>(0.01f, Axis::Y));
             //LOG(INFO) << pyramids[0]->ToString();
-           // pyramids[1]->SetSpaceAction(std::make_unique<Rotate>(curAngle, Axis::Y));
+            //pyramids[1]->SetSpaceAction(std::make_unique<Rotate>(curAngle, Axis::Y));
             window_->Clear(White);
-            //tex.Use();
+            tex.Use();
+            shader_.SetUniform("use_texture", 1);
             pyramids[0]->Draw(*window_);
             pyramids[1]->Draw(*window_);
             shader_.StopUsing();
@@ -95,6 +95,8 @@ private:
     std::unique_ptr<Camera> camera_;
     Texture tex;
     Shader shader_;
+    Shader shader_2;
+
     float curAngle_;
 };
 

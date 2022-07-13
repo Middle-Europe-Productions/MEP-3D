@@ -4,16 +4,24 @@
 #include<string>
 #include<fstream>
 #include<GL/glew.h>
+#include<glm/glm.hpp>
+#include<MEP-3D/identity.hpp>
 
-class ShaderBase {
+class ShaderBase: public Identity {
 public:
-	ShaderBase() : status_(false) {}
+	ShaderBase() : Identity(__FUNCTION__), status_(false) {}
 
 	virtual bool Compile(const std::string&, const std::string&) = 0;
 	bool IsCompiled() const;
 	virtual GLuint GetProjectionLocation() = 0;
 	virtual GLuint GetModelLocation() = 0;
 	virtual GLuint GetViewLocation() = 0;
+	virtual bool SetUniformExt(GLuint uniform_location, const glm::mat4& matrix) = 0;
+	virtual bool SetUniformExt(GLuint uniform_location, float value) = 0;
+	virtual bool SetUniformExt(GLuint uniform_location, int value) = 0;
+	virtual bool SetUniform(const std::string& name, const glm::mat4& matrix) = 0;
+	virtual bool SetUniform(const std::string& name, float value) = 0;
+	virtual bool SetUniform(const std::string& name, int value) = 0;
 	virtual ~ShaderBase() = default;
 
 protected:
@@ -46,6 +54,12 @@ public:
 	GLuint GetProjectionLocation() override;
 	GLuint GetModelLocation() override;
 	GLuint GetViewLocation() override;
+	bool SetUniformExt(GLuint uniform_location, const glm::mat4& matrix) override;
+	bool SetUniformExt(GLuint uniform_location, float value) override;
+	bool SetUniformExt(GLuint uniform_location, int value) override;
+	bool SetUniform(const std::string& name, const glm::mat4& matrix) override;
+	bool SetUniform(const std::string& name, float value) override;
+	bool SetUniform(const std::string& name, int value) override;
 	static std::string LoadFromFile(const std::string& path);
 	virtual ~Shader();
 
@@ -57,6 +71,7 @@ protected:
 
 private:
 	bool AddShader(GLuint program, const std::string& shader_code, GLenum shader_type);
+	bool GetUniformLocation(GLuint &location, const std::string &name);
 
 };
 
