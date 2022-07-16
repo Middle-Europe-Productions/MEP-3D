@@ -2,36 +2,13 @@
 #include<MEP-3D/shader.hpp>
 #include<glog/logging.h>
 
-bool ShaderBase::IsCompiled() const {
-	return status_;
-}
-
-void ShaderBase::SetStatus(bool status) {
-	status_ = status;
-}
-
-
-void ShaderBinder::Bind(ShaderBase* shader) {
-	shader_ = shader;
-}
-
-void ShaderBinder::UnBind() {
-	shader_ = nullptr;
-}
-
-ShaderBase* ShaderBinder::Get() {
-	if (!shader_ || !shader_->IsCompiled())
-		return nullptr;
-	return shader_;
-}
-
-Shader::Shader() {
+Shader::Shader(): Identity(__FUNCTION__), status_(false) {
+	LOG(INFO) << __FUNCTION__ << ", " << ToString();
 	shader_id_ = 0;
-	uniform_projection_ = 0;
-	uniform_model_ = 0;
-	uniform_view_ = 0;
 }
+
 bool Shader::Compile(const std::string& vertex_code, const std::string& fragment_code) {
+	LOG(INFO) << __FUNCTION__ << ", " << ToString();
 	SetStatus(false);
 	shader_id_ = glCreateProgram();
 
@@ -62,11 +39,6 @@ bool Shader::Compile(const std::string& vertex_code, const std::string& fragment
 		LOG(ERROR) << "[ERROR: " << __FUNCTION__ << "]: " << log << std::endl;
 		return false;
 	}
-
-	uniform_projection_ = glGetUniformLocation(shader_id_, "projection");
-	uniform_model_ = glGetUniformLocation(shader_id_, "model");
-	uniform_view_ = glGetUniformLocation(shader_id_, "view");
-
 	SetStatus(true);
 	return true;
 }
@@ -96,22 +68,67 @@ void Shader::Clear() {
 		glDeleteProgram(shader_id_);
 		shader_id_ = 0;
 	}
-	uniform_view_ = 0;
-	uniform_model_ = 0;
-	uniform_projection_ = 0;
 	SetStatus(false);
 }
 
-GLuint Shader::GetProjectionLocation() {
-	return uniform_projection_;
+bool Shader::SaveUniformToMemory(const std::string& name, unsigned int memory_id) {
+	GLuint uniform_value_loc = glGetUniformLocation(shader_id_, name.c_str());
+	if (uniform_value_loc == -1) {
+		LOG(ERROR) << "Could not find a variable!";
+		return false;
+	}
+	uniform_memory_[memory_id] = uniform_value_loc;
 }
 
-GLuint Shader::GetModelLocation() {
-	return uniform_model_;
+bool Shader::SetUniform(const std::string& name, const glm::mat4& matrix) {
+	GLuint uniform_value_loc = glGetUniformLocation(shader_id_, name.c_str());
+	if (uniform_value_loc == -1) {
+		LOG(ERROR) << "Could not find a variable!";
+		return false;
+	}
+	SetUniformExt(uniform_value_loc, matrix);
 }
 
-GLuint Shader::GetViewLocation() {
-	return uniform_view_;
+bool Shader::SetUniform(const std::string& name, float value) {
+	GLuint uniform_value_loc = glGetUniformLocation(shader_id_, name.c_str());
+	if (uniform_value_loc == -1) {
+		LOG(ERROR) << "Could not find a variable!";
+		return false;
+	}
+	SetUniformExt(uniform_value_loc, value);
+}
+
+bool Shader::SetUniform(const std::string& name, int value) {
+	GLuint uniform_value_loc = glGetUniformLocation(shader_id_, name.c_str());
+	if (uniform_value_loc == -1) {
+		LOG(ERROR) << "Could not find a variable!";
+		return false;
+	}
+	SetUniformExt(uniform_value_loc, value);
+}
+
+bool Shader::SetUniformFromMemory(unsigned int id, const glm::mat4& matrix) {
+	auto local_uniform = uniform_memory_.find(id);
+	if (local_uniform == uniform_memory_.end()) {
+		return false;
+	}
+	SetUniformExt(local_uniform->second, matrix);
+}
+
+bool Shader::SetUniformFromMemory(unsigned int id, float value) {
+	auto local_uniform = uniform_memory_.find(id);
+	if (local_uniform == uniform_memory_.end()) {
+		return false;
+	}
+	SetUniformExt(local_uniform->second, value);
+}
+
+bool Shader::SetUniformFromMemory(unsigned int id, int value) {
+	auto local_uniform = uniform_memory_.find(id);
+	if (local_uniform == uniform_memory_.end()) {
+		return false;
+	}
+	SetUniformExt(local_uniform->second, value);
 }
 
 bool Shader::SetUniformExt(GLuint uniform_location, const glm::mat4& matrix) {
@@ -126,33 +143,6 @@ bool Shader::SetUniformExt(GLuint uniform_location, float value) {
 
 bool Shader::SetUniformExt(GLuint uniform_location, int value) {
 	glUniform1i(uniform_location, value);
-	return true;
-}
-
-bool Shader::SetUniform(const std::string& name, const glm::mat4& matrix) {
-	GLuint uni_location = glGetUniformLocation(shader_id_, name.c_str());
-	if (!GetUniformLocation(uni_location, name)) {
-		return false;
-	}
-	glUniformMatrix4fv(uni_location, 1, GL_FALSE, glm::value_ptr(matrix));
-	return true;
-}
-
-bool Shader::SetUniform(const std::string &name, float value) {
-	GLuint uni_location = glGetUniformLocation(shader_id_, name.c_str());
-	if (!GetUniformLocation(uni_location, name)) {
-		return false;
-	}
-	glUniform1f(uni_location, value);
-	return true;
-}
-
-bool Shader::SetUniform(const std::string& name, int value) {
-	GLuint uni_location = glGetUniformLocation(shader_id_, name.c_str());
-	if (!GetUniformLocation(uni_location, name)) {
-		return false;
-	}
-	glUniform1i(uni_location, value);
 	return true;
 }
 
@@ -172,7 +162,19 @@ std::string Shader::LoadFromFile(const std::string& path) {
 }
 
 Shader::~Shader() {
+	LOG(INFO) << __FUNCTION__ << ", " << ToString();
+	ForAllObservers([this](AssetObserver* observer){
+		observer->OnDelete(*this);
+	});
 	Clear();
+}
+
+bool Shader::IsCompiled() const {
+	return status_;
+}
+
+void Shader::SetStatus(bool status) {
+	status_ = status;
 }
 
 bool Shader::AddShader(GLuint program, const std::string& shader_code, GLenum shader_type) {

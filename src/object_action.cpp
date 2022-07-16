@@ -38,7 +38,7 @@ glm::mat4& ObjectActionController::GetModel() {
 }
 
 std::string ObjectActionController::ToString() const {
-	return "ObjectActionController: {\n" + glm::to_string(model_) + "\n}";
+	return "ObjectActionController: {\nmodel_matrix: " + glm::to_string(model_) + "\n}";
 }
 
 void ObjectActionController::InitObjectActionArray() {

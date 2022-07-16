@@ -6,72 +6,41 @@
 #include<GL/glew.h>
 #include<glm/glm.hpp>
 #include<MEP-3D/identity.hpp>
+#include<MEP-3D/asset_observer.hpp>
+#include<MEP-3D/observer_list.hpp>
 
-class ShaderBase: public Identity {
-public:
-	ShaderBase() : Identity(__FUNCTION__), status_(false) {}
-
-	virtual bool Compile(const std::string&, const std::string&) = 0;
-	bool IsCompiled() const;
-	virtual GLuint GetProjectionLocation() = 0;
-	virtual GLuint GetModelLocation() = 0;
-	virtual GLuint GetViewLocation() = 0;
-	virtual bool SetUniformExt(GLuint uniform_location, const glm::mat4& matrix) = 0;
-	virtual bool SetUniformExt(GLuint uniform_location, float value) = 0;
-	virtual bool SetUniformExt(GLuint uniform_location, int value) = 0;
-	virtual bool SetUniform(const std::string& name, const glm::mat4& matrix) = 0;
-	virtual bool SetUniform(const std::string& name, float value) = 0;
-	virtual bool SetUniform(const std::string& name, int value) = 0;
-	virtual ~ShaderBase() = default;
-
-protected:
-	void SetStatus(bool status);
-
-private:
-	bool status_;
-};
-
-class ShaderBinder {
-public:
-	void Bind(ShaderBase* shader);
-	void UnBind();
-protected:
-	ShaderBase* Get();
-
-private:
-	ShaderBase* shader_;
-};
-
-class Shader : public ShaderBase {
+class Shader : public Identity, public ObserverList<AssetObserver> {
 public:
 	Shader();
-	bool Compile(const std::string& vertex_code, const std::string& fragment_code) override;
+	bool Compile(const std::string& vertex_code, const std::string& fragment_code);
+	bool IsCompiled() const;
 	void StartUsing();
 	void StopUsing();
 	bool CreateFromFile(const std::string& vertex_location, const std::string& fragment_location);
 	bool CreateFromString(const std::string& vertex_code, const std::string& fragment_code);
 	void Clear();
-	GLuint GetProjectionLocation() override;
-	GLuint GetModelLocation() override;
-	GLuint GetViewLocation() override;
-	bool SetUniformExt(GLuint uniform_location, const glm::mat4& matrix) override;
-	bool SetUniformExt(GLuint uniform_location, float value) override;
-	bool SetUniformExt(GLuint uniform_location, int value) override;
-	bool SetUniform(const std::string& name, const glm::mat4& matrix) override;
-	bool SetUniform(const std::string& name, float value) override;
-	bool SetUniform(const std::string& name, int value) override;
+	bool SetUniform(const std::string& name, const glm::mat4& matrix);
+	bool SetUniform(const std::string& name, float value);
+	bool SetUniform(const std::string& name, int value);
+	bool SetUniformFromMemory(unsigned int id, const glm::mat4& matrix);
+	bool SetUniformFromMemory(unsigned int id, float value);
+	bool SetUniformFromMemory(unsigned int id, int value);
+	bool SetUniformExt(GLuint uniform_location, const glm::mat4& matrix);
+	bool SetUniformExt(GLuint uniform_location, float value);
+	bool SetUniformExt(GLuint uniform_location, int value);
+	bool SaveUniformToMemory(const std::string& name, unsigned int memory_id);
 	static std::string LoadFromFile(const std::string& path);
 	virtual ~Shader();
 
 protected:
+	std::unordered_map<unsigned int, GLuint> uniform_memory_;
 	GLuint shader_id_;
-	GLuint uniform_projection_;
-	GLuint uniform_model_;
-	GLuint uniform_view_;
 
 private:
+	void SetStatus(bool status);
 	bool AddShader(GLuint program, const std::string& shader_code, GLenum shader_type);
 	bool GetUniformLocation(GLuint &location, const std::string &name);
+	bool status_;
 
 };
 

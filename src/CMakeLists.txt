@@ -14,11 +14,12 @@ set(SOURCE
   ${SRC_ROOT}/shader.cpp
   ${SRC_ROOT}/mesh.cpp
   ${SRC_ROOT}/perspective_view.cpp
-  ${SRC_ROOT}/triangle.cpp
   ${SRC_ROOT}/updatable.cpp
   ${SRC_ROOT}/utils.cpp
   ${SRC_ROOT}/texture.cpp
   ${SRC_ROOT}/identity.cpp
+  ${SRC_ROOT}/observer.cpp
+  ${SRC_ROOT}/asset_controller.cpp
 )
 
 set(HEADERS
@@ -29,7 +30,6 @@ set(HEADERS
   ${INC_ROOT}/pyramid.hpp
   ${INC_ROOT}/shader.hpp
   ${INC_ROOT}/object_action.hpp
-  ${INC_ROOT}/triangle.hpp
   ${INC_ROOT}/utils.hpp
   ${INC_ROOT}/window.hpp
   ${INC_ROOT}/window_observer.hpp
@@ -44,9 +44,13 @@ set(HEADERS
   ${INC_ROOT}/view_base.hpp
   ${INC_ROOT}/image.hpp
   ${INC_ROOT}/vector.hpp
+  ${INC_ROOT}/vector.inl
   ${INC_ROOT}/texture.hpp
   ${INC_ROOT}/color.hpp
   ${INC_ROOT}/identity.hpp
+  ${INC_ROOT}/asset_observer.hpp
+  ${INC_ROOT}/asset_controller.hpp
+  ${INC_ROOT}/observer.hpp
 )
 
 set(INCLUDE_DIRECTORIES

@@ -3,13 +3,14 @@
 
 #include<list>
 #include<functional>
+#include<glog/logging.h>
 
 template <typename ObserverType>
 class ObserverList {
 public:
 	using ObserverCallback = std::function<void(ObserverType*)>;
 	void AddObserver(ObserverType* obs);
-	void RemoveObserver(const ObserverType* obs);
+	void RemoveObserver(ObserverType* obs);
 	void ForAllObservers(ObserverCallback callback);
 private:
 	std::list<ObserverType*> observer_list_;
@@ -23,9 +24,22 @@ void ObserverList<ObserverType>::AddObserver(ObserverType* obs) {
 }
 
 template <typename ObserverType>
-void ObserverList<ObserverType>::RemoveObserver(const ObserverType* obs) {
-	if (obs)
-		observer_list_.remove(obs);
+void ObserverList<ObserverType>::RemoveObserver(ObserverType* obs) {
+	if (!obs)
+		return;
+	LOG(INFO) << __FUNCTION__ << ", observer_id: " << obs->GetObsserverId();
+	for (auto it = observer_list_.begin(); it != observer_list_.end(); ++it) {
+		if ((*it)->IsEqual(obs)) {
+			if (it != observer_list_.end()) {
+				LOG(INFO) << __FUNCTION__ << ", " << __LINE__ << ", " << (*it)->GetObsserverId();
+				observer_list_.erase(it);
+			}
+			else {
+				LOG(ERROR) << "Could not find an observer!";
+			}
+			return;
+		}
+	}
 }
 
 template <typename ObserverType>
