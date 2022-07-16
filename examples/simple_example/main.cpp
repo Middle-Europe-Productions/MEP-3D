@@ -15,6 +15,7 @@
 #include<MEP-3D/image.hpp>
 #include<MEP-3D/vector.hpp>
 #include<MEP-3D/texture.hpp>
+#include<MEP-3D/light.hpp>
 
 class Game: private WindowObserver {
 public:
@@ -63,7 +64,7 @@ public:
                 curAngle_ -= 360;
             }
             glfwPollEvents();
-            LOG(INFO) << pyramids[0]->ToString();
+            //LOG(INFO) << pyramids[0]->ToString();
             camera_->Update();
             shader_.StartUsing();
             pyramids[0]->PushObjectAction(std::make_unique<Rotate>(0.01f, Axis::Y));

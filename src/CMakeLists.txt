@@ -51,6 +51,7 @@ set(HEADERS
   ${INC_ROOT}/asset_observer.hpp
   ${INC_ROOT}/asset_controller.hpp
   ${INC_ROOT}/observer.hpp
+  ${INC_ROOT}/light.hpp
 )
 
 set(INCLUDE_DIRECTORIES
