@@ -42,6 +42,7 @@ public:
             return false;
         }
         glEnable(GL_DEPTH_TEST);
+        glEnable(GL_TEXTURE_2D);
         glViewport(0, 0, window_buffer_x_, window_buffer_y_);
         glfwSetWindowUserPointer(main_window_, this);
         init_ = true;

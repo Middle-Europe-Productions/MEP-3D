@@ -12,10 +12,10 @@ Pyramid::Pyramid(const std::vector<GLfloat>& vertices) {
 }
 
 void Pyramid::Draw(RenderTarget& render_target) {
-	if (!GetShader()) {
+	if (!Get<Shader>()) {
 		return;
 	}
-	Shader* shader = GetShader();
+	Shader* shader = Get<Shader>();
 	Update();
 	shader->SetUniformFromMemory(CommonUniform::Model, GetModel());
 	if (render_target.GetView())
@@ -24,7 +24,7 @@ void Pyramid::Draw(RenderTarget& render_target) {
 		shader->SetUniformFromMemory(CommonUniform::View, render_target.GetCamera()->GetViewMatrix());
 	
 	Texture* texture = nullptr;
-	if (texture = GetTexture())
+	if ((texture = Get<Texture>()))
 		texture->Use();
 
 	glBindVertexArray(vertex_array_object_);

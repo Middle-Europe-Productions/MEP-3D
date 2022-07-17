@@ -19,14 +19,6 @@ void AssetController::Bind(Shader* object) {
     shader_->AddObserver(this);
 }
 
-Texture* AssetController::GetTexture() {
-    return texture_;
-}
-
-Shader* AssetController::GetShader() {
-    return shader_;
-}
-
 void AssetController::OnDelete(Identity& caller_identity) {
     LOG(INFO) << __FUNCTION__ << ", caller_id: " << caller_identity.ToString();
     if (texture_ && texture_->GetGlobalId() == caller_identity.GetGlobalId()) {

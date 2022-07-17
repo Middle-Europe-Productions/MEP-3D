@@ -21,11 +21,11 @@ class Game: private WindowObserver {
 public:
     Game() {
         window_ = Window::GetInstance({ 800, 600, "Example" });
+        window_->Init();
         view_ = std::make_unique<PerspectiveView>(PerspectiveView::Config({ glm::radians(45.0f),
             (GLfloat)window_->GetBufferWidth() / (GLfloat)window_->GetBufferHight(), 0.1f, 100.0f }));
         CameraConfig config = { glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 180.0f, 5.0f, 0.5f };
         camera_ = std::make_unique<Camera>(config);
-        window_->Init();
 
         image.LoadFromFile("textures/dirt.png");
         tex = std::make_unique<Texture>();
@@ -47,6 +47,9 @@ public:
             1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
             0.0f, 1.0f, 0.0f, 0.5f, 1.0f
         };
+        light = std::make_unique<Light>(AmbientConfig{Color(255, 0, 255), 0.5f}, std::nullopt);
+        light->BindUniform(shader_.GetUniform("directional_light.color"), LightUniforms::AmbientColor);
+        light->BindUniform(shader_.GetUniform("directional_light.ambient_intensity"), LightUniforms::AmbientIntensity);
         pyramids.emplace_back(std::make_unique<Pyramid>(vec));
         pyramids.back()->Bind(&shader_);
         pyramids.back()->Bind(tex.get());
@@ -67,10 +70,12 @@ public:
             //LOG(INFO) << pyramids[0]->ToString();
             camera_->Update();
             shader_.StartUsing();
+            light->Use();
             pyramids[0]->PushObjectAction(std::make_unique<Rotate>(0.01f, Axis::Y));
             //LOG(INFO) << pyramids[0]->ToString();
             //pyramids[1]->SetSpaceAction(std::make_unique<Rotate>(curAngle, Axis::Y));
             window_->Clear(White);
+            LOG(INFO) << light->ToString();
             shader_.SetUniform("use_texture", 1);
             for (auto& x : pyramids) {
                 x->Draw(*window_);
@@ -117,14 +122,15 @@ private:
     Shader shader_;
     Shader shader_2;
     Image image;
+    std::unique_ptr<Light> light;
     float curAngle_;
 };
 
 
 int main()
 {
-    glEnable(GL_TEXTURE_2D);
     Game game;
     game.Init();
     game.RunUntilStopped();
+    return 1;
 }

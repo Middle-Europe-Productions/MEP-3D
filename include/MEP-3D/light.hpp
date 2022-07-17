@@ -7,7 +7,10 @@
 #include<MEP-3D/asset_observer.hpp>
 #include<MEP-3D/observer_list.hpp>
 
+#include<GL/glew.h>
+
 #include<optional>
+#include<unordered_map>
 
 struct AmbientConfig {
 	Color color;
@@ -15,42 +18,32 @@ struct AmbientConfig {
 };
 
 struct DiffuseConfig {
-	Vec3f direction;
+	std::optional<Vec3f> direction;
 	float intensity;
 };
 
-class Light: public ObserverList<AssetObserver> {
-public:
-	Light(): ambient_config_(std::nullopt), diffuse_config_(std::nullopt) {} 
-	Light(std::optional<AmbientConfig> ambient_config, std::optional<DiffuseConfig> diffuse_config): 
-					ambient_config_(ambient_config), diffuse_config_(diffuse_config) {}
+enum LightUniforms {
+	AmbientIntensity = 0,
+	AmbientColor = 1,
+	DiffuseDirection,
+	DiffuseIntensity
+};
 
-	bool UseAmbient(GLfloat ambient_intensity_loc, GLfloat ambient_color_loc) const {
-		if (!ambient_config_.has_value())
-			return false;
-		glUniform3f(ambient_color_loc, 
-					ambient_config_.value().color.Rf(),
-					ambient_config_.value().color.Gf(),
-					ambient_config_.value().color.Bf());
-		glUniform1f(ambient_intensity_loc, ambient_config_.value().intensity);
-	}
-	bool UseDiffuse(GLfloat diffuse_intensity_loc, GLfloat diffuse_direction_loc) const {
-		if (!diffuse_config_.has_value())
-			return false;
-		glUniform3f(diffuse_direction_loc, 
-					diffuse_config_.value().direction.x_,
-					diffuse_config_.value().direction.y_,
-					diffuse_config_.value().direction.z_);
-		glUniform1f(diffuse_intensity_loc, diffuse_config_.value().intensity);
-	}
-	void SetAmbientConfig(AmbientConfig ambient_config) {
-		ambient_config_ = ambient_config;
-	}
-	void SetDiffuseConfig(DiffuseConfig diffuse_config) {
-		diffuse_config_ = diffuse_config;
-	}
+std::string ToString(LightUniforms uniform_type);
+
+class Light: public Identity, public ObserverList<AssetObserver> {
+public:
+	Light();
+	Light(std::optional<AmbientConfig> ambient_config, std::optional<DiffuseConfig> diffuse_config);
+	virtual void Use();
+	void BindUniform(GLint uniform_location, LightUniforms type);
+	void SetAmbientConfig(AmbientConfig ambient_config);
+	void SetDiffuseConfig(DiffuseConfig diffuse_config);
+	std::string ToString() const override;
+	virtual ~Light() = default;
 
 private:
+	std::unordered_map<LightUniforms, GLfloat> uniform_cache_;
 	std::optional<AmbientConfig> ambient_config_;
 	std::optional<DiffuseConfig> diffuse_config_;
 };

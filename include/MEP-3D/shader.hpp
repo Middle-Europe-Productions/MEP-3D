@@ -29,6 +29,7 @@ public:
 	bool SetUniformExt(GLuint uniform_location, float value);
 	bool SetUniformExt(GLuint uniform_location, int value);
 	bool SaveUniformToMemory(const std::string& name, unsigned int memory_id);
+	GLint GetUniform(const std::string& name) const;
 	static std::string LoadFromFile(const std::string& path);
 	virtual ~Shader();
 

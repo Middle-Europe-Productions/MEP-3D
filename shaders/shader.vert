@@ -12,9 +12,7 @@ uniform mat4 view;
 
 void main()
 {
-    if (model != 0) gl_Position = model * vec4(pos, 1.0);
-    if (view != 0) gl_Position = view * gl_Position;
-    if (projection != 0) gl_Position = projection * gl_Position;
+    gl_Position = projection * view * model * vec4(pos, 1.0);
     local_color = vec4(clamp(pos, 0.0f, 1.0f), 1.0);
 
     texture_coordinates = tex;

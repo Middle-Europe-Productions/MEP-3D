@@ -10,8 +10,8 @@ public:
     AssetController();
     void Bind(Texture* object);
     void Bind(Shader* object);
-    Texture* GetTexture();
-    Shader* GetShader();
+    template<typename What>
+    What* Get() const;
     void OnDelete(Identity& caller_identity);
     void RemoveAssets();
     std::string ToString() const;
@@ -20,5 +20,7 @@ private:
     Texture* texture_;
     Shader* shader_;
 };
+
+#include<MEP-3D/asset_controller.inl>
 
 #endif

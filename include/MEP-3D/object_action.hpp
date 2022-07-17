@@ -23,6 +23,7 @@ public:
 	ObjectAction(Type type);
 	Type GetType() const;
 	virtual void Update(glm::mat4& model) = 0;
+	virtual ~ObjectAction() = default;
 
 private:
 	Type type_;

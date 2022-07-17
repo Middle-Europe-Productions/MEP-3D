@@ -19,6 +19,7 @@ bool Image::LoadFromFile(const std::string& name) {
         image_type_ = Type::RGB;
     } else {
         image_type_ = Type::Unknown;
+        LOG(WARNING) << "Unknown bit depth: " << name;
     }
     stbi_image_free(pixels);
 }

@@ -1,9 +1,9 @@
 #ifndef CAMERA_HPP
 #define CAMERA_HPP
 
-#include<GL\glew.h>
-#include<glm\glm.hpp>
-#include<glm\gtc\matrix_transform.hpp>
+#include<GL/glew.h>
+#include<glm/glm.hpp>
+#include<glm/gtc/matrix_transform.hpp>
 #include<unordered_map>
 #include<memory>
 
@@ -15,6 +15,7 @@
 #include<glm/gtx/string_cast.hpp>
 #include<string>
 #include<glog/logging.h>
+
 struct CameraControls {
 	CameraControls() :
 		up(Keyboard::W),
@@ -41,8 +42,8 @@ public:
 	Camera(CameraConfig config, CameraControls controls = CameraControls());
 	void Update() override;
 	glm::mat4 GetViewMatrix() const;
-	virtual void OnKeyEvent(KeyEvent event);
-	virtual void OnMouseEvent(MouseEvent event);
+	void OnKeyEvent(KeyEvent event) override;
+	void OnMouseEvent(MouseEvent event) override;
 	std::string ToString() const;
 
 private:

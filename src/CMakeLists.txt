@@ -20,6 +20,7 @@ set(SOURCE
   ${SRC_ROOT}/identity.cpp
   ${SRC_ROOT}/observer.cpp
   ${SRC_ROOT}/asset_controller.cpp
+  ${SRC_ROOT}/light.cpp
 )
 
 set(HEADERS
@@ -50,6 +51,7 @@ set(HEADERS
   ${INC_ROOT}/identity.hpp
   ${INC_ROOT}/asset_observer.hpp
   ${INC_ROOT}/asset_controller.hpp
+  ${INC_ROOT}/asset_controller.inl
   ${INC_ROOT}/observer.hpp
   ${INC_ROOT}/light.hpp
 )

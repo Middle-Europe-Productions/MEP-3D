@@ -39,7 +39,7 @@ void Texture::Clear() {
 }
 
 Texture::~Texture() {
-	LOG(INFO) << __FUNCTION__ << ", " << __LINE__;
+	LOG(INFO) << __FUNCTION__;
 	ForAllObservers([this](AssetObserver* observer){
 		observer->OnDelete(*this);
 	});
