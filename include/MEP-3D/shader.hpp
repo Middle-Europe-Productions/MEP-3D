@@ -20,12 +20,15 @@ public:
 	bool CreateFromString(const std::string& vertex_code, const std::string& fragment_code);
 	void Clear();
 	bool SetUniform(const std::string& name, const glm::mat4& matrix);
+	bool SetUniform(const std::string& name, const glm::vec3& matrix);
 	bool SetUniform(const std::string& name, float value);
 	bool SetUniform(const std::string& name, int value);
 	bool SetUniformFromMemory(unsigned int id, const glm::mat4& matrix);
+	bool SetUniformFromMemory(unsigned int id, const glm::vec3& matrix);
 	bool SetUniformFromMemory(unsigned int id, float value);
 	bool SetUniformFromMemory(unsigned int id, int value);
 	bool SetUniformExt(GLuint uniform_location, const glm::mat4& matrix);
+	bool SetUniformExt(GLuint uniform_location, const glm::vec3& matrix);
 	bool SetUniformExt(GLuint uniform_location, float value);
 	bool SetUniformExt(GLuint uniform_location, int value);
 	bool SaveUniformToMemory(const std::string& name, unsigned int memory_id);

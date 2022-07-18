@@ -21,6 +21,8 @@ set(SOURCE
   ${SRC_ROOT}/observer.cpp
   ${SRC_ROOT}/asset_controller.cpp
   ${SRC_ROOT}/light.cpp
+  ${SRC_ROOT}/asset.cpp
+  ${SRC_ROOT}/material.cpp
 )
 
 set(HEADERS
@@ -54,6 +56,9 @@ set(HEADERS
   ${INC_ROOT}/asset_controller.inl
   ${INC_ROOT}/observer.hpp
   ${INC_ROOT}/light.hpp
+  ${INC_ROOT}/asset.hpp
+  ${INC_ROOT}/material.hpp
+  ${INC_ROOT}/uniform_container.hpp
 )
 
 set(INCLUDE_DIRECTORIES

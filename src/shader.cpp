@@ -74,7 +74,7 @@ void Shader::Clear() {
 bool Shader::SaveUniformToMemory(const std::string& name, unsigned int memory_id) {
 	GLint uniform_value_loc = glGetUniformLocation(shader_id_, name.c_str());
 	if (uniform_value_loc == -1) {
-		LOG(ERROR) << "Could not find a variable!";
+		LOG(ERROR) << "Could not find a variable: " << name << "!";
 		return false;
 	}
 	uniform_memory_[memory_id] = uniform_value_loc;
@@ -84,7 +84,16 @@ bool Shader::SaveUniformToMemory(const std::string& name, unsigned int memory_id
 bool Shader::SetUniform(const std::string& name, const glm::mat4& matrix) {
 	GLint uniform_value_loc = glGetUniformLocation(shader_id_, name.c_str());
 	if (uniform_value_loc == -1) {
-		LOG(ERROR) << "Could not find a variable!";
+		LOG(ERROR) << "Could not find a variable: " << name << "!";
+		return false;
+	}
+	return SetUniformExt(uniform_value_loc, matrix);
+}
+
+bool Shader::SetUniform(const std::string& name, const glm::vec3& matrix) {
+	GLint uniform_value_loc = glGetUniformLocation(shader_id_, name.c_str());
+	if (uniform_value_loc == -1) {
+		LOG(ERROR) << "Could not find a variable: " << name << "!";
 		return false;
 	}
 	return SetUniformExt(uniform_value_loc, matrix);
@@ -93,7 +102,7 @@ bool Shader::SetUniform(const std::string& name, const glm::mat4& matrix) {
 bool Shader::SetUniform(const std::string& name, float value) {
 	GLint uniform_value_loc = glGetUniformLocation(shader_id_, name.c_str());
 	if (uniform_value_loc == -1) {
-		LOG(ERROR) << "Could not find a variable!";
+		LOG(ERROR) << "Could not find a variable: " << name << "!";
 		return false;
 	}
 	return SetUniformExt(uniform_value_loc, value);
@@ -102,7 +111,7 @@ bool Shader::SetUniform(const std::string& name, float value) {
 bool Shader::SetUniform(const std::string& name, int value) {
 	GLint uniform_value_loc = glGetUniformLocation(shader_id_, name.c_str());
 	if (uniform_value_loc == -1) {
-		LOG(ERROR) << "Could not find a variable!";
+		LOG(ERROR) << "Could not find a variable: " << name << "!";
 		return false;
 	}
 	SetUniformExt(uniform_value_loc, value);
@@ -110,6 +119,15 @@ bool Shader::SetUniform(const std::string& name, int value) {
 }
 
 bool Shader::SetUniformFromMemory(unsigned int id, const glm::mat4& matrix) {
+	auto local_uniform = uniform_memory_.find(id);
+	if (local_uniform == uniform_memory_.end()) {
+		return false;
+	}
+	SetUniformExt(local_uniform->second, matrix);
+	return true;
+}
+
+bool Shader::SetUniformFromMemory(unsigned int id, const glm::vec3& matrix) {
 	auto local_uniform = uniform_memory_.find(id);
 	if (local_uniform == uniform_memory_.end()) {
 		return false;
@@ -141,6 +159,11 @@ bool Shader::SetUniformExt(GLuint uniform_location, const glm::mat4& matrix) {
 	return true;
 }
 
+bool Shader::SetUniformExt(GLuint uniform_location, const glm::vec3& matrix) {
+	glUniform3f(uniform_location, matrix.x, matrix.y, matrix.z);
+	return true;
+}
+
 bool Shader::SetUniformExt(GLuint uniform_location, float value) {
 	glUniform1f(uniform_location, value);
 	return true;
@@ -154,7 +177,7 @@ bool Shader::SetUniformExt(GLuint uniform_location, int value) {
 GLint Shader::GetUniform(const std::string& name) const {
 	GLint uniform_value_loc = glGetUniformLocation(shader_id_, name.c_str());
 	if (uniform_value_loc == -1) {
-		LOG(ERROR) << "Could not find a variable!";
+		LOG(ERROR) << "Could not find a variable: " << name << "!";
 	}
 	return uniform_value_loc;
 }
@@ -162,7 +185,7 @@ GLint Shader::GetUniform(const std::string& name) const {
 std::string Shader::LoadFromFile(const std::string& path) {
 	std::ifstream file_stream(path, std::ios::in);
 	if (!file_stream.is_open()) {
-		LOG(ERROR) << "Could not open a file!";
+		LOG(ERROR) << "Could not open a file: " << path << "!";
 		return "";
 	}
 	std::string output;
@@ -204,7 +227,7 @@ bool Shader::AddShader(GLuint program, const std::string& shader_code, GLenum sh
 	glGetShaderiv(gl_shader, GL_COMPILE_STATUS, &result);
 	if (!result) {
 		glGetShaderInfoLog(gl_shader, 1024, NULL, log);
-		LOG(ERROR) << __FUNCTION__ << log << std::endl;
+		LOG(ERROR) << __FUNCTION__ << log;
 		return false;
 	}
 	glAttachShader(program, gl_shader);

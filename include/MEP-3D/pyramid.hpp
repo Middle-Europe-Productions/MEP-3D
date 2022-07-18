@@ -7,7 +7,7 @@
 
 class Pyramid : public Mesh, public AssetController, public ObjectActionController {
 public:
-	Pyramid(const std::vector<GLfloat>& vertices);
+	Pyramid(std::vector<GLfloat>& vertices);
 	void Draw(RenderTarget& render_target) override;
 	std::string ToString() const;
 };

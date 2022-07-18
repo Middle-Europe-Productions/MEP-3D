@@ -1,6 +1,6 @@
 #include<MEP-3D/camera.hpp>
 
-Camera::Camera(CameraConfig config, CameraControls controls) :
+Camera::Camera(const CameraConfig& config, const CameraControls& controls) :
 	controls_(controls),
 	camera_time_delta_(TimeDelta::GetInstance()) {
 	position_ = config.start_position;
@@ -33,6 +33,10 @@ void Camera::Update() {
 
 glm::mat4 Camera::GetViewMatrix() const {
 	return glm::lookAt(position_, position_ + front_, up_);
+}
+
+glm::vec3 Camera::GetPosition() const {
+	return position_;
 }
 
 void Camera::OnKeyEvent(KeyEvent event) {

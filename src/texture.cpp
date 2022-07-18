@@ -1,7 +1,7 @@
 #include<MEP-3D/texture.hpp>
 #include<stb_image.h>
 #include<glog/logging.h>
-Texture::Texture(): Identity(__FUNCTION__) {
+Texture::Texture(): Asset(__FUNCTION__) {
     texture_id_ = 0;
 }
 
@@ -29,7 +29,7 @@ void Texture::Use() {
 	glBindTexture(GL_TEXTURE_2D, texture_id_);
 }
 
-void Texture::StopUsing() {
+void Texture::Stop() {
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
@@ -40,8 +40,5 @@ void Texture::Clear() {
 
 Texture::~Texture() {
 	LOG(INFO) << __FUNCTION__;
-	ForAllObservers([this](AssetObserver* observer){
-		observer->OnDelete(*this);
-	});
     Clear();
 }

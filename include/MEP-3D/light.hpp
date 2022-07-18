@@ -6,6 +6,8 @@
 #include<MEP-3D/asset_observer.hpp>
 #include<MEP-3D/asset_observer.hpp>
 #include<MEP-3D/observer_list.hpp>
+#include<MEP-3D/uniform_container.hpp>
+#include<MEP-3D/asset.hpp>
 
 #include<GL/glew.h>
 
@@ -31,21 +33,21 @@ enum LightUniforms {
 
 std::string ToString(LightUniforms uniform_type);
 
-class Light: public Identity, public ObserverList<AssetObserver> {
+class Light: public Asset, public UniformContainer<LightUniforms> {
 public:
 	Light();
 	Light(std::optional<AmbientConfig> ambient_config, std::optional<DiffuseConfig> diffuse_config);
-	virtual void Use();
-	void BindUniform(GLint uniform_location, LightUniforms type);
+	void Use() override;
+	void Stop() override;
 	void SetAmbientConfig(AmbientConfig ambient_config);
 	void SetDiffuseConfig(DiffuseConfig diffuse_config);
 	std::string ToString() const override;
-	virtual ~Light() = default;
+	virtual ~Light();
 
 private:
-	std::unordered_map<LightUniforms, GLfloat> uniform_cache_;
 	std::optional<AmbientConfig> ambient_config_;
 	std::optional<DiffuseConfig> diffuse_config_;
+
 };
 
 #endif

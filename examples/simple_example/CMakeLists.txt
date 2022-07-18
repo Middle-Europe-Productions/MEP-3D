@@ -1,12 +1,12 @@
 project(simple_example)
 
 set(SHADERS
-  ${CMAKE_SOURCE_DIR}/shaders/shader.frag
-  ${CMAKE_SOURCE_DIR}/shaders/shader.vert
+  ${PROJECT_SOURCE_DIR}/shaders/shader.frag
+  ${PROJECT_SOURCE_DIR}/shaders/shader.vert
 )
 
 set(RESOURCE_DIR
-  ${CMAKE_SOURCE_DIR}/shaders
+  ${PROJECT_SOURCE_DIR}/shaders
   ${PROJECT_SOURCE_DIR}/textures
 )
 
@@ -18,7 +18,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC mep-3d)
 
 file(
   COPY
-  ${CMAKE_SOURCE_DIR}/shaders
+  ${PROJECT_SOURCE_DIR}/shaders
   DESTINATION
   ${PROJECT_BINARY_DIR}/
 )

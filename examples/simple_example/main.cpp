@@ -16,6 +16,7 @@
 #include<MEP-3D/vector.hpp>
 #include<MEP-3D/texture.hpp>
 #include<MEP-3D/light.hpp>
+#include<MEP-3D/material.hpp>
 
 class Game: private WindowObserver {
 public:
@@ -41,15 +42,24 @@ public:
         shader_.SaveUniformToMemory("projection", CommonUniform::Projection);
         shader_.SaveUniformToMemory("view", CommonUniform::View);
         shader_.SaveUniformToMemory("model", CommonUniform::Model);
+        shader_.SaveUniformToMemory("eye_position", CommonUniform::Position);
         std::vector<GLfloat> vec = {
-            -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-            0.0f, -1.0f, 1.0f, 0.5f, 0.0f,
-            1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-            0.0f, 1.0f, 0.0f, 0.5f, 1.0f
+            // x,     y,    z,    u,   v,     nx,   ny,   nz
+            -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, -1.0f, 1.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f,
+            1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f
         };
-        light = std::make_unique<Light>(AmbientConfig{Color(255, 0, 255), 0.5f}, std::nullopt);
+        light = std::make_unique<Light>(AmbientConfig{Color(255, 255, 255), 0.5f}, DiffuseConfig{Vec3f(-2.0f, -1.0f, -2.0f), 1.0f});
         light->BindUniform(shader_.GetUniform("directional_light.color"), LightUniforms::AmbientColor);
         light->BindUniform(shader_.GetUniform("directional_light.ambient_intensity"), LightUniforms::AmbientIntensity);
+        light->BindUniform(shader_.GetUniform("directional_light.direction"), LightUniforms::DiffuseDirection);
+        light->BindUniform(shader_.GetUniform("directional_light.diffuse_intensity"), LightUniforms::DiffuseIntensity);
+
+        material = std::make_unique<Material>(MaterialConfig{ 1.0f, 32 });
+        material->BindUniform(shader_.GetUniform("material.specular_intensity"), MaterialUniform::SpecularIntensity);
+        material->BindUniform(shader_.GetUniform("material.shininess"), MaterialUniform::Shininess);
+
         pyramids.emplace_back(std::make_unique<Pyramid>(vec));
         pyramids.back()->Bind(&shader_);
         pyramids.back()->Bind(tex.get());
@@ -61,7 +71,7 @@ public:
         pyramids[0]->PushObjectAction(std::make_unique<Transform>(0.0f, 1.0f, 0.0f));
         pyramids[1]->PushObjectAction(std::make_unique<Transform>(0.0f, -1.0f, 0.0f));
         while (window_->IsOpen()) {
-            curAngle_ += 0.0001f;
+            curAngle_ += 0.01f;
             if (curAngle_ >= 360)
             {
                 curAngle_ -= 360;
@@ -71,11 +81,11 @@ public:
             camera_->Update();
             shader_.StartUsing();
             light->Use();
-            pyramids[0]->PushObjectAction(std::make_unique<Rotate>(0.01f, Axis::Y));
+            material->Use();
+            pyramids[0]->PushObjectAction(std::make_unique<Rotate>(0.1f, Axis::Y));
             //LOG(INFO) << pyramids[0]->ToString();
             //pyramids[1]->SetSpaceAction(std::make_unique<Rotate>(curAngle, Axis::Y));
             window_->Clear(White);
-            LOG(INFO) << light->ToString();
             shader_.SetUniform("use_texture", 1);
             for (auto& x : pyramids) {
                 x->Draw(*window_);
@@ -87,7 +97,7 @@ public:
     void OnKeyEvent(KeyEvent event) override {
         //LOG(INFO) << event.code << ", action: " << (event.action == Action::Pressed ? "Pressed" : "Released");
         if (event.code == Keyboard::Z) {
-            pyramids[0]->PushObjectAction(std::make_unique<Rotate>(1.0f, Axis::Z));
+            pyramids[0]->PushObjectAction(std::make_unique<Rotate>(1.0f, Axis::Y));
             pyramids[0]->Update();
         }
         else if (event.code == Keyboard::R) {
@@ -123,6 +133,7 @@ private:
     Shader shader_2;
     Image image;
     std::unique_ptr<Light> light;
+    std::unique_ptr<Material> material;
     float curAngle_;
 };
 

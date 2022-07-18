@@ -2,7 +2,7 @@
 namespace {
 	constexpr int kSizeOfVertice = sizeof(GLfloat);
 	constexpr int kSizeOfIndice = sizeof(unsigned int);
-	constexpr int kRowSize = 5;
+	constexpr int kRowSize = 8;
 }
 
 Mesh::Mesh() {
@@ -34,6 +34,9 @@ void Mesh::Init(const std::vector<GLfloat>& vertices, const std::vector<unsigned
 
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, kSizeOfVertice * kRowSize, (void*)(kSizeOfVertice * 3));
 	glEnableVertexAttribArray(1);
+
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, kSizeOfVertice * kRowSize, (void*)(kSizeOfVertice * 5));
+	glEnableVertexAttribArray(2);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);

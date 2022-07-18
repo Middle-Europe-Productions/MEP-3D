@@ -14,47 +14,45 @@ std::string ToString(LightUniforms uniform_type) {
     return "Unknown";
 }
 
-Light::Light(): Identity(__FUNCTION__), ambient_config_(std::nullopt), diffuse_config_(std::nullopt) {}
+Light::Light(): Asset(__FUNCTION__), ambient_config_(std::nullopt), diffuse_config_(std::nullopt) {}
 
 Light::Light(std::optional<AmbientConfig> ambient_config, std::optional<DiffuseConfig> diffuse_config): 
-				Identity(__FUNCTION__), ambient_config_(ambient_config), diffuse_config_(diffuse_config) {}
+				Asset(__FUNCTION__), ambient_config_(ambient_config), diffuse_config_(diffuse_config) {}
 
 void Light::Use() {
 	if (!ambient_config_.has_value())
 		return;
-	if (uniform_cache_.find(LightUniforms::AmbientColor) != uniform_cache_.end()) {
-		glUniform3f(uniform_cache_[LightUniforms::AmbientColor], 
+	if (Exists(LightUniforms::AmbientColor)) {
+		glUniform3f(GetUniform(LightUniforms::AmbientColor), 
 					ambient_config_.value().color.Rf(),
 					ambient_config_.value().color.Gf(),
 					ambient_config_.value().color.Bf());
 	}
-	if (uniform_cache_.find(LightUniforms::AmbientIntensity) != uniform_cache_.end()) {
-		glUniform1f(uniform_cache_[LightUniforms::AmbientIntensity], ambient_config_.value().intensity);
+	if (Exists(LightUniforms::AmbientIntensity)) {
+		glUniform1f(GetUniform(LightUniforms::AmbientIntensity), ambient_config_.value().intensity);
 	}
 	if (!diffuse_config_.has_value())
 		return;
-	if (uniform_cache_.find(LightUniforms::DiffuseDirection) != uniform_cache_.end()) {
+	if (Exists(LightUniforms::DiffuseDirection)) {
 		if (diffuse_config_.value().direction.has_value()) {
-			glUniform3f(uniform_cache_[LightUniforms::DiffuseDirection], 
+			glUniform3f(GetUniform(LightUniforms::DiffuseDirection), 
 				diffuse_config_.value().direction.value().x_,
 				diffuse_config_.value().direction.value().y_,
 				diffuse_config_.value().direction.value().z_);
 		}
 	}
-	if (uniform_cache_.find(LightUniforms::DiffuseIntensity) != uniform_cache_.end()) {
-		glUniform1f(uniform_cache_[LightUniforms::DiffuseIntensity], ambient_config_.value().intensity);
+	if (Exists(LightUniforms::DiffuseIntensity)) {
+		glUniform1f(GetUniform(LightUniforms::DiffuseIntensity), diffuse_config_.value().intensity);
 	}
 }
 
-void Light::BindUniform(GLint uniform_location, LightUniforms type) {
-	if (uniform_location < 0) {
-		LOG(ERROR) << "Invalid uniform!";
-		return;
+void Light::Stop() {
+	if (Exists(LightUniforms::AmbientIntensity)) {
+		glUniform1f(GetUniform(LightUniforms::AmbientIntensity), 0.0f);
 	}
-	if (uniform_cache_.find(type) != uniform_cache_.end()) {
-		LOG(INFO) << "Uniform already bound overriding!";
+	if (Exists(LightUniforms::DiffuseIntensity)) {
+		glUniform1f(GetUniform(LightUniforms::DiffuseIntensity), 0.0f);
 	}
-	uniform_cache_[type] = uniform_location;
 }
 
 void Light::SetAmbientConfig(AmbientConfig ambient_config) {
@@ -78,4 +76,8 @@ std::string Light::ToString() const {
     }
     output += "}\n}";
     return output;
+}
+
+Light::~Light() {
+    LOG(INFO) << __FUNCTION__;
 }

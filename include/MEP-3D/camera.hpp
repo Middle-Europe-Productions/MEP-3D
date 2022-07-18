@@ -39,9 +39,10 @@ struct CameraConfig {
 
 class Camera : public Updatable, public WindowObserver {
 public:
-	Camera(CameraConfig config, CameraControls controls = CameraControls());
+	Camera(const CameraConfig& config, const CameraControls& controls = CameraControls());
 	void Update() override;
 	glm::mat4 GetViewMatrix() const;
+	glm::vec3 GetPosition() const;
 	void OnKeyEvent(KeyEvent event) override;
 	void OnMouseEvent(MouseEvent event) override;
 	std::string ToString() const;
