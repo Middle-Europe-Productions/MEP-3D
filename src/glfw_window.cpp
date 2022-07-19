@@ -19,15 +19,15 @@ public:
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-        main_window_ = glfwCreateWindow(config_.width, config_.height, config_.name.c_str(), NULL, NULL);
+        main_window_ = glfwCreateWindow(config_.size.x_, config_.size.y_, config_.name.c_str(), NULL, NULL);
 
         if (!main_window_) {
             LOG(ERROR) << "GLFW window failed";
             glfwTerminate();
             return false;
         }
-        glfwGetFramebufferSize(main_window_, &window_buffer_x_, &window_buffer_y_);
-
+        glfwGetFramebufferSize(main_window_, &buffer_size.x_, &buffer_size.y_);
+        LOG(INFO) << __FUNCTION__ << ", buffer initialized [x: " << buffer_size.x_ << ", y: " << buffer_size.y_ << "]";
         glfwMakeContextCurrent(main_window_);
 
         InitCallbacks();
@@ -43,7 +43,7 @@ public:
         }
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_TEXTURE_2D);
-        glViewport(0, 0, window_buffer_x_, window_buffer_y_);
+        glViewport(0, 0, buffer_size.x_, buffer_size.y_);
         glfwSetWindowUserPointer(main_window_, this);
         init_ = true;
         return true;
@@ -66,20 +66,16 @@ public:
         glfwSwapBuffers(main_window_);
 	}
 
-	std::size_t GetHight() override {
-        return config_.width;
-	}
-
-	std::size_t GetWidth() override {
-        return config_.height;
-	}
-
-    std::size_t GetBufferHight() override {
-        return window_buffer_x_;
+    virtual Vec2i GetSize() {
+        return config_.size;
     }
 
-    std::size_t GetBufferWidth() override {
-        return window_buffer_y_;
+    virtual Vec2i GetBufferSize() {
+        return buffer_size;
+    }
+
+    virtual float GetAspectRation() {
+        return static_cast<float>(buffer_size.x_) / static_cast<float>(buffer_size.y_);
     }
 
 	~GLFWWindowController() {
@@ -92,8 +88,7 @@ private:
     GLFWwindow* main_window_;
     GLFWWindowController* shared_window_;
     WindowConfig config_;
-    int window_buffer_x_;
-    int window_buffer_y_;
+    Vec2i buffer_size;
 
     void InitCallbacks() {
         glfwSetKeyCallback(main_window_, OnKeyEventHandler);

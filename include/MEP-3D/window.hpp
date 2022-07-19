@@ -8,10 +8,10 @@
 #include<MEP-3D/window_observer.hpp>
 #include<MEP-3D/render_target.hpp>
 #include<MEP-3D/color.hpp>
+#include<MEP-3D/vector.hpp>
 
 struct WindowConfig {
-	std::size_t width;
-	std::size_t height;
+	Vec2u size;
 	std::string name;
 };
 
@@ -22,10 +22,9 @@ public:
 	virtual bool IsOpen() = 0;
 	virtual void Clear(Color color = Black) = 0;
 	virtual void FinishLoop() = 0;
-	virtual std::size_t GetHight() = 0;
-	virtual std::size_t GetWidth() = 0;
-	virtual std::size_t GetBufferHight() = 0;
-	virtual std::size_t GetBufferWidth() = 0;
+	virtual Vec2i GetSize() = 0;
+	virtual Vec2i GetBufferSize() = 0;
+	virtual float GetAspectRation() = 0;
 	virtual ~Window() = default;
 	static std::unique_ptr<Window> GetInstance(WindowConfig config);
 };
