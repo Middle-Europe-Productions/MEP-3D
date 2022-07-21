@@ -33,10 +33,10 @@ constexpr bool Vec2<T>::operator==(const Vec2& x) const {
 
 
 template<typename T>
-constexpr Vec3<T>::Vec3() : z_(0) {}
+constexpr Vec3<T>::Vec3() : Vec2<T>(), z_(0) {}
 
 template<typename T>
-constexpr Vec3<T>::Vec3(const T& x, const T& y, const T& z) : z_(z) {}
+constexpr Vec3<T>::Vec3(const T& x, const T& y, const T& z) : Vec2<T>(x, y), z_(z) {}
 
 template<typename T>
 template<typename U>

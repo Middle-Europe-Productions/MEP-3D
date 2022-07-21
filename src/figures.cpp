@@ -1,4 +1,4 @@
-#include <MEP-3D/pyramid.hpp>
+#include <MEP-3D/figures.hpp>
 #include <MEP-3D/common.hpp>
 #include<glm/gtc/type_ptr.hpp>
 
@@ -38,40 +38,16 @@ namespace {
 
 }
 
-Pyramid::Pyramid(std::vector<GLfloat>& vertices) {
+Pyramid::Pyramid(Vec3f initial_position) {
+	LOG(INFO) << __FUNCTION__;
+	std::vector<GLfloat> vertices = {
+		// x,     y,    z,    u,   v,     nx,   ny,   nz
+		-1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, -1.0f, 1.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f,
+		1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f
+	};
 	CalculateNormals(vertices, 5);
 	Mesh::Init(vertices, kPyramidIndicies);
-}
-
-void Pyramid::Draw(RenderTarget& render_target) {
-	if (!Get<Shader>()) {
-		return;
-	}
-	Shader* shader = Get<Shader>();
-	Update();
-	shader->SetUniformFromMemory(CommonUniform::Model, GetModel());
-	if (render_target.GetView())
-		shader->SetUniformFromMemory(CommonUniform::Projection, render_target.GetView()->GetProjection());
-	if (render_target.GetCamera()) {
-		shader->SetUniformFromMemory(CommonUniform::View, render_target.GetCamera()->GetViewMatrix());
-		shader->SetUniformFromMemory(CommonUniform::Position, render_target.GetCamera()->GetPosition());
-	}
-	
-	Texture* texture = nullptr;
-	if ((texture = Get<Texture>()))
-		texture->Use();
-
-	glBindVertexArray(vertex_array_object_);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_boject_);
-	glDrawElements(GL_TRIANGLES, GetVerticesCount(), GL_UNSIGNED_INT, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-	
-	if (texture)
-		texture->Stop();
-}
-
-std::string Pyramid::ToString() const
-{
-	return AssetController::ToString() + ",\n" + ObjectActionController::ToString();
+	PushObjectAction(std::make_unique<Transform>(initial_position));
 }

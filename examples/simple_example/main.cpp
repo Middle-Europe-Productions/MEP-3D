@@ -7,7 +7,7 @@
 #include<glm/gtc/matrix_transform.hpp>
 #include<glm/gtc/type_ptr.hpp>
 
-#include<MEP-3D/pyramid.hpp>
+#include<MEP-3D/figures.hpp>
 #include<MEP-3D/shader.hpp>
 #include<MEP-3D/window.hpp>
 #include<MEP-3D/perspective_view.hpp>
@@ -43,13 +43,7 @@ public:
         shader_.SaveUniformToMemory("view", CommonUniform::View);
         shader_.SaveUniformToMemory("model", CommonUniform::Model);
         shader_.SaveUniformToMemory("eye_position", CommonUniform::Position);
-        std::vector<GLfloat> vec = {
-            // x,     y,    z,    u,   v,     nx,   ny,   nz
-            -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-            0.0f, -1.0f, 1.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f,
-            1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-            0.0f, 1.0f, 0.0f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f
-        };
+
         light = std::make_unique<Light>(AmbientConfig{Color(255, 255, 255), 0.5f}, DiffuseConfig{Vec3f(-2.0f, -1.0f, -2.0f), 1.0f});
         light->BindUniform(shader_.GetUniform("directional_light.color"), LightUniforms::AmbientColor);
         light->BindUniform(shader_.GetUniform("directional_light.ambient_intensity"), LightUniforms::AmbientIntensity);
@@ -60,16 +54,14 @@ public:
         material->BindUniform(shader_.GetUniform("material.specular_intensity"), MaterialUniform::SpecularIntensity);
         material->BindUniform(shader_.GetUniform("material.shininess"), MaterialUniform::Shininess);
 
-        pyramids.emplace_back(std::make_unique<Pyramid>(vec));
+        pyramids.emplace_back(std::make_unique<Pyramid>(Vec3f{ 0.0f, 1.0f, 0.0f }));
         pyramids.back()->Bind(&shader_);
         pyramids.back()->Bind(tex.get());
-        pyramids.emplace_back(std::make_unique<Pyramid>(vec));
+        pyramids.emplace_back(std::make_unique<Pyramid>(Vec3f{ 0.0f, -1.0f, 0.0f }));
         pyramids.back()->Bind(&shader_);
     }
     void RunUntilStopped() {
         float curAngle = 0;
-        pyramids[0]->PushObjectAction(std::make_unique<Transform>(0.0f, 1.0f, 0.0f));
-        pyramids[1]->PushObjectAction(std::make_unique<Transform>(0.0f, -1.0f, 0.0f));
         while (window_->IsOpen()) {
             curAngle_ += 0.01f;
             if (curAngle_ >= 360)
@@ -117,6 +109,9 @@ public:
         }
         else if (event.code == Keyboard::O && event.action == Action::Released) {
             pyramids.pop_back();
+        }
+        else if (event.code == Keyboard::O && event.action == Action::Released) {
+
         }
     }
     void OnMouseEvent(MouseEvent event) override {

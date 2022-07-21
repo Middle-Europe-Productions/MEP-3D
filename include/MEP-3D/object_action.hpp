@@ -7,7 +7,9 @@
 #include<iostream>
 
 #include<glm/glm.hpp>
+
 #include<MEP-3D/common.hpp>
+#include<MEP-3D/vector.hpp>
 
 class ObjectAction;
 using ObjectActionPtr = std::unique_ptr<ObjectAction>;
@@ -47,6 +49,7 @@ private:
 
 class Transform : public ObjectAction {
 public:
+	Transform(const Vec3f& val);
 	Transform(float x, float y, float z);
 	void Update(glm::mat4& model) override;
 
@@ -56,6 +59,7 @@ protected:
 
 class Scale : public ObjectAction {
 public:
+	Scale(const Vec3f& val);
 	Scale(float x, float y, float z);
 	void Update(glm::mat4& model) override;
 

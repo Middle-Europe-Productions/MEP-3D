@@ -3,6 +3,8 @@
 #include<glm/gtx/string_cast.hpp>
 #include<glm/gtc/matrix_transform.hpp>
 #include<glm/glm.hpp>
+#include<vector>
+#include<glog/logging.h>
 
 ObjectAction::ObjectAction(Type type) : type_(type) {}
 
@@ -11,6 +13,7 @@ ObjectAction::Type ObjectAction::GetType() const {
 }
 
 ObjectActionController::ObjectActionController() {
+	LOG(INFO) << __FUNCTION__;
 	ResetModel();
 	InitObjectActionArray();
 }
@@ -47,12 +50,18 @@ void ObjectActionController::InitObjectActionArray() {
 	}
 }
 
+Transform::Transform(const Vec3f& val) : 
+	x_(val.x_), y_(val.y_), z_(val.z_), ObjectAction(Type::Transform) {}
+
 Transform::Transform(float x, float y, float z) :
 	x_(x), y_(y), z_(z), ObjectAction(Type::Transform) {}
 
 void Transform::Update(glm::mat4& model) {
 	model = glm::translate(model, glm::vec3(x_, y_, z_));
 }
+
+Scale::Scale(const Vec3f& val) :
+	x_(val.x_), y_(val.y_), z_(val.z_), ObjectAction(Type::Scale) {}
 
 Scale::Scale(float x, float y, float z) :
 	x_(x), y_(y), z_(z), ObjectAction(Type::Scale) {}
