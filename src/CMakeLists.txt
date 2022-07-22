@@ -8,8 +8,8 @@ set(SOURCE
   ${SRC_ROOT}/glfw_time_delta.cpp
   ${SRC_ROOT}/glfw_window.cpp
   ${SRC_ROOT}/mesh_base.cpp
-  ${SRC_ROOT}/object_action.cpp
-  ${SRC_ROOT}/pyramid.cpp
+  ${SRC_ROOT}/model_controller.cpp
+  ${SRC_ROOT}/figures.cpp
   ${SRC_ROOT}/render_target.cpp
   ${SRC_ROOT}/shader.cpp
   ${SRC_ROOT}/mesh.cpp
@@ -30,9 +30,9 @@ set(HEADERS
   ${INC_ROOT}/mesh.hpp
   ${INC_ROOT}/common.hpp
   ${INC_ROOT}/drawable.hpp
-  ${INC_ROOT}/pyramid.hpp
+  ${INC_ROOT}/figures.hpp
   ${INC_ROOT}/shader.hpp
-  ${INC_ROOT}/object_action.hpp
+  ${INC_ROOT}/model_controller.hpp
   ${INC_ROOT}/utils.hpp
   ${INC_ROOT}/window.hpp
   ${INC_ROOT}/window_observer.hpp

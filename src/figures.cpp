@@ -10,6 +10,10 @@ namespace {
 		2, 3, 0,
 		0, 1, 2
 	};
+	const std::vector<unsigned int> kPlaneIndices = {
+		0, 2, 1,
+		1, 2, 3
+	};
 
 	void CalculateNormals(std::vector<GLfloat>& vertice_array, unsigned int normal_offset) {
 		for (std::size_t i = 0; i < kPyramidIndicies.size(); i += 3) {
@@ -49,5 +53,17 @@ Pyramid::Pyramid(Vec3f initial_position) {
 	};
 	CalculateNormals(vertices, 5);
 	Mesh::Init(vertices, kPyramidIndicies);
+	PushObjectAction(std::make_unique<Transform>(initial_position));
+}
+
+Plane::Plane(float size, Vec3f initial_position) {
+	LOG(INFO) << __FUNCTION__;
+	std::vector<GLfloat> vertices = {
+		-size, 0.0f, -size, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f,
+		size, 0.0f, -size, size, 0.0f, 0.0f, -1.0f, 0.0f,
+		-size, 0.0f, size, 0.0f, size, 0.0f, -1.0f, 0.0f,
+		size, 0.0f, size, size, size, 0.0f, -1.0f, 0.0f
+	};
+	Mesh::Init(vertices, kPlaneIndices);
 	PushObjectAction(std::make_unique<Transform>(initial_position));
 }

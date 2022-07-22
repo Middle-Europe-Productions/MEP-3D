@@ -79,5 +79,5 @@ unsigned int Mesh::GetVerticesCount() const {
 
 std::string Mesh::ToString() const
 {
-	return "Mesh: {\n" + AssetController::ToString() + ",\n" + ObjectActionController::ToString() + "\n)";
+	return "Mesh: {\n" + AssetController::ToString() + ",\n" + ModelController::ToString() + "\n}";
 }

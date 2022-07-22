@@ -59,6 +59,9 @@ public:
         pyramids.back()->Bind(tex.get());
         pyramids.emplace_back(std::make_unique<Pyramid>(Vec3f{ 0.0f, -1.0f, 0.0f }));
         pyramids.back()->Bind(&shader_);
+        plane = std::make_unique<Plane>(100.0f);
+        plane->Bind(tex.get());
+        plane->Bind(&shader_);
     }
     void RunUntilStopped() {
         float curAngle = 0;
@@ -78,7 +81,9 @@ public:
             //LOG(INFO) << pyramids[0]->ToString();
             //pyramids[1]->SetSpaceAction(std::make_unique<Rotate>(curAngle, Axis::Y));
             window_->Clear(White);
+            LOG(INFO) << pyramids[0]->ToString();
             shader_.SetUniform("use_texture", 1);
+            plane->Draw(*window_);
             for (auto& x : pyramids) {
                 x->Draw(*window_);
             }
@@ -120,6 +125,7 @@ public:
     ~Game() {}
 private:
     std::vector<std::unique_ptr<Pyramid>> pyramids;
+    std::unique_ptr<Plane> plane;
     WindowPtr window_;
     std::unique_ptr<PerspectiveView> view_;
     std::unique_ptr<Camera> camera_;

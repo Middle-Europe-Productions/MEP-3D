@@ -11,10 +11,10 @@
 #include<MEP-3D/common.hpp>
 #include<MEP-3D/vector.hpp>
 
-class ObjectAction;
-using ObjectActionPtr = std::unique_ptr<ObjectAction>;
+class ModelAction;
+using ModelActionPtr = std::unique_ptr<ModelAction>;
 
-class ObjectAction {
+class ModelAction {
 public:
 	enum Type {
 		Transform = 0,
@@ -22,32 +22,32 @@ public:
 		Scale,
 		Count
 	};
-	ObjectAction(Type type);
+	ModelAction(Type type);
 	Type GetType() const;
 	virtual void Update(glm::mat4& model) = 0;
-	virtual ~ObjectAction() = default;
+	virtual ~ModelAction() = default;
 
 private:
 	Type type_;
 };
 
-class ObjectActionController {
+class ModelController {
 public:
-	ObjectActionController();
-	void PushObjectAction(ObjectActionPtr space_action);
+	ModelController();
+	void PushObjectAction(ModelActionPtr space_action);
 	void Update();
 	void ResetModel();
 	glm::mat4& GetModel();
 	std::string ToString() const;
 
 private:
-	void InitObjectActionArray();
+	void InitModelArray();
 
-	std::unordered_map<ObjectAction::Type, std::queue<ObjectActionPtr>> space_actions_;
+	std::unordered_map<ModelAction::Type, std::queue<ModelActionPtr>> space_actions_;
 	glm::mat4 model_;
 };
 
-class Transform : public ObjectAction {
+class Transform : public ModelAction {
 public:
 	Transform(const Vec3f& val);
 	Transform(float x, float y, float z);
@@ -57,7 +57,7 @@ protected:
 	float x_, y_, z_;
 };
 
-class Scale : public ObjectAction {
+class Scale : public ModelAction {
 public:
 	Scale(const Vec3f& val);
 	Scale(float x, float y, float z);
@@ -67,7 +67,7 @@ protected:
 	float x_, y_, z_;
 };
 
-class Rotate : public ObjectAction {
+class Rotate : public ModelAction {
 public:
 	Rotate(float degrees, Axis axis = Axis::X);
 	void SetRotationRad(float radians, Axis axis = Axis::X);
