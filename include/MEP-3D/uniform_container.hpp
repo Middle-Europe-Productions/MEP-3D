@@ -6,12 +6,15 @@
 #include <MEP-3D/shader.hpp>
 #include <unordered_map>
 
-
 template <typename Type>
 class UniformContainer {
  public:
   void BindUniform(GLint uniform_location, Type type);
   void BindUniforms(const Shader& shader,
+                    std::unordered_map<Type, std::string> names_bind);
+  void BindUniforms(const Shader& shader,
+                    unsigned int id,
+                    std::string structure_name,
                     std::unordered_map<Type, std::string> names_bind);
   bool Exists(Type type) const;
   GLint GetUniform(Type type) const;
@@ -35,7 +38,30 @@ void UniformContainer<Type>::BindUniform(GLint uniform_location, Type type) {
 template <typename Type>
 void UniformContainer<Type>::BindUniforms(
     const Shader& shader,
-    std::unordered_map<Type, std::string> names_bind);
+    std::unordered_map<Type, std::string> names_bind) {
+  for (auto& ele : names_bind) {
+    GLint location = shader.GetUniform(ele.second);
+    if (uniform_cache_.find(ele.first) != uniform_cache_.end()) {
+      LOG(INFO) << "Overriding " << ele.second;
+    }
+    uniform_cache_[ele.first] = location;
+  }
+}
+template <typename Type>
+void UniformContainer<Type>::BindUniforms(
+    const Shader& shader,
+    unsigned int id,
+    std::string structure_name,
+    std::unordered_map<Type, std::string> names_bind) {
+  std::string prefix = structure_name + "[" + std::to_string(id) + "].";
+  for (auto& ele : names_bind) {
+    GLint location = shader.GetUniform(structure_name + ele.second);
+    if (uniform_cache_.find(ele.first) != uniform_cache_.end()) {
+      LOG(INFO) << "Overriding " << structure_name + ele.second;
+    }
+    uniform_cache_[ele.first] = location;
+  }
+}
 
 template <typename Type>
 bool UniformContainer<Type>::Exists(Type type) const {

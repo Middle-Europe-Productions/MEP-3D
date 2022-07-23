@@ -12,11 +12,34 @@
 #include <MEP-3D/image.hpp>
 #include <MEP-3D/material.hpp>
 #include <MEP-3D/perspective_view.hpp>
+#include <MEP-3D/point_light_factory.hpp>
 #include <MEP-3D/shader.hpp>
 #include <MEP-3D/texture.hpp>
 #include <MEP-3D/vector.hpp>
 #include <MEP-3D/window.hpp>
 #include <MEP-3D/window_observer.hpp>
+
+const std::unordered_map<LightUniforms, std::string>
+    kDirectionalLightUniformMap = {
+        {LightUniforms::AmbientColor, "directional_light.base.color"},
+        {LightUniforms::AmbientIntensity,
+         "directional_light.base.ambient_intensity"},
+        {LightUniforms::DiffuseDirection, "directional_light.direction"},
+        {LightUniforms::DiffuseIntensity,
+         "directional_light.base.diffuse_intensity"}};
+
+const std::unordered_map<LightUniforms, std::string> kPointLightUniformMap = {
+    {LightUniforms::AmbientColor, "base.color"},
+    {LightUniforms::AmbientIntensity, "base.ambient_intensity"},
+    {LightUniforms::DiffuseIntensity, "base.diffuse_intensity"},
+    {LightUniforms::Position, "position"},
+    {LightUniforms::Constant, "constant"},
+    {LightUniforms::Linear, "linear"},
+    {LightUniforms::Quadratic, "quadratic"}};
+
+const std::unordered_map<MaterialUniform, std::string> kMaterialUniformMap = {
+    {MaterialUniform::SpecularIntensity, "material.specular_intensity"},
+    {MaterialUniform::Shininess, "material.shininess"}};
 
 class Game : private WindowObserver {
  public:
@@ -49,25 +72,16 @@ class Game : private WindowObserver {
     shader_.SaveUniformToMemory("model", CommonUniform::Model);
     shader_.SaveUniformToMemory("eye_position", CommonUniform::Position);
 
+    point_light_fact = std::make_unique<PointLightFactory>(
+        16, "point_light", kPointLightUniformMap);
+
     light = std::make_unique<DirectionalLight>(
         AmbientConfig{Color(255, 255, 255), 0.5f},
         DiffuseConfig{Vec3f(-2.0f, -1.0f, -2.0f), 1.0f});
-    light->BindUniform(shader_.GetUniform("directional_light.color"),
-                       LightUniforms::AmbientColor);
-    light->BindUniform(
-        shader_.GetUniform("directional_light.ambient_intensity"),
-        LightUniforms::AmbientIntensity);
-    light->BindUniform(shader_.GetUniform("directional_light.direction"),
-                       LightUniforms::DiffuseDirection);
-    light->BindUniform(
-        shader_.GetUniform("directional_light.diffuse_intensity"),
-        LightUniforms::DiffuseIntensity);
+    light->BindUniforms(shader_, kDirectionalLightUniformMap);
 
     material = std::make_unique<Material>(MaterialConfig{1.0f, 32});
-    material->BindUniform(shader_.GetUniform("material.specular_intensity"),
-                          MaterialUniform::SpecularIntensity);
-    material->BindUniform(shader_.GetUniform("material.shininess"),
-                          MaterialUniform::Shininess);
+    material->BindUniforms(shader_, kMaterialUniformMap);
 
     pyramids.emplace_back(std::make_unique<Pyramid>(Vec3f{0.0f, 1.0f, 0.0f}));
     pyramids.back()->Bind(&shader_);
@@ -96,7 +110,6 @@ class Game : private WindowObserver {
       // pyramids[1]->SetSpaceAction(std::make_unique<Rotate>(curAngle,
       // Axis::Y));
       window_->Clear(White);
-      LOG(INFO) << pyramids[0]->ToString();
       shader_.SetUniform("use_texture", 1);
       plane->Draw(*window_);
       for (auto& x : pyramids) {
@@ -137,6 +150,7 @@ class Game : private WindowObserver {
  private:
   std::vector<std::unique_ptr<Pyramid>> pyramids;
   std::unique_ptr<Plane> plane;
+  std::unique_ptr<PointLightFactory> point_light_fact;
   WindowPtr window_;
   std::unique_ptr<PerspectiveView> view_;
   std::unique_ptr<Camera> camera_;

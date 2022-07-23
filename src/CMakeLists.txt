@@ -60,6 +60,7 @@ set(HEADERS
   ${INC_ROOT}/light.hpp
   ${INC_ROOT}/directional_light.hpp
   ${INC_ROOT}/point_light.hpp
+  ${INC_ROOT}/point_light_factory.hpp
   ${INC_ROOT}/asset.hpp
   ${INC_ROOT}/material.hpp
   ${INC_ROOT}/uniform_container.hpp
