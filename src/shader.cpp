@@ -2,7 +2,6 @@
 #include <MEP-3D/shader.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-
 Shader::Shader() : Identity(__FUNCTION__), status_(false) {
   LOG(INFO) << __FUNCTION__ << ", " << ToString();
   shader_id_ = 0;
@@ -42,6 +41,7 @@ bool Shader::Compile(const std::string& vertex_code,
     return false;
   }
   SetStatus(true);
+  LOG(INFO) << __FUNCTION__ << ", " << ToString() << ", compilation finished!";
   return true;
 }
 

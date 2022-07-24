@@ -12,7 +12,7 @@
 #include <MEP-3D/image.hpp>
 #include <MEP-3D/material.hpp>
 #include <MEP-3D/perspective_view.hpp>
-#include <MEP-3D/point_light_factory.hpp>
+#include <MEP-3D/point_light_controller.hpp>
 #include <MEP-3D/shader.hpp>
 #include <MEP-3D/texture.hpp>
 #include <MEP-3D/vector.hpp>
@@ -60,6 +60,10 @@ class Game : private WindowObserver {
     tex = std::make_unique<Texture>();
     tex->Create(image);
 
+    image.LoadFromFile("textures/plain.png");
+    plain_tex = std::make_unique<Texture>();
+    plain_tex->Create(image);
+
     window_->AddView(view_.get());
     window_->AddCamera(camera_.get());
     window_->AddObserver(this);
@@ -72,12 +76,23 @@ class Game : private WindowObserver {
     shader_.SaveUniformToMemory("model", CommonUniform::Model);
     shader_.SaveUniformToMemory("eye_position", CommonUniform::Position);
 
-    point_light_fact = std::make_unique<PointLightFactory>(
-        16, "point_light", kPointLightUniformMap);
+    point_light_fact = std::make_unique<PointLightController>(
+        16, "point_light", shader_.GetUniform("point_light_count"),
+        kPointLightUniformMap);
+
+    auto point_Light = point_light_fact->MakeAndBind(
+        AmbientConfig{Color(255, 0, 0), 0.5f},
+        PointConfig{Vec3f{1.0f, 1.0f, 1.0f},  1, 1, 0.001 }, 0.5f, shader_);
+    point_Light = point_light_fact->MakeAndBind(
+        AmbientConfig{ Color(0, 0, 255), 0.5f },
+        PointConfig{ Vec3f{-1.0f, 1.0f, -1.0f}, 1, 1, 0 }, 0.8f, shader_);
+    point_Light = point_light_fact->MakeAndBind(
+        AmbientConfig{ Color(0, 255, 0), 0.5f },
+        PointConfig{ Vec3f{1.0f, 1.0f, -1.0f}, 1, 1, 0 }, 0.8f, shader_);
 
     light = std::make_unique<DirectionalLight>(
-        AmbientConfig{Color(255, 255, 255), 0.5f},
-        DiffuseConfig{Vec3f(-2.0f, -1.0f, -2.0f), 1.0f});
+        AmbientConfig{Color(255, 255, 255), 0.1f},
+        DiffuseConfig{Vec3f(-2.0f, -1.0f, -2.0f), 0.0f });
     light->BindUniforms(shader_, kDirectionalLightUniformMap);
 
     material = std::make_unique<Material>(MaterialConfig{1.0f, 32});
@@ -91,6 +106,7 @@ class Game : private WindowObserver {
     plane = std::make_unique<Plane>(100.0f);
     plane->Bind(tex.get());
     plane->Bind(&shader_);
+    plane->Bind(plain_tex.get());
   }
   void RunUntilStopped() {
     float curAngle = 0;
@@ -112,6 +128,7 @@ class Game : private WindowObserver {
       window_->Clear(White);
       shader_.SetUniform("use_texture", 1);
       plane->Draw(*window_);
+      point_light_fact->Use();
       for (auto& x : pyramids) {
         x->Draw(*window_);
       }
@@ -150,11 +167,12 @@ class Game : private WindowObserver {
  private:
   std::vector<std::unique_ptr<Pyramid>> pyramids;
   std::unique_ptr<Plane> plane;
-  std::unique_ptr<PointLightFactory> point_light_fact;
+  std::unique_ptr<PointLightController> point_light_fact;
   WindowPtr window_;
   std::unique_ptr<PerspectiveView> view_;
   std::unique_ptr<Camera> camera_;
   std::unique_ptr<Texture> tex;
+  std::unique_ptr<Texture> plain_tex;
   Shader shader_;
   Shader shader_2;
   Image image;

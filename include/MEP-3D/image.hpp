@@ -7,7 +7,6 @@
 #include <string>
 #include <vector>
 
-
 class Image {
  public:
   enum class Type : int { RGBA = GL_RGBA, RGB = GL_RGB, Unknown = 0 };

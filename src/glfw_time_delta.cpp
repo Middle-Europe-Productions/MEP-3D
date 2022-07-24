@@ -1,7 +1,6 @@
 #include <GLFW/glfw3.h>
 #include <MEP-3D/time_delta.hpp>
 
-
 class GlfwTimeDelta : public TimeDelta {
  public:
   GlfwTimeDelta() { last_time_ = glfwGetTime(); }

@@ -6,7 +6,6 @@
 #include <queue>
 #include <unordered_map>
 
-
 #include <glm/glm.hpp>
 
 #include <MEP-3D/common.hpp>

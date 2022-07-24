@@ -6,7 +6,6 @@
 #include <glm/gtx/string_cast.hpp>
 #include <vector>
 
-
 ModelAction::ModelAction(Type type) : type_(type) {}
 
 ModelAction::Type ModelAction::GetType() const {

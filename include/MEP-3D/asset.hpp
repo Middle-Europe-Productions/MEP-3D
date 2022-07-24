@@ -5,7 +5,6 @@
 #include <MEP-3D/identity.hpp>
 #include <MEP-3D/observer_list.hpp>
 
-
 class Asset : public Identity, public ObserverList<AssetObserver> {
  public:
   Asset(const char* identity) : Identity(identity) {}

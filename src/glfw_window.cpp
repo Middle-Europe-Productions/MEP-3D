@@ -3,7 +3,6 @@
 #include <glog/logging.h>
 #include <MEP-3D/window.hpp>
 
-
 class GLFWWindowController : public Window {
  public:
   GLFWWindowController(WindowConfig config)

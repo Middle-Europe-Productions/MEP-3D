@@ -1,7 +1,6 @@
 #include <glog/logging.h>
 #include <MEP-3D/asset_controller.hpp>
 
-
 AssetController::AssetController() : texture_(nullptr), shader_(nullptr) {}
 
 void AssetController::Bind(Texture* object) {

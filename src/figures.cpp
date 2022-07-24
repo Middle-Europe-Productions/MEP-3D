@@ -2,7 +2,6 @@
 #include <MEP-3D/figures.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-
 namespace {
 constexpr unsigned int kRowSize = 8;
 const std::vector<unsigned int> kPyramidIndicies = {0, 3, 1, 1, 3, 2,

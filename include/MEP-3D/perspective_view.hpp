@@ -6,7 +6,6 @@
 #include <functional>
 #include <glm/glm.hpp>
 
-
 class PerspectiveView : public ViewBase {
  public:
   struct Config {

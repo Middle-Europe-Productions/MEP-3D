@@ -5,7 +5,6 @@
 #include <functional>
 #include <list>
 
-
 template <typename ObserverType>
 class ObserverList {
  public:

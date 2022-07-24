@@ -9,7 +9,6 @@
 #include <glm/glm.hpp>
 #include <string>
 
-
 class Shader : public Identity, public ObserverList<AssetObserver> {
  public:
   Shader();

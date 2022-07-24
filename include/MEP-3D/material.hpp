@@ -5,7 +5,6 @@
 #include <MEP-3D/asset_observer.hpp>
 #include <MEP-3D/uniform_container.hpp>
 
-
 #include <optional>
 
 #include <GL/glew.h>

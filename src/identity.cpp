@@ -25,7 +25,7 @@ unsigned int Identity::GetGlobalId() const {
 std::string Identity::ToString() const {
   return "Identity: { name: " + std::string(identity_char_) +
          ", id: " + std::to_string(id_) +
-         ", global_id: " + std::to_string(global_id_) + "} ";
+         ", global_id: " + std::to_string(global_id_) + "}";
 }
 
 bool Identity::operator==(const Identity& x) const {

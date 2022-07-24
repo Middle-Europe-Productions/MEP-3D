@@ -6,7 +6,6 @@
 #include <MEP-3D/camera.hpp>
 #include <MEP-3D/view_base.hpp>
 
-
 class RenderTarget {
  public:
   RenderTarget();

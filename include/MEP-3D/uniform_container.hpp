@@ -55,7 +55,7 @@ void UniformContainer<Type>::BindUniforms(
     std::unordered_map<Type, std::string> names_bind) {
   std::string prefix = structure_name + "[" + std::to_string(id) + "].";
   for (auto& ele : names_bind) {
-    GLint location = shader.GetUniform(structure_name + ele.second);
+    GLint location = shader.GetUniform(prefix + ele.second);
     if (uniform_cache_.find(ele.first) != uniform_cache_.end()) {
       LOG(INFO) << "Overriding " << structure_name + ele.second;
     }

@@ -4,7 +4,6 @@
 #include <string>
 #include <unordered_map>
 
-
 class Identity {
  public:
   Identity(const char* name);

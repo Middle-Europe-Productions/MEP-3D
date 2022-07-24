@@ -4,7 +4,6 @@
 #include <MEP-3D/light.hpp>
 #include <MEP-3D/vector.hpp>
 
-
 struct PointConfig {
   Vec3f position;
   // https://wiki.ogre3d.org/tiki-index.php?page=-Point+Light+Attenuation

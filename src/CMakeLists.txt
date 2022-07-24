@@ -23,6 +23,7 @@ set(SOURCE
   ${SRC_ROOT}/light.cpp
   ${SRC_ROOT}/directional_light.cpp
   ${SRC_ROOT}/point_light.cpp
+  ${SRC_ROOT}/point_light_controller.cpp
   ${SRC_ROOT}/asset.cpp
   ${SRC_ROOT}/material.cpp
 )
@@ -60,7 +61,7 @@ set(HEADERS
   ${INC_ROOT}/light.hpp
   ${INC_ROOT}/directional_light.hpp
   ${INC_ROOT}/point_light.hpp
-  ${INC_ROOT}/point_light_factory.hpp
+  ${INC_ROOT}/point_light_controller.hpp
   ${INC_ROOT}/asset.hpp
   ${INC_ROOT}/material.hpp
   ${INC_ROOT}/uniform_container.hpp

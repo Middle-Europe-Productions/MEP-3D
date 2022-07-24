@@ -4,7 +4,6 @@
 #include <glog/logging.h>
 #include <MEP-3D/image.hpp>
 
-
 Image::Image() {}
 
 bool Image::LoadFromFile(const std::string& name) {

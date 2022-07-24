@@ -8,7 +8,6 @@
 #include <MEP-3D/uniform_container.hpp>
 #include <MEP-3D/vector.hpp>
 
-
 #include <GL/glew.h>
 
 #include <optional>

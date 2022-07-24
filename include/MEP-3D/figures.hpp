@@ -6,7 +6,6 @@
 #include <MEP-3D/model_controller.hpp>
 #include <MEP-3D/vector.hpp>
 
-
 class Pyramid : public Mesh {
  public:
   Pyramid(Vec3f initial_position = {0.0f, 0.0f, 0.0f});

@@ -1,7 +1,6 @@
 #include <glog/logging.h>
 #include <MEP-3D/image.hpp>
 
-
 Image::Image() {
   LOG(INFO) << "Default implementation of " << __FUNCTION__;
 }
