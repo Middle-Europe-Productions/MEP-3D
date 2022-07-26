@@ -1,6 +1,5 @@
-#include <MEP-3D/point_light_controller.hpp>
-
-PointLightController::PointLightController(
+template <typename LightPtr>
+LightController<LightPtr>::LightController(
     unsigned int max_point_light,
     const std::string& struct_name,
     GLint light_count_location,
@@ -10,45 +9,48 @@ PointLightController::PointLightController(
       light_count_location_(light_count_location),
       max_size_(max_point_light) {}
 
-PointLightContainer::iterator PointLightController::MakeAndBind(
-    const AmbientConfig& ambient_config,
-    const PointConfig& point_config,
-    float diffuse_intensity,
+template <typename LightPtr>
+typename std::vector<LightPtr>::iterator LightController<LightPtr>::MakeAndBind(
+    LightPtr light_ptr,
     const Shader& shader_) {
   if (point_light_container_.size() >= max_size_) {
     LOG(INFO) << "Reached maximal number of point lights (" << max_size_ << ")";
     return point_light_container_.end();
   }
-  point_light_container_.emplace_back(std::make_unique<PointLight>(
-      ambient_config, point_config, diffuse_intensity));
+  point_light_container_.emplace_back(std::move(light_ptr));
   point_light_container_.back()->BindUniforms(
       shader_, point_light_container_.size() - 1, struct_name_, uniform_map_);
   return point_light_container_.end() - 1;
 }
 
-void PointLightController::ForAll(
-    std::function<void(PointLightPtr&)> function) {
+template <typename LightPtr>
+void LightController<LightPtr>::ForAll(
+    std::function<void(LightPtr&)> function) {
   for (auto& light : point_light_container_) {
     function(light);
   }
 }
 
-void PointLightController::Use() {
+template <typename LightPtr>
+void LightController<LightPtr>::Use() {
   glUniform1i(light_count_location_, point_light_container_.size());
   for (auto& light : point_light_container_) {
     light->Use();
   }
 }
 
-const PointLightContainer& PointLightController::GetContainer() const {
+template <typename LightPtr>
+const std::vector<LightPtr>& LightController<LightPtr>::GetContainer() const {
   return point_light_container_;
 }
 
-PointLightPtr& PointLightController::operator[](std::size_t element) {
+template <typename LightPtr>
+LightPtr& LightController<LightPtr>::operator[](std::size_t element) {
   return point_light_container_[element];
 }
 
-const PointLightPtr& PointLightController::operator[](
+template <typename LightPtr>
+const LightPtr& LightController<LightPtr>::operator[](
     std::size_t element) const {
   return point_light_container_[element];
 }

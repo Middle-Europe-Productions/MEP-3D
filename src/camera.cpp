@@ -38,6 +38,11 @@ glm::vec3 Camera::GetPosition() const {
   return position_;
 }
 
+glm::vec3 Camera::GetNormalizedDirection() const
+{
+    return glm::normalize(front_);
+}
+
 void Camera::OnKeyEvent(KeyEvent event) {
   if (event.action == Action::Pressed || event.action == Action::Released) {
     if (event.code == controls_.up || event.code == controls_.down ||

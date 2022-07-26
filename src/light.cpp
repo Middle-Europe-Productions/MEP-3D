@@ -18,6 +18,10 @@ std::string ToString(LightUniforms uniform_type) {
       return "Linear";
     case LightUniforms::Quadratic:
       return "Quadratic";
+    case LightUniforms::Direction:
+      return "Direction";
+    case LightUniforms::Edge:
+      return "Edge";
   }
   return "Unknown";
 }
@@ -30,6 +34,13 @@ Light::Light()
 Light::Light(std::optional<AmbientConfig> ambient_config,
              std::optional<DiffuseConfig> diffuse_config)
     : Asset(__FUNCTION__),
+      ambient_config_(ambient_config),
+      diffuse_config_(diffuse_config) {}
+
+Light::Light(std::optional<AmbientConfig> ambient_config,
+             std::optional<DiffuseConfig> diffuse_config,
+             const char* super_class_name)
+    : Asset(super_class_name),
       ambient_config_(ambient_config),
       diffuse_config_(diffuse_config) {}
 
@@ -69,18 +80,6 @@ void Light::Stop() {
   if (Exists(LightUniforms::DiffuseIntensity)) {
     glUniform1f(GetUniform(LightUniforms::DiffuseIntensity), 0.0f);
   }
-}
-
-void Light::SetAmbientConfig(AmbientConfig ambient_config) {
-  if (ambient_config_.has_value())
-    LOG(INFO) << "Overraiding config: AmbientConfig";
-  ambient_config_ = ambient_config;
-}
-
-void Light::SetDiffuseConfig(DiffuseConfig diffuse_config) {
-  if (diffuse_config_.has_value())
-    LOG(INFO) << "Overriding config: DiffuseConfig";
-  diffuse_config_ = diffuse_config;
 }
 
 std::string Light::ToString() const {

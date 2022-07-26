@@ -3,7 +3,20 @@
 PointLight::PointLight(const AmbientConfig& ambient_config,
                        const PointConfig& point_config,
                        float diffuse_intensity)
-    : Light(ambient_config, DiffuseConfig{std::nullopt, diffuse_intensity}),
+    : Light(ambient_config,
+            DiffuseConfig{std::nullopt, diffuse_intensity},
+            __FUNCTION__),
+      point_config_(point_config) {
+  LOG(INFO) << __FUNCTION__ << ", " << ToString();
+}
+
+PointLight::PointLight(const AmbientConfig& ambient_config,
+                       const PointConfig& point_config,
+                       float diffuse_intensity,
+                       const char* super_class_name)
+    : Light(ambient_config,
+            DiffuseConfig{std::nullopt, diffuse_intensity},
+            super_class_name),
       point_config_(point_config) {
   LOG(INFO) << __FUNCTION__ << ", " << ToString();
 }
@@ -21,4 +34,16 @@ void PointLight::Use() {
 
   if (Exists(LightUniforms::Quadratic))
     glUniform1f(GetUniform(LightUniforms::Quadratic), point_config_.quadratic);
+}
+
+AmbientConfig& PointLight::GetAmbientConfigRef() {
+  assert(ambient_config_.has_value());
+  return ambient_config_.value();
+}
+PointConfig& PointLight::GetPointConfigRef() {
+  return point_config_;
+}
+float& PointLight::GetDiffuseIntensityRef() {
+  assert(diffuse_config_.has_value());
+  return diffuse_config_.value().intensity;
 }

@@ -44,6 +44,7 @@ class Camera : public Updatable, public WindowObserver {
   void Update() override;
   glm::mat4 GetViewMatrix() const;
   glm::vec3 GetPosition() const;
+  glm::vec3 GetNormalizedDirection() const;
   void OnKeyEvent(KeyEvent event) override;
   void OnMouseEvent(MouseEvent event) override;
   std::string ToString() const;

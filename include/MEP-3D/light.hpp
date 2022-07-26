@@ -31,7 +31,9 @@ enum class LightUniforms : unsigned int {
   Position,
   Constant,
   Linear,
-  Quadratic
+  Quadratic,
+  Direction,
+  Edge,
 };
 
 std::string ToString(LightUniforms uniform_type);
@@ -47,10 +49,9 @@ class Light : public Asset, public UniformContainer<LightUniforms> {
   virtual ~Light();
 
  protected:
-  void SetAmbientConfig(AmbientConfig ambient_config);
-  void SetDiffuseConfig(DiffuseConfig diffuse_config);
-
- private:
+  Light(std::optional<AmbientConfig> ambient_config,
+        std::optional<DiffuseConfig> diffuse_config,
+        const char* super_class_name);
   std::optional<AmbientConfig> ambient_config_;
   std::optional<DiffuseConfig> diffuse_config_;
 };

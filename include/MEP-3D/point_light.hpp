@@ -18,6 +18,15 @@ class PointLight : public Light {
              const PointConfig& point_config,
              float diffuse_intensity);
   void Use() override;
+  AmbientConfig& GetAmbientConfigRef();
+  PointConfig& GetPointConfigRef();
+  float& GetDiffuseIntensityRef();
+
+ protected:
+  PointLight(const AmbientConfig& ambient_config,
+             const PointConfig& point_config,
+             float diffuse_intensity,
+             const char* super_class_name);
 
  private:
   PointConfig point_config_;

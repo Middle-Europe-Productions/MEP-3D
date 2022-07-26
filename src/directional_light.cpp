@@ -2,4 +2,4 @@
 
 DirectionalLight::DirectionalLight(const AmbientConfig& ambient_config,
                                    const DiffuseConfig& diffuse_config)
-    : Light(ambient_config, diffuse_config) {}
+    : Light(ambient_config, diffuse_config, __FUNCTION__) {}

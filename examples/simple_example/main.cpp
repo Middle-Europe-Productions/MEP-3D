@@ -10,10 +10,11 @@
 #include <MEP-3D/directional_light.hpp>
 #include <MEP-3D/figures.hpp>
 #include <MEP-3D/image.hpp>
+#include <MEP-3D/light_controller.hpp>
 #include <MEP-3D/material.hpp>
 #include <MEP-3D/perspective_view.hpp>
-#include <MEP-3D/point_light_controller.hpp>
 #include <MEP-3D/shader.hpp>
+#include <MEP-3D/spot_light.hpp>
 #include <MEP-3D/texture.hpp>
 #include <MEP-3D/vector.hpp>
 #include <MEP-3D/window.hpp>
@@ -36,6 +37,17 @@ const std::unordered_map<LightUniforms, std::string> kPointLightUniformMap = {
     {LightUniforms::Constant, "constant"},
     {LightUniforms::Linear, "linear"},
     {LightUniforms::Quadratic, "quadratic"}};
+
+const std::unordered_map<LightUniforms, std::string> kSpotLightUniformMap = {
+    {LightUniforms::AmbientColor, "base.base.color"},
+    {LightUniforms::AmbientIntensity, "base.base.ambient_intensity"},
+    {LightUniforms::DiffuseIntensity, "base.base.diffuse_intensity"},
+    {LightUniforms::Position, "base.position"},
+    {LightUniforms::Constant, "base.constant"},
+    {LightUniforms::Linear, "base.linear"},
+    {LightUniforms::Quadratic, "base.quadratic"},
+    {LightUniforms::Direction, "direction"},
+    {LightUniforms::Edge, "edge"}};
 
 const std::unordered_map<MaterialUniform, std::string> kMaterialUniformMap = {
     {MaterialUniform::SpecularIntensity, "material.specular_intensity"},
@@ -80,19 +92,36 @@ class Game : private WindowObserver {
         16, "point_light", shader_.GetUniform("point_light_count"),
         kPointLightUniformMap);
 
-    auto point_Light = point_light_fact->MakeAndBind(
-        AmbientConfig{Color(255, 0, 0), 0.5f},
-        PointConfig{Vec3f{1.0f, 1.0f, 1.0f},  1, 1, 0.001 }, 0.5f, shader_);
-    point_Light = point_light_fact->MakeAndBind(
-        AmbientConfig{ Color(0, 0, 255), 0.5f },
-        PointConfig{ Vec3f{-1.0f, 1.0f, -1.0f}, 1, 1, 0 }, 0.8f, shader_);
-    point_Light = point_light_fact->MakeAndBind(
-        AmbientConfig{ Color(0, 255, 0), 0.5f },
-        PointConfig{ Vec3f{1.0f, 1.0f, -1.0f}, 1, 1, 0 }, 0.8f, shader_);
+    spot_light_fact = std::make_unique<SpotLightController>(
+        16, "spot_light", shader_.GetUniform("spot_light_count"),
+        kSpotLightUniformMap);
+
+    point_light_fact->MakeAndBind(
+        std::make_unique<PointLight>(
+            AmbientConfig{Color(255, 0, 0), 0.5f},
+            PointConfig{Vec3f{1.0f, 1.0f, 1.0f}, 1, 1, 0.001}, 0.5f),
+        shader_);
+    point_light_fact->MakeAndBind(
+        std::make_unique<PointLight>(
+            AmbientConfig{Color(0, 0, 255), 0.5f},
+            PointConfig{Vec3f{-1.0f, 1.0f, -1.0f}, 1, 1, 0}, 0.8f),
+        shader_);
+    point_light_fact->MakeAndBind(
+        std::make_unique<PointLight>(
+            AmbientConfig{Color(0, 255, 0), 0.5f},
+            PointConfig{Vec3f{1.0f, 1.0f, -1.0f}, 1, 1, 0}, 0.8f),
+        shader_);
+
+    spot_light_fact->MakeAndBind(
+        std::make_unique<SpotLight>(
+            AmbientConfig{Color(255, 255, 255), 0.5f},
+            PointConfig{Vec3f{1.0f, 1.0f, -1.0f}, 1, 1, 0}, 10.0f,
+            SpotConfig{{0.0, -1.0, 0.0}, 15}),
+        shader_);
 
     light = std::make_unique<DirectionalLight>(
         AmbientConfig{Color(255, 255, 255), 0.1f},
-        DiffuseConfig{Vec3f(-2.0f, -1.0f, -2.0f), 0.0f });
+        DiffuseConfig{Vec3f(-2.0f, -1.0f, -2.0f), 0.0f});
     light->BindUniforms(shader_, kDirectionalLightUniformMap);
 
     material = std::make_unique<Material>(MaterialConfig{1.0f, 32});
@@ -127,8 +156,17 @@ class Game : private WindowObserver {
       // Axis::Y));
       window_->Clear(White);
       shader_.SetUniform("use_texture", 1);
-      plane->Draw(*window_);
+      (*spot_light_fact)[0]->GetPointConfigRef().position =
+          Vec3f{camera_->GetPosition().x, camera_->GetPosition().y,
+                camera_->GetPosition().z};
+      (*spot_light_fact)[0]->GetSpotConfigRef().direction =
+          Vec3f{ camera_->GetNormalizedDirection().x, camera_->GetNormalizedDirection().y,
+                camera_->GetNormalizedDirection().z };
+
       point_light_fact->Use();
+      if (use_stop_light)
+        spot_light_fact->Use();
+      plane->Draw(*window_);
       for (auto& x : pyramids) {
         x->Draw(*window_);
       }
@@ -158,6 +196,9 @@ class Game : private WindowObserver {
       pyramids.pop_back();
     } else if (event.code == Keyboard::O && event.action == Action::Released) {
     }
+    else if (event.code == Keyboard::F && event.action == Action::Released) {
+        use_stop_light = !use_stop_light;
+    }
   }
   void OnMouseEvent(MouseEvent event) override {
     // LOG(INFO) << "Mouse event, x: " << event.x << ", y: " << event.y;
@@ -168,6 +209,8 @@ class Game : private WindowObserver {
   std::vector<std::unique_ptr<Pyramid>> pyramids;
   std::unique_ptr<Plane> plane;
   std::unique_ptr<PointLightController> point_light_fact;
+  std::unique_ptr<SpotLightController> spot_light_fact;
+  bool use_stop_light = true;
   WindowPtr window_;
   std::unique_ptr<PerspectiveView> view_;
   std::unique_ptr<Camera> camera_;
