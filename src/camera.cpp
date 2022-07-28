@@ -2,7 +2,8 @@
 
 Camera::Camera(const CameraConfig& config, const CameraControls& controls)
     : controls_(controls), camera_time_delta_(TimeDelta::GetInstance()) {
-  position_ = config.start_position;
+  Set(CameraVariables::Position, config.start_position);
+  //position_ = config.start_position;
   world_up_ = config.start_up;
   yaw_ = config.start_yaw;
   pitch_ = config.start_pitch;
@@ -31,11 +32,12 @@ void Camera::Update() {
 }
 
 glm::mat4 Camera::GetViewMatrix() const {
-  return glm::lookAt(position_, position_ + front_, up_);
+  return glm::lookAt(Get(CameraVariables::Position), Get(CameraVariables::Position) + front_, up_);
+  //return glm::lookAt(position_, position_ + front_, up_);
 }
 
 glm::vec3 Camera::GetPosition() const {
-  return position_;
+  return Get(CameraVariables::Position);
 }
 
 glm::vec3 Camera::GetNormalizedDirection() const
@@ -100,18 +102,22 @@ void Camera::ValidateKeyboardInput() {
   bool pressed = false;
   double velocity = move_speed_ * camera_time_delta_->GetTimeDelta();
   if (key_status_[controls_.up]) {
-    position_ += front_ * (GLfloat)velocity;
+    Increment(CameraVariables::Position, front_ * (GLfloat)velocity);
+    //position_ += front_ * (GLfloat)velocity;
     pressed = true;
   }
   if (key_status_[controls_.down]) {
+    Decrement(CameraVariables::Position, front_ * (GLfloat)velocity);
     position_ -= front_ * (GLfloat)velocity;
     pressed = true;
   }
   if (key_status_[controls_.left]) {
+    Decrement(CameraVariables::Position, right_ * (GLfloat)velocity);
     position_ -= right_ * (GLfloat)velocity;
     pressed = true;
   }
   if (key_status_[controls_.right]) {
+    Increment(CameraVariables::Position, right_ * (GLfloat)velocity);
     position_ += right_ * (GLfloat)velocity;
     pressed = true;
   }

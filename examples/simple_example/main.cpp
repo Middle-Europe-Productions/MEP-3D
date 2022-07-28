@@ -53,6 +53,13 @@ const std::unordered_map<MaterialUniform, std::string> kMaterialUniformMap = {
     {MaterialUniform::SpecularIntensity, "material.specular_intensity"},
     {MaterialUniform::Shininess, "material.shininess"}};
 
+class CameraLogger: public CameraObserver {
+public:
+  void OnVariableChanged(const glm::vec3& value, const CameraVariables& identity) override {
+    LOG(INFO) << glm::to_string(value);
+  }
+};
+
 class Game : private WindowObserver {
  public:
   Game() {
@@ -75,6 +82,8 @@ class Game : private WindowObserver {
     image.LoadFromFile("textures/plain.png");
     plain_tex = std::make_unique<Texture>();
     plain_tex->Create(image);
+
+    camera_->AddObserver(&camera_logger);
 
     window_->AddView(view_.get());
     window_->AddCamera(camera_.get());
@@ -216,6 +225,7 @@ class Game : private WindowObserver {
   std::unique_ptr<Camera> camera_;
   std::unique_ptr<Texture> tex;
   std::unique_ptr<Texture> plain_tex;
+  CameraLogger camera_logger;
   Shader shader_;
   Shader shader_2;
   Image image;
