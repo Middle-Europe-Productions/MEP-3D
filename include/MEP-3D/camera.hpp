@@ -11,7 +11,7 @@
 #include <MEP-3D/time_delta.hpp>
 #include <MEP-3D/updatable.hpp>
 #include <MEP-3D/window_observer.hpp>
-#include <MEP-3D/observable_variable.hpp>
+#include <MEP-3D/observable_map.hpp>
 
 #include <glog/logging.h>
 #include <glm/gtx/string_cast.hpp>
@@ -40,14 +40,14 @@ struct CameraConfig {
 
 enum class CameraVariables {
   Position,
-  Front,
-  Up,
-  Right
+  Direction
 };
 
-using CameraObserver = VariablesObserver<glm::vec3, CameraVariables>;
+std::string ToString(const CameraVariables& camera_variable);
 
-class Camera : public Updatable, public WindowObserver, public ObservableVariables<glm::vec3, CameraVariables> {
+using CameraObserver = MapObserver<glm::vec3, CameraVariables>;
+
+class Camera : public Updatable, public WindowObserver, public ObservableMap<glm::vec3, CameraVariables> {
  public:
   Camera(const CameraConfig& config,
          const CameraControls& controls = CameraControls());
@@ -66,7 +66,6 @@ class Camera : public Updatable, public WindowObserver, public ObservableVariabl
   std::unordered_map<Keyboard, bool> key_status_;
   CameraControls controls_;
   TimeDeltaPtr camera_time_delta_;
-  glm::vec3 position_;
   glm::vec3 front_;
   glm::vec3 up_;
   glm::vec3 right_;

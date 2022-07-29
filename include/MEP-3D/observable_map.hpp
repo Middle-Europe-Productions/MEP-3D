@@ -5,38 +5,38 @@
 #include <unordered_map>
 
 template<typename Type, typename Identity>
-class VariablesObserver {
+class MapObserver {
 public:
     virtual void OnVariableChanged(const Type& value, const Identity& identity) = 0;
-    virtual ~VariablesObserver() = default;
+    virtual ~MapObserver() = default;
 };
 
 template<typename Type, typename Identity>
-class ObservableVariables: public ObserverList<VariablesObserver<Type, Identity>> {
+class ObservableMap: public ObserverList<MapObserver<Type, Identity>> {
 public:
     const Type& Get(const Identity& identity) const {
-        //static_assert(variable_map_.find(identity) != variable_map_.end());
+        assert(variable_map_.find(identity) != variable_map_.end());
         return variable_map_.at(identity);
     }
     void Set(const Identity& identity, const Type& new_type_) {
         if (variable_map_.find(identity) != variable_map_.end() && variable_map_[identity] == new_type_)
             return;
         variable_map_[identity] = new_type_;
-        ObserverList<VariablesObserver<Type, Identity>>::ForAllObservers([&new_type_, &identity](VariablesObserver<Type, Identity>* observer){
+        ObserverList<MapObserver<Type, Identity>>::ForAllObservers([&new_type_, &identity](MapObserver<Type, Identity>* observer){
             observer->OnVariableChanged(new_type_, identity);
         });
     }
     void Increment(const Identity& identity, const Type& value) {
-        //static_assert(variable_map_.find(identity) != variable_map_.end());
+        assert(variable_map_.find(identity) != variable_map_.end());
         variable_map_[identity] += value;
-        ObserverList<VariablesObserver<Type, Identity>>::ForAllObservers([this, &identity](VariablesObserver<Type, Identity>* observer){
+        ObserverList<MapObserver<Type, Identity>>::ForAllObservers([this, &identity](MapObserver<Type, Identity>* observer){
             observer->OnVariableChanged(variable_map_.at(identity), identity);
         });
     }
     void Decrement(const Identity& identity, const Type& value) {
-        //static_assert(variable_map_.find(identity) != variable_map_.end());
+        assert(variable_map_.find(identity) != variable_map_.end());
         variable_map_[identity] -= value;
-        ObserverList<VariablesObserver<Type, Identity>>::ForAllObservers([this, &identity](VariablesObserver<Type, Identity>* observer){
+        ObserverList<MapObserver<Type, Identity>>::ForAllObservers([this, &identity](MapObserver<Type, Identity>* observer){
             observer->OnVariableChanged(variable_map_.at(identity), identity);
         });
     }

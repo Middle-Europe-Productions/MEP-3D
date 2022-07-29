@@ -56,7 +56,7 @@ const std::unordered_map<MaterialUniform, std::string> kMaterialUniformMap = {
 class CameraLogger: public CameraObserver {
 public:
   void OnVariableChanged(const glm::vec3& value, const CameraVariables& identity) override {
-    LOG(INFO) << glm::to_string(value);
+    LOG(INFO) << ToString(identity) << ": " << glm::to_string(value);
   }
 };
 

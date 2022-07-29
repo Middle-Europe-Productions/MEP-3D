@@ -64,11 +64,11 @@ class GLFWWindowController : public Window {
 
   void FinishLoop() override { glfwSwapBuffers(main_window_); }
 
-  virtual Vec2i GetSize() { return config_.size; }
+  Vec2i GetSize() override { return config_.size; }
 
-  virtual Vec2i GetBufferSize() { return buffer_size; }
+  Vec2i GetBufferSize() override { return buffer_size; }
 
-  virtual float GetAspectRation() {
+  float GetAspectRation() override {
     return static_cast<float>(buffer_size.x_) /
            static_cast<float>(buffer_size.y_);
   }
