@@ -5,9 +5,11 @@
 
 using Uint8 = unsigned char;
 
+constexpr char* kDefaultTexturePath = "Textures/";
+
 enum class Axis { X, Y, Z };
 
-enum CommonUniform : unsigned int {
+enum class CommonUniform : unsigned int {
   Projection = 10000,
   Model = 10001,
   View,

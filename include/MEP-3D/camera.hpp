@@ -8,10 +8,11 @@
 #include <unordered_map>
 
 #include <MEP-3D/key_event.hpp>
+#include <MEP-3D/observable_map.hpp>
 #include <MEP-3D/time_delta.hpp>
 #include <MEP-3D/updatable.hpp>
 #include <MEP-3D/window_observer.hpp>
-#include <MEP-3D/observable_map.hpp>
+
 
 #include <glog/logging.h>
 #include <glm/gtx/string_cast.hpp>
@@ -38,16 +39,15 @@ struct CameraConfig {
   GLfloat start_turn_speed;
 };
 
-enum class CameraVariables {
-  Position,
-  Direction
-};
+enum class CameraVariables { Position, Direction };
 
 std::string ToString(const CameraVariables& camera_variable);
 
 using CameraObserver = MapObserver<glm::vec3, CameraVariables>;
 
-class Camera : public Updatable, public WindowObserver, public ObservableMap<glm::vec3, CameraVariables> {
+class Camera : public Updatable,
+               public WindowObserver,
+               public ObservableMap<glm::vec3, CameraVariables> {
  public:
   Camera(const CameraConfig& config,
          const CameraControls& controls = CameraControls());

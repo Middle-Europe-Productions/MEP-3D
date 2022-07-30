@@ -2,17 +2,26 @@
 #define MESH_BASE_HPP
 
 #include <GL/glew.h>
+#include <MEP-3D/drawable.hpp>
+#include <memory>
 
-class MeshBase {
+class MeshBase : public Drawable {
  public:
   MeshBase();
   void Clear();
+  virtual void Init(const std::vector<GLfloat>& vertices,
+                    const std::vector<unsigned int> indices);
+  virtual void Draw(RenderTarget& render_target);
+  unsigned int GetVerticesCount() const;
   virtual ~MeshBase();
 
  protected:
   GLuint vertex_buffer_object_;
   GLuint vertex_array_object_;
   GLuint index_buffer_boject_;
+  unsigned int vertices_count_;
 };
+
+using MeshBasePtr = std::unique_ptr<MeshBase>;
 
 #endif

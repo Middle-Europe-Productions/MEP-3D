@@ -1,7 +1,7 @@
 #include <MEP-3D/camera.hpp>
 
 std::string ToString(const CameraVariables& camera_variable) {
-  switch(camera_variable) {
+  switch (camera_variable) {
     case CameraVariables::Position:
       return "Position";
     case CameraVariables::Direction:
@@ -30,28 +30,30 @@ Camera::Camera(const CameraConfig& config, const CameraControls& controls)
 void Camera::Update() {
   ValidateKeyboardInput();
   UpdateInt([this]() {
-    Set(CameraVariables::Direction, glm::normalize(glm::vec3(
-      cos(glm::radians(yaw_)) * cos(glm::radians(pitch_)), 
-      sin(glm::radians(pitch_)), 
-      sin(glm::radians(yaw_)) * cos(glm::radians(pitch_))
-    )));
+    Set(CameraVariables::Direction,
+        glm::normalize(
+            glm::vec3(cos(glm::radians(yaw_)) * cos(glm::radians(pitch_)),
+                      sin(glm::radians(pitch_)),
+                      sin(glm::radians(yaw_)) * cos(glm::radians(pitch_)))));
 
-    right_ = glm::normalize(glm::cross(Get(CameraVariables::Direction), world_up_));
+    right_ =
+        glm::normalize(glm::cross(Get(CameraVariables::Direction), world_up_));
     up_ = glm::normalize(glm::cross(right_, Get(CameraVariables::Direction)));
   });
 }
 
 glm::mat4 Camera::GetViewMatrix() const {
-  return glm::lookAt(Get(CameraVariables::Position), Get(CameraVariables::Position) + Get(CameraVariables::Direction), up_);
+  return glm::lookAt(
+      Get(CameraVariables::Position),
+      Get(CameraVariables::Position) + Get(CameraVariables::Direction), up_);
 }
 
 glm::vec3 Camera::GetPosition() const {
   return Get(CameraVariables::Position);
 }
 
-glm::vec3 Camera::GetNormalizedDirection() const
-{
-    return Get(CameraVariables::Direction);
+glm::vec3 Camera::GetNormalizedDirection() const {
+  return Get(CameraVariables::Direction);
 }
 
 void Camera::OnKeyEvent(KeyEvent event) {
@@ -91,13 +93,14 @@ void Camera::OnMouseEvent(MouseEvent event) {
 }
 
 std::string Camera::ToString() const {
-  return std::string("camera: { \nPosition: " + glm::to_string(Get(CameraVariables::Position)) +
-                     ", \n" + "Front: " + glm::to_string(Get(CameraVariables::Direction)) + ", \n" +
-                     "Up: " + glm::to_string(up_) + ", \n" +
-                     "Right: " + glm::to_string(right_) + ", \n" +
-                     "World_up: " + glm::to_string(world_up_) + ", \n" +
-                     "Yaw: " + std::to_string(yaw_) + ", \n" +
-                     "Pitch: " + std::to_string(pitch_) + "\n}");
+  return std::string(
+      "camera: { \nPosition: " +
+      glm::to_string(Get(CameraVariables::Position)) + ", \n" +
+      "Front: " + glm::to_string(Get(CameraVariables::Direction)) + ", \n" +
+      "Up: " + glm::to_string(up_) + ", \n" +
+      "Right: " + glm::to_string(right_) + ", \n" + "World_up: " +
+      glm::to_string(world_up_) + ", \n" + "Yaw: " + std::to_string(yaw_) +
+      ", \n" + "Pitch: " + std::to_string(pitch_) + "\n}");
 }
 
 void Camera::InitKeyboardMap() {
@@ -111,11 +114,13 @@ void Camera::ValidateKeyboardInput() {
   bool pressed = false;
   double velocity = move_speed_ * camera_time_delta_->GetTimeDelta();
   if (key_status_[controls_.up]) {
-    Increment(CameraVariables::Position, Get(CameraVariables::Direction) * (GLfloat)velocity);
+    Increment(CameraVariables::Position,
+              Get(CameraVariables::Direction) * (GLfloat)velocity);
     pressed = true;
   }
   if (key_status_[controls_.down]) {
-    Decrement(CameraVariables::Position, Get(CameraVariables::Direction) * (GLfloat)velocity);
+    Decrement(CameraVariables::Position,
+              Get(CameraVariables::Direction) * (GLfloat)velocity);
     pressed = true;
   }
   if (key_status_[controls_.left]) {

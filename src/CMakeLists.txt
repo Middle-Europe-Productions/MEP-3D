@@ -67,24 +67,46 @@ set(HEADERS
   ${INC_ROOT}/asset.hpp
   ${INC_ROOT}/material.hpp
   ${INC_ROOT}/uniform_container.hpp
+  ${INC_ROOT}/observable_map.hpp
+  ${INC_ROOT}/model.hpp
 )
 
 set(INCLUDE_DIRECTORIES
   ${CMAKE_SOURCE_DIR}/include
 )
 
+set(LINK_TARGETS
+    glfw 
+    libglew_static 
+    glm 
+    glog
+)
+
 if (MEP_USE_STB)
   list(APPEND SOURCE 
-    ${SRC_ROOT}/stb_image.cpp
+    ${SRC_ROOT}/image_stb.cpp
   )
   list(APPEND INCLUDE_DIRECTORIES 
     ${CMAKE_SOURCE_DIR}/third-party/stb
   )
 else()
   list(APPEND SOURCE 
-    ${SRC_ROOT}/default_image.cpp
+    ${SRC_ROOT}/image_default.cpp
   )
 endif(MEP_USE_STB)
+
+if (MEP_USE_ASSIMP)
+  list(APPEND SOURCE
+    ${SRC_ROOT}/model_assimp.cpp
+  )
+  list(APPEND LINK_TARGETS
+    assimp
+  )
+else()
+  list(APPEND SOURCE
+    ${SRC_ROOT}/model_default.cpp
+  )
+endif(MEP_USE_ASSIMP)
 
 source_group("Header Files" FILES ${HEADERS})
 
@@ -94,4 +116,4 @@ set_target_properties(${MEP_LIBRARY_NAME} PROPERTIES FOLDER "MEP-3D")
 
 target_include_directories(${MEP_LIBRARY_NAME} PUBLIC ${INCLUDE_DIRECTORIES})
 
-target_link_libraries(${MEP_LIBRARY_NAME} PUBLIC glfw libglew_static glm glog)
+target_link_libraries(${MEP_LIBRARY_NAME} PUBLIC ${LINK_TARGETS})

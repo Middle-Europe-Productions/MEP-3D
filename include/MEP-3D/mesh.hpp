@@ -16,15 +16,10 @@ class Mesh : public MeshBase,
  public:
   Mesh();
   virtual void Clear();
-  virtual void Init(const std::vector<GLfloat>& vertices,
-                    const std::vector<unsigned int> indices);
   virtual void Draw(RenderTarget& render_target);
-  unsigned int GetVerticesCount() const;
   std::string ToString() const;
-  virtual ~Mesh() = default;
-
- protected:
-  unsigned int vertices_count_;
 };
+
+using MeshPtr = std::unique_ptr<Mesh>;
 
 #endif

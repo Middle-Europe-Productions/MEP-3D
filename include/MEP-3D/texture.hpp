@@ -20,4 +20,6 @@ class Texture : public Asset {
   GLuint texture_id_;
 };
 
+using TexturePtr = std::unique_ptr<Texture>;
+
 #endif

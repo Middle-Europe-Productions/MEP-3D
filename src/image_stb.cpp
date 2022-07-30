@@ -2,12 +2,14 @@
 #include <stb_image.h>
 
 #include <glog/logging.h>
+#include <MEP-3D/common.hpp>
 #include <MEP-3D/image.hpp>
 
 Image::Image() {}
 
 bool Image::LoadFromFile(const std::string& name) {
-  Uint8* pixels = stbi_load(name.c_str(), &size_.x_, &size_.y_, &bit_depth_, 0);
+  std::string path = kDefaultTexturePath + name;
+  Uint8* pixels = stbi_load(path.c_str(), &size_.x_, &size_.y_, &bit_depth_, 0);
   if (!pixels) {
     LOG(ERROR) << "Could not open " << name;
     return false;

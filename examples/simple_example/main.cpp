@@ -12,6 +12,7 @@
 #include <MEP-3D/image.hpp>
 #include <MEP-3D/light_controller.hpp>
 #include <MEP-3D/material.hpp>
+#include <MEP-3D/model.hpp>
 #include <MEP-3D/perspective_view.hpp>
 #include <MEP-3D/shader.hpp>
 #include <MEP-3D/spot_light.hpp>
@@ -53,10 +54,11 @@ const std::unordered_map<MaterialUniform, std::string> kMaterialUniformMap = {
     {MaterialUniform::SpecularIntensity, "material.specular_intensity"},
     {MaterialUniform::Shininess, "material.shininess"}};
 
-class CameraLogger: public CameraObserver {
-public:
-  void OnVariableChanged(const glm::vec3& value, const CameraVariables& identity) override {
-    LOG(INFO) << ToString(identity) << ": " << glm::to_string(value);
+class CameraLogger : public CameraObserver {
+ public:
+  void OnVariableChanged(const glm::vec3& value,
+                         const CameraVariables& identity) override {
+    // LOG(INFO) << ToString(identity) << ": " << glm::to_string(value);
   }
 };
 
@@ -75,11 +77,11 @@ class Game : private WindowObserver {
                            0.5f};
     camera_ = std::make_unique<Camera>(config);
 
-    image.LoadFromFile("textures/dirt.png");
+    image.LoadFromFile("dirt.png");
     tex = std::make_unique<Texture>();
     tex->Create(image);
 
-    image.LoadFromFile("textures/plain.png");
+    image.LoadFromFile("plain.png");
     plain_tex = std::make_unique<Texture>();
     plain_tex->Create(image);
 
@@ -92,10 +94,14 @@ class Game : private WindowObserver {
   }
   void Init() {
     shader_.CreateFromFile("shaders/shader.vert", "shaders/shader.frag");
-    shader_.SaveUniformToMemory("projection", CommonUniform::Projection);
-    shader_.SaveUniformToMemory("view", CommonUniform::View);
-    shader_.SaveUniformToMemory("model", CommonUniform::Model);
-    shader_.SaveUniformToMemory("eye_position", CommonUniform::Position);
+    shader_.SaveUniformToMemory(
+        "projection", static_cast<unsigned int>(CommonUniform::Projection));
+    shader_.SaveUniformToMemory("view",
+                                static_cast<unsigned int>(CommonUniform::View));
+    shader_.SaveUniformToMemory(
+        "model", static_cast<unsigned int>(CommonUniform::Model));
+    shader_.SaveUniformToMemory(
+        "eye_position", static_cast<unsigned int>(CommonUniform::Position));
 
     point_light_fact = std::make_unique<PointLightController>(
         16, "point_light", shader_.GetUniform("point_light_count"),
@@ -123,8 +129,8 @@ class Game : private WindowObserver {
 
     spot_light_fact->MakeAndBind(
         std::make_unique<SpotLight>(
-            AmbientConfig{Color(255, 255, 255), 0.5f},
-            PointConfig{Vec3f{1.0f, 1.0f, -1.0f}, 1, 1, 0}, 10.0f,
+            AmbientConfig{Color(255, 0, 0), 0.5f},
+            PointConfig{Vec3f{1.0f, 1.0f, -1.0f}, 1, 1, 0}, 1.0f,
             SpotConfig{{0.0, -1.0, 0.0}, 15}),
         shader_);
 
@@ -145,6 +151,12 @@ class Game : private WindowObserver {
     plane->Bind(tex.get());
     plane->Bind(&shader_);
     plane->Bind(plain_tex.get());
+    model.Load("models/heart.obj");
+    model.Bind(&shader_);
+    model.Bind(plain_tex.get());
+    model.PushObjectAction(std::make_unique<Scale>(0.1, 0.1, 0.1));
+    model.PushObjectAction(std::make_unique<Rotate>(-90, Axis::X));
+    model.PushObjectAction(std::make_unique<Transform>(1.0, 4.0, 4.0));
   }
   void RunUntilStopped() {
     float curAngle = 0;
@@ -169,8 +181,9 @@ class Game : private WindowObserver {
           Vec3f{camera_->GetPosition().x, camera_->GetPosition().y,
                 camera_->GetPosition().z};
       (*spot_light_fact)[0]->GetSpotConfigRef().direction =
-          Vec3f{ camera_->GetNormalizedDirection().x, camera_->GetNormalizedDirection().y,
-                camera_->GetNormalizedDirection().z };
+          Vec3f{camera_->GetNormalizedDirection().x,
+                camera_->GetNormalizedDirection().y,
+                camera_->GetNormalizedDirection().z};
 
       point_light_fact->Use();
       if (use_stop_light)
@@ -179,6 +192,7 @@ class Game : private WindowObserver {
       for (auto& x : pyramids) {
         x->Draw(*window_);
       }
+      model.Draw(*window_);
       shader_.StopUsing();
       window_->FinishLoop();
     }
@@ -204,9 +218,8 @@ class Game : private WindowObserver {
     } else if (event.code == Keyboard::O && event.action == Action::Released) {
       pyramids.pop_back();
     } else if (event.code == Keyboard::O && event.action == Action::Released) {
-    }
-    else if (event.code == Keyboard::F && event.action == Action::Released) {
-        use_stop_light = !use_stop_light;
+    } else if (event.code == Keyboard::F && event.action == Action::Released) {
+      use_stop_light = !use_stop_light;
     }
   }
   void OnMouseEvent(MouseEvent event) override {
@@ -229,6 +242,7 @@ class Game : private WindowObserver {
   Shader shader_;
   Shader shader_2;
   Image image;
+  Model model;
   std::unique_ptr<DirectionalLight> light;
   std::unique_ptr<Material> material;
   float curAngle_;
