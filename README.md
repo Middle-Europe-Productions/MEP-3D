@@ -23,3 +23,9 @@ The supported lighting model is Phong lighting. It consists of three types of li
     * Directional light
     * Point light
     * Stop light
+
+#### Model loading
+The engine currently supports assimp library as its main object loader.
+
+#### Build in thread pool
+Objects are always loaded in the dedicated resource thread pool.

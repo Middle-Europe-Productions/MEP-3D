@@ -1,6 +1,7 @@
 #include <MEP-3D/model.hpp>
 #include <MEP-3D/shader.hpp>
-#define ASSIMP_CATCH_GLOBAL_EXCEPTIONS
+#include <MEP-3D/thread_pool.hpp>
+
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 #include <assimp/Importer.hpp>
@@ -10,7 +11,7 @@ constexpr bool kUseReversedNormals = true;
 
 void LoadMesh(aiMesh* mesh,
               const aiScene* scene,
-              std::vector<MeshBasePtr>& mesh_container,
+              std::vector<MeshBaseFactoryPtr>& master_mesh_factory_,
               std::vector<unsigned int>& mesh_to_texture) {
   std::vector<GLfloat> vertices;
   std::vector<unsigned int> indices;
@@ -38,21 +39,20 @@ void LoadMesh(aiMesh* mesh,
       indices.push_back(face.mIndices[j]);
     }
   }
-  auto mesh_object = std::make_unique<MeshBase>();
-  mesh_object->Init(vertices, indices);
-  mesh_container.emplace_back(std::move(mesh_object));
+  master_mesh_factory_.emplace_back(
+      std::make_unique<MeshBaseFactory>(move(vertices), std::move(indices)));
   mesh_to_texture.push_back(mesh->mMaterialIndex);
 }
 void LoadNode(aiNode* node,
               const aiScene* scene,
-              std::vector<MeshBasePtr>& mesh_container,
+              std::vector<MeshBaseFactoryPtr>& master_mesh_factory_,
               std::vector<unsigned int>& mesh_to_texture) {
   for (std::size_t i = 0; i < node->mNumMeshes; i++) {
-    LoadMesh(scene->mMeshes[node->mMeshes[i]], scene, mesh_container,
+    LoadMesh(scene->mMeshes[node->mMeshes[i]], scene, master_mesh_factory_,
              mesh_to_texture);
   }
   for (std::size_t i = 0; i < node->mNumChildren; i++) {
-    LoadNode(node->mChildren[i], scene, mesh_container, mesh_to_texture);
+    LoadNode(node->mChildren[i], scene, master_mesh_factory_, mesh_to_texture);
   }
 }
 void LoadTextures(const aiScene* scene,
@@ -87,29 +87,47 @@ void LoadTextures(const aiScene* scene,
 
 }  // namespace
 
-Model::Model() {
-  status = false;
-}
+Model::Model() {}
 
 void Model::Load(const std::string& file_path) {
-  Assimp::Importer importer;
-  const aiScene* scene =
-      importer.ReadFile(file_path, aiProcess_Triangulate | aiProcess_FlipUVs |
-                                       aiProcess_GenSmoothNormals |
-                                       aiProcess_JoinIdenticalVertices);
-  if (!scene) {
-    LOG(ERROR) << "Could not load the model, path: " << file_path
-               << ", message: " << importer.GetErrorString();
-    return;
+  UpdateStatus(Status::Loading);
+  ThreadPool::PostTaskWithCallback(
+      Executors::Resource,
+      std::make_unique<TaskWithCallback>(
+          [this, file_path]() {
+            Assimp::Importer importer;
+            const aiScene* scene = importer.ReadFile(
+                file_path, aiProcess_Triangulate | aiProcess_FlipUVs |
+                               aiProcess_GenSmoothNormals |
+                               aiProcess_JoinIdenticalVertices);
+            if (!scene) {
+              LOG(ERROR) << "Could not load the model, path: " << file_path
+                         << ", message: " << importer.GetErrorString();
+              return;
+            }
+            LoadNode(scene->mRootNode, scene, this->master_mesh_factory_,
+                     this->mesh_to_texture_);
+            LoadTextures(scene, this->textures_container_);
+          },
+          [this]() { this->UpdateStatus(Status::Uninitialized); }));
+}
+
+void Model::Init() {
+  assert(GetStatus() == Status::Uninitialized);
+  for (auto& mesh_factory_ele : master_mesh_factory_) {
+    mesh_container_.emplace_back(std::move(mesh_factory_ele->Create()));
   }
-  LoadNode(scene->mRootNode, scene, mesh_container_, mesh_to_texture_);
-  LoadTextures(scene, textures_container_);
-  status = true;
+  master_mesh_factory_.clear();
 }
 
 void Model::Draw(RenderTarget& render_target) {
-  if (!status)
-    return;
+  if (GetStatus() != Status::Avalible) {
+    if (GetStatus() == Status::Uninitialized) {
+      Init();
+    } else {
+      return;
+    }
+  }
   if (!Get<Shader>()) {
     return;
   }
@@ -119,7 +137,7 @@ void Model::Draw(RenderTarget& render_target) {
                                GetModel());
   Texture* texture = nullptr;
   if ((texture = Get<Texture>()))
-      texture->Use();
+    texture->Use();
   for (std::size_t i = 0; i < mesh_container_.size(); i++) {
     if (mesh_to_texture_[i] < textures_container_.size() &&
         textures_container_[mesh_to_texture_[i]]) {
@@ -130,7 +148,9 @@ void Model::Draw(RenderTarget& render_target) {
 }
 
 void Model::Clear() {
-  status = false;
+  if (GetStatus() == Status::Loading) {
+    LOG(ERROR) << "Resrouce is still loading!";
+  }
   mesh_container_.clear();
   textures_container_.clear();
   mesh_to_texture_.clear();

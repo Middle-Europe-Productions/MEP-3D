@@ -10,7 +10,7 @@ class MeshBase : public Drawable {
   MeshBase();
   void Clear();
   virtual void Init(const std::vector<GLfloat>& vertices,
-                    const std::vector<unsigned int> indices);
+                    const std::vector<unsigned int>& indices);
   virtual void Draw(RenderTarget& render_target);
   unsigned int GetVerticesCount() const;
   virtual ~MeshBase();
@@ -21,7 +21,26 @@ class MeshBase : public Drawable {
   GLuint index_buffer_boject_;
   unsigned int vertices_count_;
 };
-
 using MeshBasePtr = std::unique_ptr<MeshBase>;
+
+class MeshBaseFactory {
+ public:
+  MeshBaseFactory(const std::vector<GLfloat>& vertices,
+                  const std::vector<unsigned int> indices)
+      : vertices_(vertices), indices_(indices) {}
+  MeshBaseFactory(std::vector<GLfloat>&& vertices,
+                  std::vector<unsigned int>&& indices)
+      : vertices_(std::move(vertices)), indices_(std::move(indices)) {}
+  MeshBasePtr Create() {
+    auto obj = std::make_unique<MeshBase>();
+    obj->Init(vertices_, indices_);
+    return std::move(obj);
+  }
+
+ private:
+  std::vector<GLfloat> vertices_;
+  std::vector<unsigned int> indices_;
+};
+using MeshBaseFactoryPtr = std::unique_ptr<MeshBaseFactory>;
 
 #endif

@@ -26,6 +26,9 @@ set(SOURCE
   ${SRC_ROOT}/spot_light.cpp
   ${SRC_ROOT}/asset.cpp
   ${SRC_ROOT}/material.cpp
+  ${SRC_ROOT}/thread_pool.cpp
+  ${SRC_ROOT}/executor.cpp
+  ${SRC_ROOT}/resource_base.cpp
 )
 
 set(HEADERS
@@ -69,6 +72,10 @@ set(HEADERS
   ${INC_ROOT}/uniform_container.hpp
   ${INC_ROOT}/observable_map.hpp
   ${INC_ROOT}/model.hpp
+  ${INC_ROOT}/non_copyable.hpp
+  ${INC_ROOT}/resource_base.hpp
+  ${INC_ROOT}/thread_pool.hpp
+  ${INC_ROOT}/executor.hpp
 )
 
 set(INCLUDE_DIRECTORIES

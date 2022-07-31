@@ -151,12 +151,26 @@ class Game : private WindowObserver {
     plane->Bind(tex.get());
     plane->Bind(&shader_);
     plane->Bind(plain_tex.get());
-    model.Load("models/heart.obj");
-    model.Bind(&shader_);
-    model.Bind(plain_tex.get());
-    model.PushObjectAction(std::make_unique<Scale>(0.1, 0.1, 0.1));
-    model.PushObjectAction(std::make_unique<Rotate>(-90, Axis::X));
-    model.PushObjectAction(std::make_unique<Transform>(1.0, 4.0, 4.0));
+    model[0].Load("models/heart.obj");
+    model[0].Bind(&shader_);
+    model[0].Bind(plain_tex.get());
+    model[0].PushObjectAction(std::make_unique<Scale>(0.1, 0.1, 0.1));
+    model[0].PushObjectAction(std::make_unique<Rotate>(-90, Axis::X));
+    model[0].PushObjectAction(std::make_unique<Transform>(0.0, 1.0, 1.0));
+
+    model[1].Load("models/heart.obj");
+    model[1].Bind(&shader_);
+    model[1].Bind(plain_tex.get());
+    model[1].PushObjectAction(std::make_unique<Scale>(0.1, 0.1, 0.1));
+    model[1].PushObjectAction(std::make_unique<Rotate>(-90, Axis::X));
+    model[1].PushObjectAction(std::make_unique<Transform>(3.0, 1.0, 1.0));
+
+    model[2].Load("models/heart.obj");
+    model[2].Bind(&shader_);
+    model[2].Bind(plain_tex.get());
+    model[2].PushObjectAction(std::make_unique<Scale>(0.1, 0.1, 0.1));
+    model[2].PushObjectAction(std::make_unique<Rotate>(-90, Axis::X));
+    model[2].PushObjectAction(std::make_unique<Transform>(6.0, 1.0, 1.0));
   }
   void RunUntilStopped() {
     float curAngle = 0;
@@ -192,7 +206,9 @@ class Game : private WindowObserver {
       for (auto& x : pyramids) {
         x->Draw(*window_);
       }
-      model.Draw(*window_);
+      model[0].Draw(*window_);
+      model[1].Draw(*window_);
+      model[2].Draw(*window_);
       shader_.StopUsing();
       window_->FinishLoop();
     }
@@ -242,7 +258,7 @@ class Game : private WindowObserver {
   Shader shader_;
   Shader shader_2;
   Image image;
-  Model model;
+  Model model[3];
   std::unique_ptr<DirectionalLight> light;
   std::unique_ptr<Material> material;
   float curAngle_;

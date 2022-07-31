@@ -13,7 +13,7 @@ MeshBase::MeshBase() {
 }
 
 void MeshBase::Init(const std::vector<GLfloat>& vertices,
-                    const std::vector<unsigned int> indices) {
+                    const std::vector<unsigned int>& indices) {
   vertices_count_ = vertices.size();
   glGenVertexArrays(1, &vertex_array_object_);
   glBindVertexArray(vertex_array_object_);
