@@ -4,6 +4,7 @@
 class GlfwTimeDelta : public TimeDelta {
  public:
   GlfwTimeDelta() { last_time_ = glfwGetTime(); }
+  virtual double GetCurrentTime() override { return (double)glfwGetTime(); }
   virtual double GetTimeDelta() override {
     GLfloat now = glfwGetTime();
     double delta_time = now - last_time_;

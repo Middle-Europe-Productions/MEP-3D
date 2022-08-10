@@ -2,12 +2,13 @@
 #include <vector>
 
 #include <GL/glew.h>
-#include <GLFW/glfw3.h>
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 #include <MEP-3D/directional_light.hpp>
+#include <MEP-3D/engine_pool.hpp>
 #include <MEP-3D/figures.hpp>
 #include <MEP-3D/image.hpp>
 #include <MEP-3D/light_controller.hpp>
@@ -62,13 +63,14 @@ class CameraLogger : public CameraObserver {
   }
 };
 
-class Game : private WindowObserver {
+class MainLayer : private WindowObserver, public Layer {
  public:
-  Game() {
-    window_ = Window::GetInstance({{1280, 720}, "Example"});
-    window_->Init();
+  MainLayer() : Layer() {}
+  virtual void OnAttach() {
+    auto& window = GetEngine()->GetWindow();
+    LOG(INFO) << GetEngine()->GetWindow()->GetAspectRation();
     view_ = std::make_unique<PerspectiveView>(PerspectiveView::Config(
-        {glm::radians(45.0f), window_->GetAspectRation(), 0.1f, 100.0f}));
+        {glm::radians(45.0f), window->GetAspectRation(), 0.1f, 100.0f}));
     CameraConfig config = {glm::vec3(0.0f, 0.0f, 0.0f),
                            glm::vec3(0.0f, 1.0f, 0.0f),
                            -90.0f,
@@ -87,12 +89,11 @@ class Game : private WindowObserver {
 
     camera_->AddObserver(&camera_logger);
 
-    window_->AddView(view_.get());
-    window_->AddCamera(camera_.get());
-    window_->AddObserver(this);
-    window_->AddObserver(camera_.get());
-  }
-  void Init() {
+    window->AddView(view_.get());
+    window->AddCamera(camera_.get());
+    window->AddObserver(this);
+    window->AddObserver(camera_.get());
+
     shader_.CreateFromFile("shaders/shader.vert", "shaders/shader.frag");
     shader_.SaveUniformToMemory(
         "projection", static_cast<unsigned int>(CommonUniform::Projection));
@@ -130,7 +131,7 @@ class Game : private WindowObserver {
     spot_light_fact->MakeAndBind(
         std::make_unique<SpotLight>(
             AmbientConfig{Color(255, 0, 0), 0.5f},
-            PointConfig{Vec3f{1.0f, 1.0f, -1.0f}, 1, 1, 0}, 1.0f,
+            PointConfig{Vec3f{1.0f, 1.0f, -1.0f}, 1, 1, 0}, 5.0f,
             SpotConfig{{0.0, -1.0, 0.0}, 15}),
         shader_);
 
@@ -172,46 +173,41 @@ class Game : private WindowObserver {
     model[2].PushObjectAction(std::make_unique<Rotate>(-90, Axis::X));
     model[2].PushObjectAction(std::make_unique<Transform>(6.0, 1.0, 1.0));
   }
-  void RunUntilStopped() {
-    float curAngle = 0;
-    while (window_->IsOpen()) {
-      curAngle_ += 0.01f;
-      if (curAngle_ >= 360) {
-        curAngle_ -= 360;
-      }
-      glfwPollEvents();
-      // LOG(INFO) << pyramids[0]->ToString();
-      camera_->Update();
-      shader_.StartUsing();
-      light->Use();
-      material->Use();
-      pyramids[0]->PushObjectAction(std::make_unique<Rotate>(0.1f, Axis::Y));
-      // LOG(INFO) << pyramids[0]->ToString();
-      // pyramids[1]->SetSpaceAction(std::make_unique<Rotate>(curAngle,
-      // Axis::Y));
-      window_->Clear(White);
-      shader_.SetUniform("use_texture", 1);
-      (*spot_light_fact)[0]->GetPointConfigRef().position =
-          Vec3f{camera_->GetPosition().x, camera_->GetPosition().y,
-                camera_->GetPosition().z};
-      (*spot_light_fact)[0]->GetSpotConfigRef().direction =
-          Vec3f{camera_->GetNormalizedDirection().x,
-                camera_->GetNormalizedDirection().y,
-                camera_->GetNormalizedDirection().z};
-
-      point_light_fact->Use();
-      if (use_stop_light)
-        spot_light_fact->Use();
-      plane->Draw(*window_);
-      for (auto& x : pyramids) {
-        x->Draw(*window_);
-      }
-      model[0].Draw(*window_);
-      model[1].Draw(*window_);
-      model[2].Draw(*window_);
-      shader_.StopUsing();
-      window_->FinishLoop();
+  virtual void OnDetach(){};
+  virtual void OnUpdate(unsigned int time_delta) {
+    curAngle_ += 0.01f;
+    if (curAngle_ >= 360) {
+      curAngle_ -= 360;
     }
+    camera_->Update();
+    pyramids[0]->PushObjectAction(std::make_unique<Rotate>(0.1f, Axis::Y));
+    (*spot_light_fact)[0]->GetPointConfigRef().position =
+        Vec3f{camera_->GetPosition().x, camera_->GetPosition().y,
+              camera_->GetPosition().z};
+    (*spot_light_fact)[0]->GetSpotConfigRef().direction =
+        Vec3f{camera_->GetNormalizedDirection().x,
+              camera_->GetNormalizedDirection().y,
+              camera_->GetNormalizedDirection().z};
+  }
+
+  virtual void OnDraw(RenderTarget& render_target) {
+    shader_.StartUsing();
+    light->Use();
+    material->Use();
+
+    shader_.SetUniform("use_texture", 1);
+
+    point_light_fact->Use();
+    if (use_stop_light)
+      spot_light_fact->Use();
+    plane->Draw(render_target);
+    for (auto& x : pyramids) {
+      x->Draw(render_target);
+    }
+    model[0].Draw(render_target);
+    model[1].Draw(render_target);
+    model[2].Draw(render_target);
+    shader_.StopUsing();
   }
   void OnKeyEvent(KeyEvent event) override {
     // LOG(INFO) << event.code << ", action: " << (event.action ==
@@ -241,7 +237,7 @@ class Game : private WindowObserver {
   void OnMouseEvent(MouseEvent event) override {
     // LOG(INFO) << "Mouse event, x: " << event.x << ", y: " << event.y;
   }
-  ~Game() {}
+  ~MainLayer() override {}
 
  private:
   std::vector<std::unique_ptr<Pyramid>> pyramids;
@@ -261,12 +257,16 @@ class Game : private WindowObserver {
   Model model[3];
   std::unique_ptr<DirectionalLight> light;
   std::unique_ptr<Material> material;
-  float curAngle_;
+  float curAngle_ = 0;
 };
 
 int main() {
-  Game game;
-  game.Init();
-  game.RunUntilStopped();
-  return 1;
+  auto window = Window::GetInstance({{1280, 720}, "Example"});
+  window->Init();
+  auto main_engine = std::make_shared<Engine>();
+  main_engine->AttachWindow(std::move(window));
+  LOG(INFO) << "Window attached";
+  std::unique_ptr<Layer> master_layer = std::make_unique<MainLayer>();
+  main_engine->AttachLayer(std::move(master_layer));
+  EnginePool::AttachEngineAndExecuteTask(std::move(main_engine), ENGINE_RUN);
 }

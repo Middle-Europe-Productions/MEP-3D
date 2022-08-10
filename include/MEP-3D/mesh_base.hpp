@@ -26,16 +26,10 @@ using MeshBasePtr = std::unique_ptr<MeshBase>;
 class MeshBaseFactory {
  public:
   MeshBaseFactory(const std::vector<GLfloat>& vertices,
-                  const std::vector<unsigned int> indices)
-      : vertices_(vertices), indices_(indices) {}
+                  const std::vector<unsigned int> indices);
   MeshBaseFactory(std::vector<GLfloat>&& vertices,
-                  std::vector<unsigned int>&& indices)
-      : vertices_(std::move(vertices)), indices_(std::move(indices)) {}
-  MeshBasePtr Create() {
-    auto obj = std::make_unique<MeshBase>();
-    obj->Init(vertices_, indices_);
-    return std::move(obj);
-  }
+                  std::vector<unsigned int>&& indices);
+  MeshBasePtr Create();
 
  private:
   std::vector<GLfloat> vertices_;

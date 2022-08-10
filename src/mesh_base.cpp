@@ -75,3 +75,17 @@ void MeshBase::Clear() {
 MeshBase::~MeshBase() {
   Clear();
 }
+
+MeshBaseFactory::MeshBaseFactory(const std::vector<GLfloat>& vertices,
+                                 const std::vector<unsigned int> indices)
+    : vertices_(vertices), indices_(indices) {}
+
+MeshBaseFactory::MeshBaseFactory(std::vector<GLfloat>&& vertices,
+                                 std::vector<unsigned int>&& indices)
+    : vertices_(std::move(vertices)), indices_(std::move(indices)) {}
+
+MeshBasePtr MeshBaseFactory::Create() {
+  auto obj = std::make_unique<MeshBase>();
+  obj->Init(vertices_, indices_);
+  return std::move(obj);
+}

@@ -29,6 +29,9 @@ set(SOURCE
   ${SRC_ROOT}/thread_pool.cpp
   ${SRC_ROOT}/executor.cpp
   ${SRC_ROOT}/resource_base.cpp
+  ${SRC_ROOT}/engine.cpp
+  ${SRC_ROOT}/engine_pool.cpp
+  ${SRC_ROOT}/layer.cpp
 )
 
 set(HEADERS
@@ -76,6 +79,9 @@ set(HEADERS
   ${INC_ROOT}/resource_base.hpp
   ${INC_ROOT}/thread_pool.hpp
   ${INC_ROOT}/executor.hpp
+  ${INC_ROOT}/layer.hpp
+  ${INC_ROOT}/engine.hpp
+  ${INC_ROOT}/engine_pool.hpp
 )
 
 set(INCLUDE_DIRECTORIES
