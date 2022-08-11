@@ -1,17 +1,16 @@
 #include <MEP-3D/engine.hpp>
 
 std::string EngineMonitor::ToDebugJSON() {
-  std::string layer_json = "\"layer_data\": [\n";
-  for (auto& layer : frame_id_.layer_data_) {
-    layer_json += layer.first.ToString() + ",\n";
-    layer_json += "{\n\"layer_update_time_ms\":" +
+  std::string layer_json = "\"engine_monitor\": {\"layer_data\": [\n";
+  for (auto& layer : frame_data.layer_data) {
+    layer_json += layer.first.ToString() + ", ";
+    layer_json += "\n\"layer_update_time_ms\":" +
                   std::to_string(layer.second.layer_update_time_ms) + ",\n" +
                   "\"layer_draw_time_ms\":" +
-                  std::to_string(layer.second.layer_draw_time_ms) + ",\n" +
-                  "\"frame_time\":" + std::to_string(layer.second.frame_time) +
-                  "\n" + "}";
+                  std::to_string(layer.second.layer_draw_time_ms) + "\n" + "}";
   }
-  layer_json += "],\n\"fps\":" + std::to_string(fps);
+  layer_json += "],\n\"frame_time\":" + std::to_string(frame_data.frame_time) +
+                ",\n" + "\"fps\":" + std::to_string(fps) + "\n}";
   return layer_json;
 }
 
@@ -35,14 +34,41 @@ WindowPtr& Engine::GetWindow() {
 void Engine::Run() {
   LOG(INFO) << "Engine initialized, id: " << ToString();
   auto time = TimeDelta::GetInstance();
+  double time_controller = 0.0;
+  unsigned int frames = 0;
   while (window_ && window_->IsOpen()) {
+    engine_monitor_.frame_data.frame_time = time->GetTickCount();
+    glfwPollEvents();
+    auto time_delta = time->GetTimeDelta();
+    time_controller += time_delta;
+    frames++;
+    window_->Clear(White);
+
+    engine_monitor_.frame_data.layer_data.clear();
     for (auto& layer : layers_) {
-      glfwPollEvents();
-      layer->OnUpdate(10);
-      window_->Clear(White);
+      EngineMonitor::LayerData layer_data;
+
+      layer_data.layer_update_time_ms = time->GetTickCount();
+      layer->OnUpdate(time_delta);
+      layer_data.layer_update_time_ms =
+          time->GetTickCount() - layer_data.layer_update_time_ms;
+
+      layer_data.layer_draw_time_ms = time->GetTickCount();
       layer->OnDraw(*window_);
-      window_->FinishLoop();
+      layer_data.layer_draw_time_ms =
+          time->GetTickCount() - layer_data.layer_draw_time_ms;
+
+      engine_monitor_.frame_data.layer_data.push_back({*layer, layer_data});
     }
+    engine_monitor_.frame_data.frame_time =
+        time->GetTickCount() - engine_monitor_.frame_data.frame_time;
+    if (time_controller > 1.0) {
+      engine_monitor_.fps = frames;
+      LOG(INFO) << engine_monitor_.ToDebugJSON();
+      time_controller = 0.0;
+      frames = 0;
+    }
+    window_->FinishLoop();
   }
 }
 

@@ -12,15 +12,14 @@
 class EngineMonitor {
  public:
   struct LayerData {
-    unsigned int layer_update_time_ms;
-    unsigned int layer_draw_time_ms;
-    unsigned int frame_time;
+    double layer_update_time_ms = 0.0;
+    double layer_draw_time_ms = 0.0;
   };
   struct FrameData {
-    std::vector<std::pair<Identity, LayerData>> layer_data_;
-    unsigned long frame_index_;
+    std::vector<std::pair<Identity, LayerData>> layer_data;
+    double frame_time;
   };
-  FrameData frame_id_;
+  FrameData frame_data;
   unsigned int fps;
   std::string ToDebugJSON();
 };

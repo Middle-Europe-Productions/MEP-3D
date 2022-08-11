@@ -265,7 +265,6 @@ int main() {
   window->Init();
   auto main_engine = std::make_shared<Engine>();
   main_engine->AttachWindow(std::move(window));
-  LOG(INFO) << "Window attached";
   std::unique_ptr<Layer> master_layer = std::make_unique<MainLayer>();
   main_engine->AttachLayer(std::move(master_layer));
   EnginePool::AttachEngineAndExecuteTask(std::move(main_engine), ENGINE_RUN);
