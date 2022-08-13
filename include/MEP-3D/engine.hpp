@@ -9,14 +9,16 @@
 
 #include <MEP-3D/layer.hpp>
 
-class EngineMonitor {
+class EngineMonitorData {
  public:
   struct LayerData {
+    Identity identity;
+    std::string layer_name;
     double layer_update_time_ms = 0.0;
     double layer_draw_time_ms = 0.0;
   };
   struct FrameData {
-    std::vector<std::pair<Identity, LayerData>> layer_data;
+    std::vector<LayerData> layer_data;
     double frame_time;
   };
   FrameData frame_data;
@@ -34,12 +36,13 @@ class Engine : public std::enable_shared_from_this<Engine>, public Identity {
   void Run();
   void AttachLayer(std::unique_ptr<Layer> obs);
   std::unique_ptr<Layer> Detachlayer(const Identity& id);
-  const EngineMonitor& GetEngineMonitor() const;
+  const EngineMonitorData& GetEngineMonitor() const;
+  std::unique_ptr<Layer>& operator[](std::size_t layer_index);
   bool operator==(const Identity& id);
 
  private:
   WindowPtr window_;
-  EngineMonitor engine_monitor_;
+  EngineMonitorData engine_monitor_;
   std::vector<std::unique_ptr<Layer>> layers_;
 };
 

@@ -5,8 +5,8 @@
 
 class TimeDelta {
  public:
-  virtual double GetCurrentTime() = 0;
-  virtual double GetTimeDelta() = 0;
+  virtual float GetCurrentTime() = 0;
+  virtual float GetTimeDelta() = 0;
   static std::unique_ptr<TimeDelta> GetInstance();
   virtual ~TimeDelta() = default;
 };

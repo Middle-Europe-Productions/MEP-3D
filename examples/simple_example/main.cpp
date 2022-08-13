@@ -63,9 +63,42 @@ class CameraLogger : public CameraObserver {
   }
 };
 
+class BenchmarkLayer final : public Layer {
+public:
+    BenchmarkLayer(unsigned int triangles_count, Shader& shader)
+        : Layer("benchmark_layer_" + std::to_string(triangles_count)),
+        shader_(shader),
+        triangles_count_(triangles_count) {}
+    void OnAttach() override {
+        for (int i = 0; i < triangles_count_; i++) {
+            triangles_.emplace_back(std::make_unique<Pyramid>(
+                Vec3f{ static_cast<float>(triangles_count_ % 10 * 10.f), 1.0f, static_cast<float>(i + 10) }));
+            triangles_.back()->Bind(&shader_);
+        }
+    }
+    void OnDetach() override {}
+    void OnUpdate(float time_delta) {
+        for (auto& tr : triangles_) {
+            tr->PushObjectAction(std::make_unique<Transform>(1.f * time_delta, 0.0, 0.0));
+        }
+    }
+    void OnDraw(RenderTarget& render_target) {
+        shader_.StartUsing();
+        for (auto& tr : triangles_) {
+            tr->Draw(render_target);
+        }
+        shader_.StopUsing();
+    }
+
+private:
+    std::vector<std::unique_ptr<Pyramid>> triangles_;
+    Shader& shader_;
+    unsigned int triangles_count_;
+};
+
 class MainLayer : private WindowObserver, public Layer {
  public:
-  MainLayer() : Layer() {}
+  MainLayer() : Layer("main_layer") {}
   virtual void OnAttach() {
     auto& window = GetEngine()->GetWindow();
     LOG(INFO) << GetEngine()->GetWindow()->GetAspectRation();
@@ -103,6 +136,10 @@ class MainLayer : private WindowObserver, public Layer {
         "model", static_cast<unsigned int>(CommonUniform::Model));
     shader_.SaveUniformToMemory(
         "eye_position", static_cast<unsigned int>(CommonUniform::Position));
+
+    std::unique_ptr<Layer> bench_layer =
+        std::make_unique<BenchmarkLayer>(10000, shader_);
+    GetEngine()->AttachLayer(std::move(bench_layer));
 
     point_light_fact = std::make_unique<PointLightController>(
         16, "point_light", shader_.GetUniform("point_light_count"),
@@ -174,7 +211,7 @@ class MainLayer : private WindowObserver, public Layer {
     model[2].PushObjectAction(std::make_unique<Transform>(6.0, 1.0, 1.0));
   }
   virtual void OnDetach(){};
-  virtual void OnUpdate(unsigned int time_delta) {
+  virtual void OnUpdate(float time_delta) {
     curAngle_ += 0.01f;
     if (curAngle_ >= 360) {
       curAngle_ -= 360;
@@ -238,6 +275,7 @@ class MainLayer : private WindowObserver, public Layer {
     // LOG(INFO) << "Mouse event, x: " << event.x << ", y: " << event.y;
   }
   ~MainLayer() override {}
+
 
  private:
   std::vector<std::unique_ptr<Pyramid>> pyramids;

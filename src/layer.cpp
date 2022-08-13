@@ -1,11 +1,20 @@
 #include <MEP-3D/layer.hpp>
 
-Layer::Layer() : Identity(__FUNCTION__) {
+Layer::Layer()
+    : Identity(__FUNCTION__), layer_name_("layer_" + std::to_string(GetId())) {
   LOG(INFO) << __FUNCTION__;
 }
 
+Layer::Layer(const std::string& layer_name)
+    : Identity(__FUNCTION__), layer_name_(layer_name) {
+  LOG(INFO) << __FUNCTION__;
+}
+
+const std::string& Layer::GetName() const {
+  return layer_name_;
+}
+
 std::shared_ptr<Engine> Layer::GetEngine() const {
-  LOG(INFO) << engine_.use_count();
   return engine_;
 }
 Layer::~Layer() {

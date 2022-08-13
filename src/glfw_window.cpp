@@ -31,6 +31,7 @@ class GLFWWindowController : public Window {
     LOG(INFO) << __FUNCTION__ << ", buffer initialized [x: " << buffer_size.x_
               << ", y: " << buffer_size.y_ << "]";
     glfwMakeContextCurrent(main_window_);
+    glfwSwapInterval(0);
 
     InitCallbacks();
 
