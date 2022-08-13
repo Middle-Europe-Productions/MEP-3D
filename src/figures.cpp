@@ -59,7 +59,7 @@ Pyramid::Pyramid(Vec3f initial_position) {
       0.0f,  0.0f,  0.0f, 1.0f, 0.0f, 0.5f, 1.0f,  0.0f, 0.0f, 0.0f};
   CalculateNormals(vertices, 5);
   Mesh::Init(vertices, kPyramidIndicies);
-  PushObjectAction(std::make_unique<Transform>(initial_position));
+  Transform(initial_position);
 }
 
 Plane::Plane(float size, Vec3f initial_position) {
@@ -69,5 +69,5 @@ Plane::Plane(float size, Vec3f initial_position) {
       size,  0.0f, 0.0f,  -1.0f, 0.0f, -size, 0.0f,  size, 0.0f,  size, 0.0f,
       -1.0f, 0.0f, size,  0.0f,  size, size,  size,  0.0f, -1.0f, 0.0f};
   Mesh::Init(vertices, kPlaneIndices);
-  PushObjectAction(std::make_unique<Transform>(initial_position));
+  Transform(initial_position);
 }

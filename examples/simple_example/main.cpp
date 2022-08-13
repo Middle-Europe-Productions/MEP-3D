@@ -21,6 +21,8 @@
 #include <MEP-3D/vector.hpp>
 #include <MEP-3D/window.hpp>
 #include <MEP-3D/window_observer.hpp>
+#include <MEP-3D/utils.hpp>
+
 
 const std::unordered_map<LightUniforms, std::string>
     kDirectionalLightUniformMap = {
@@ -64,36 +66,39 @@ class CameraLogger : public CameraObserver {
 };
 
 class BenchmarkLayer final : public Layer {
-public:
-    BenchmarkLayer(unsigned int triangles_count, Shader& shader)
-        : Layer("benchmark_layer_" + std::to_string(triangles_count)),
+ public:
+  BenchmarkLayer(unsigned int triangles_count, Shader& shader)
+      : Layer("benchmark_layer_" + std::to_string(triangles_count)),
         shader_(shader),
         triangles_count_(triangles_count) {}
-    void OnAttach() override {
-        for (int i = 0; i < triangles_count_; i++) {
-            triangles_.emplace_back(std::make_unique<Pyramid>(
-                Vec3f{ static_cast<float>(triangles_count_ % 10 * 10.f), 1.0f, static_cast<float>(i + 10) }));
-            triangles_.back()->Bind(&shader_);
-        }
+  void OnAttach() override {
+    for (int i = 0; i < triangles_count_; i++) {
+      triangles_.emplace_back(std::make_unique<Pyramid>(
+          Vec3f{static_cast<float>(triangles_count_ % 10 * 10.f), 1.0f,
+                static_cast<float>(i + 10)}));
+      triangles_.back()->Bind(&shader_);
     }
-    void OnDetach() override {}
-    void OnUpdate(float time_delta) {
-        for (auto& tr : triangles_) {
-            tr->PushObjectAction(std::make_unique<Transform>(1.f * time_delta, 0.0, 0.0));
-        }
+  }
+  void OnDetach() override {}
+  void OnUpdate(float time_delta) {
+    for (auto& tr : triangles_) {
+      tr->Transform(1.f * time_delta, 0.0, 0.0);
+      // tr->PushObjectAction(std::make_unique<Transform>(1.f * time_delta, 0.0,
+      // 0.0));
     }
-    void OnDraw(RenderTarget& render_target) {
-        shader_.StartUsing();
-        for (auto& tr : triangles_) {
-            tr->Draw(render_target);
-        }
-        shader_.StopUsing();
+  }
+  void OnDraw(RenderTarget& render_target) {
+    shader_.StartUsing();
+    for (auto& tr : triangles_) {
+      tr->Draw(render_target);
     }
+    shader_.StopUsing();
+  }
 
-private:
-    std::vector<std::unique_ptr<Pyramid>> triangles_;
-    Shader& shader_;
-    unsigned int triangles_count_;
+ private:
+  std::vector<std::unique_ptr<Pyramid>> triangles_;
+  Shader& shader_;
+  unsigned int triangles_count_;
 };
 
 class MainLayer : private WindowObserver, public Layer {
@@ -183,7 +188,7 @@ class MainLayer : private WindowObserver, public Layer {
     pyramids.emplace_back(std::make_unique<Pyramid>(Vec3f{0.0f, 1.0f, 0.0f}));
     pyramids.back()->Bind(&shader_);
     pyramids.back()->Bind(tex.get());
-    pyramids.emplace_back(std::make_unique<Pyramid>(Vec3f{0.0f, -1.0f, 0.0f}));
+    pyramids.emplace_back(std::make_unique<Pyramid>(Vec3f{6.0f, -1.0f, 0.0f}));
     pyramids.back()->Bind(&shader_);
     plane = std::make_unique<Plane>(100.0f);
     plane->Bind(tex.get());
@@ -192,23 +197,23 @@ class MainLayer : private WindowObserver, public Layer {
     model[0].Load("models/heart.obj");
     model[0].Bind(&shader_);
     model[0].Bind(plain_tex.get());
-    model[0].PushObjectAction(std::make_unique<Scale>(0.1, 0.1, 0.1));
-    model[0].PushObjectAction(std::make_unique<Rotate>(-90, Axis::X));
-    model[0].PushObjectAction(std::make_unique<Transform>(0.0, 1.0, 1.0));
+    model[0].Transform(0.0, 1.0, 1.0);
+    model[0].Rotate(-90, Axis::X);
+    model[0].Scale(0.1, 0.1, 0.1);
 
     model[1].Load("models/heart.obj");
     model[1].Bind(&shader_);
     model[1].Bind(plain_tex.get());
-    model[1].PushObjectAction(std::make_unique<Scale>(0.1, 0.1, 0.1));
-    model[1].PushObjectAction(std::make_unique<Rotate>(-90, Axis::X));
-    model[1].PushObjectAction(std::make_unique<Transform>(3.0, 1.0, 1.0));
+    model[1].Transform(3.0, 1.0, 1.0);
+    model[1].Rotate(-90, Axis::X);
+    model[1].Scale(0.1, 0.1, 0.1);
 
     model[2].Load("models/heart.obj");
     model[2].Bind(&shader_);
     model[2].Bind(plain_tex.get());
-    model[2].PushObjectAction(std::make_unique<Scale>(0.1, 0.1, 0.1));
-    model[2].PushObjectAction(std::make_unique<Rotate>(-90, Axis::X));
-    model[2].PushObjectAction(std::make_unique<Transform>(6.0, 1.0, 1.0));
+    model[2].Transform(6.0, 1.0, 1.0);
+    model[2].Rotate(-90, Axis::X);
+    model[2].Scale(0.1, 0.1, 0.1);
   }
   virtual void OnDetach(){};
   virtual void OnUpdate(float time_delta) {
@@ -217,7 +222,7 @@ class MainLayer : private WindowObserver, public Layer {
       curAngle_ -= 360;
     }
     camera_->Update();
-    pyramids[0]->PushObjectAction(std::make_unique<Rotate>(0.1f, Axis::Y));
+    pyramids[0]->Rotate(0.1f, Axis::Y);
     (*spot_light_fact)[0]->GetPointConfigRef().position =
         Vec3f{camera_->GetPosition().x, camera_->GetPosition().y,
               camera_->GetPosition().z};
@@ -250,8 +255,7 @@ class MainLayer : private WindowObserver, public Layer {
     // LOG(INFO) << event.code << ", action: " << (event.action ==
     // Action::Pressed ? "Pressed" : "Released");
     if (event.code == Keyboard::Z) {
-      pyramids[0]->PushObjectAction(std::make_unique<Rotate>(1.0f, Axis::Y));
-      pyramids[0]->Update();
+      pyramids[0]->Rotate(1.0f, Axis::Y);
     } else if (event.code == Keyboard::R) {
       pyramids[0]->ResetModel();
     } else if (event.code == Keyboard::U) {
@@ -275,7 +279,6 @@ class MainLayer : private WindowObserver, public Layer {
     // LOG(INFO) << "Mouse event, x: " << event.x << ", y: " << event.y;
   }
   ~MainLayer() override {}
-
 
  private:
   std::vector<std::unique_ptr<Pyramid>> pyramids;
