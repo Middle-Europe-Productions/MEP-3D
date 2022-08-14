@@ -5,8 +5,8 @@ set(MEP_LIBRARY_NAME mep-3d)
 set(SOURCE
   ${SRC_ROOT}/camera.cpp
   ${SRC_ROOT}/common.cpp
-  ${SRC_ROOT}/glfw_time_delta.cpp
-  ${SRC_ROOT}/glfw_window.cpp
+  ${SRC_ROOT}/integration/time_delta_glfw.cpp
+  ${SRC_ROOT}/integration/window_glfw.cpp
   ${SRC_ROOT}/mesh_base.cpp
   ${SRC_ROOT}/model_controller.cpp
   ${SRC_ROOT}/figures.cpp
@@ -82,6 +82,8 @@ set(HEADERS
   ${INC_ROOT}/layer.hpp
   ${INC_ROOT}/engine.hpp
   ${INC_ROOT}/engine_pool.hpp
+  ${INC_ROOT}/user_interface.hpp
+  ${INC_ROOT}/template/engine_data_ui_layer.hpp
 )
 
 set(INCLUDE_DIRECTORIES
@@ -95,31 +97,52 @@ set(LINK_TARGETS
     glog
 )
 
+if (MEP_USE_IMGUI)
+else()
+
+endif(MEP_USE_IMGUI)
+
 if (MEP_USE_STB)
   list(APPEND SOURCE 
-    ${SRC_ROOT}/image_stb.cpp
+    ${SRC_ROOT}/integration/image_stb.cpp
   )
   list(APPEND INCLUDE_DIRECTORIES 
     ${CMAKE_SOURCE_DIR}/third-party/stb
   )
 else()
   list(APPEND SOURCE 
-    ${SRC_ROOT}/image_default.cpp
+    ${SRC_ROOT}/integration/image_default.cpp
   )
 endif(MEP_USE_STB)
 
 if (MEP_USE_ASSIMP)
   list(APPEND SOURCE
-    ${SRC_ROOT}/model_assimp.cpp
+    ${SRC_ROOT}/integration/model_assimp.cpp
   )
   list(APPEND LINK_TARGETS
     assimp
   )
 else()
   list(APPEND SOURCE
-    ${SRC_ROOT}/model_default.cpp
+    ${SRC_ROOT}/integration/model_default.cpp
   )
 endif(MEP_USE_ASSIMP)
+
+if (MEP_USE_IMGUI)
+  add_definitions(-DMEP_ENGINE_USE_IMGUI)
+  list(APPEND SOURCE
+    ${SRC_ROOT}/integration/user_interface_imgui.cpp
+    ${SRC_ROOT}/integration/engine_data_ui_layer_imgui.cpp
+  )
+  list(APPEND LINK_TARGETS
+    imgui
+  )
+else()
+  list(APPEND SOURCE
+    ${SRC_ROOT}/integration/user_interface_default.cpp
+    ${SRC_ROOT}/integration/engine_data_ui_layer_default.cpp
+  )
+endif (MEP_USE_IMGUI)
 
 source_group("Header Files" FILES ${HEADERS})
 

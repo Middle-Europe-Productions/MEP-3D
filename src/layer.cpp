@@ -2,12 +2,12 @@
 
 Layer::Layer()
     : Identity(__FUNCTION__), layer_name_("layer_" + std::to_string(GetId())) {
-  LOG(INFO) << __FUNCTION__;
+  LOG(INFO) << __FUNCTION__ << ToString();
 }
 
 Layer::Layer(const std::string& layer_name)
     : Identity(__FUNCTION__), layer_name_(layer_name) {
-  LOG(INFO) << __FUNCTION__;
+  LOG(INFO) << __FUNCTION__ << ToString();
 }
 
 const std::string& Layer::GetName() const {

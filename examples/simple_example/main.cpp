@@ -18,11 +18,10 @@
 #include <MEP-3D/shader.hpp>
 #include <MEP-3D/spot_light.hpp>
 #include <MEP-3D/texture.hpp>
+#include <MEP-3D/utils.hpp>
 #include <MEP-3D/vector.hpp>
 #include <MEP-3D/window.hpp>
 #include <MEP-3D/window_observer.hpp>
-#include <MEP-3D/utils.hpp>
-
 
 const std::unordered_map<LightUniforms, std::string>
     kDirectionalLightUniformMap = {
@@ -83,8 +82,6 @@ class BenchmarkLayer final : public Layer {
   void OnUpdate(float time_delta) {
     for (auto& tr : triangles_) {
       tr->Transform(1.f * time_delta, 0.0, 0.0);
-      // tr->PushObjectAction(std::make_unique<Transform>(1.f * time_delta, 0.0,
-      // 0.0));
     }
   }
   void OnDraw(RenderTarget& render_target) {

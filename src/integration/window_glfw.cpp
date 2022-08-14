@@ -3,6 +3,12 @@
 #include <glog/logging.h>
 #include <MEP-3D/window.hpp>
 
+#ifdef MEP_ENGINE_USE_IMGUI
+#include <backends/imgui_impl_glfw.h>
+#include <backends/imgui_impl_opengl3.h>
+#include <imgui.h>
+#endif
+
 class GLFWWindowController : public Window {
  public:
   GLFWWindowController(WindowConfig config)
@@ -35,6 +41,17 @@ class GLFWWindowController : public Window {
 
     InitCallbacks();
 
+#ifdef MEP_ENGINE_USE_IMGUI
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    (void)io;
+    ImGui::StyleColorsDark();
+    ImGui_ImplGlfw_InitForOpenGL(main_window_, true);
+    ImGui_ImplOpenGL3_Init("#version 330");
+    LOG(INFO) << "IamGui initialized";
+#endif
+
     glewExperimental = GL_TRUE;
 
     GLenum err = glewInit();
@@ -63,6 +80,8 @@ class GLFWWindowController : public Window {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   }
 
+  void StartLoop() override { glfwPollEvents(); }
+
   void FinishLoop() override { glfwSwapBuffers(main_window_); }
 
   Vec2i GetSize() override { return config_.size; }
@@ -75,6 +94,11 @@ class GLFWWindowController : public Window {
   }
 
   ~GLFWWindowController() {
+#ifdef MEP_ENGINE_USE_IMGUI
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+#endif
     glfwDestroyWindow(main_window_);
     glfwTerminate();
   }

@@ -20,6 +20,7 @@ class Window : public ObserverList<WindowObserver>, public RenderTarget {
   virtual void Close() = 0;
   virtual bool IsOpen() = 0;
   virtual void Clear(Color color = Black) = 0;
+  virtual void StartLoop() = 0;
   virtual void FinishLoop() = 0;
   virtual Vec2i GetSize() = 0;
   virtual Vec2i GetBufferSize() = 0;
