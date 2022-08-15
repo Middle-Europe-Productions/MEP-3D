@@ -91,13 +91,21 @@ void Engine::Run() {
 }
 
 void Engine::AttachLayer(std::unique_ptr<Layer> obs) {
-  LOG(INFO) << __FUNCTION__;
+  if (!EvaluateLayer(obs))
+    return;
   layers_.emplace_back(std::move(obs));
   layers_.back()->RegisterEngine(std::move(shared_from_this()));
   layers_.back()->OnAttach();
 }
 
 int Engine::AttachStructure(std::unique_ptr<CustomLayerStructure> str) {
+  str->layer_array.erase(
+      std::remove_if(str->layer_array.begin(), str->layer_array.end(),
+                     [](const auto& in) { return in->ShouldIgnoreLayer(); }),
+      str->layer_array.end());
+  if (str->layer_array.empty()) {
+    LOG(INFO) << "Attaching empty structure";
+  }
   custom_layers_.emplace_back(std::move(str));
   for (auto& layer : custom_layers_.back()->layer_array) {
     layer->RegisterEngine(shared_from_this());
@@ -134,4 +142,14 @@ const EngineMonitorData& Engine::GetEngineMonitor() const {
 
 bool Engine::operator==(const Identity& id) {
   return *this == id;
+}
+
+bool Engine::EvaluateLayer(const std::unique_ptr<Layer>& layer) const {
+  if (!layer)
+    return false;
+  if (layer->ShouldIgnoreLayer() == true) {
+    LOG(INFO) << "Ignoring layer: " << layer->ToString();
+    return false;
+  }
+  return true;
 }

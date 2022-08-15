@@ -2,12 +2,12 @@
 
 Layer::Layer()
     : Identity(__FUNCTION__), layer_name_("layer_" + std::to_string(GetId())) {
-  LOG(INFO) << __FUNCTION__ << ToString();
+  LOG(INFO) << __FUNCTION__ << ", id: " << ToString();
 }
 
 Layer::Layer(const std::string& layer_name)
     : Identity(__FUNCTION__), layer_name_(layer_name) {
-  LOG(INFO) << __FUNCTION__ << ToString();
+  LOG(INFO) << __FUNCTION__ << ", id: " << ToString();
 }
 
 const std::string& Layer::GetName() const {
@@ -25,4 +25,8 @@ void Layer::RegisterEngine(const std::shared_ptr<Engine>& engine) {
   LOG(INFO) << __FUNCTION__;
   engine_ = engine;
   LOG(INFO) << engine.use_count();
+}
+
+bool Layer::ShouldIgnoreLayer() const {
+  return false;
 }

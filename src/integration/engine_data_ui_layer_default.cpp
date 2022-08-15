@@ -4,3 +4,6 @@ void EngineDataUILayer::OnAttach() {}
 void EngineDataUILayer::OnDetach() {}
 void EngineDataUILayer::OnUpdate(float time_delta) {}
 void EngineDataUILayer::OnDraw(RenderTarget& render_target) {}
+bool EngineDataUILayer::ShouldIgnoreLayer() const {
+  return true;
+}

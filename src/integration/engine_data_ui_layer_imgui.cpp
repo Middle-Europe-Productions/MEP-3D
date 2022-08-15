@@ -23,21 +23,22 @@ void EngineDataUILayer::OnDraw(RenderTarget& render_target) {
     ImGui::TreePop();
   }
   ImGui::Separator();
-  if (ImGui::TreeNode("Structures")) {
-    for (auto& sd : engine_data.frame_data.structure_data) {
-      if (ImGui::TreeNode(sd.structure_name.c_str())) {
-        for (auto& ld : sd.layer_array) {
-          if (ImGui::TreeNode(ld.layer_name.c_str())) {
-            ImGui::Text(ld.identity.ToString().c_str());
-            ImGui::Text("Layer draw time: %.3f", ld.layer_draw_time_ms);
-            ImGui::Text("Layer update time: %.3f", ld.layer_update_time_ms);
-            ImGui::TreePop();
-          }
+  for (auto& sd : engine_data.frame_data.structure_data) {
+    if (ImGui::TreeNode(sd.structure_name.c_str())) {
+      for (auto& ld : sd.layer_array) {
+        if (ImGui::TreeNode(ld.layer_name.c_str())) {
+          ImGui::Text(ld.identity.ToString().c_str());
+          ImGui::Text("Layer draw time: %.3f", ld.layer_draw_time_ms);
+          ImGui::Text("Layer update time: %.3f", ld.layer_update_time_ms);
+          ImGui::TreePop();
         }
-        ImGui::TreePop();
       }
+      ImGui::TreePop();
     }
-    ImGui::TreePop();
   }
   ImGui::End();
+}
+
+bool EngineDataUILayer::ShouldIgnoreLayer() const {
+  return false;
 }

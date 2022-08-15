@@ -57,6 +57,7 @@ class Engine : public std::enable_shared_from_this<Engine>, public Identity {
   bool operator==(const Identity& id);
 
  private:
+  bool EvaluateLayer(const std::unique_ptr<Layer>& layer) const;
   WindowPtr window_;
   EngineMonitorData engine_monitor_;
   std::vector<std::unique_ptr<Layer>> layers_;

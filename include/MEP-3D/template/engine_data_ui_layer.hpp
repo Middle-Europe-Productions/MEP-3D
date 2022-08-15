@@ -11,6 +11,9 @@ class EngineDataUILayer final : public Layer {
   void OnUpdate(float time_delta);
   void OnDraw(RenderTarget& render_target);
   ~EngineDataUILayer() = default;
+
+ private:
+  bool ShouldIgnoreLayer() const override;
 };
 
 #endif

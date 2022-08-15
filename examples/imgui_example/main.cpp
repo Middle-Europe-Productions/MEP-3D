@@ -125,7 +125,7 @@ int main() {
   auto engine_data = std::make_unique<EngineDataUILayer>();
   std::unique_ptr<Engine::CustomLayerStructure> custom_structure =
       std::make_unique<Engine::CustomLayerStructure>();
-  custom_structure->structure_name = std::string("imgui"),
+  custom_structure->structure_name = std::string("ImGui"),
   custom_structure->before_run = UI::BeforeRender;
   custom_structure->after_run = UI::AfterRender;
   custom_structure->layer_array.push_back(std::move(engine_data));
