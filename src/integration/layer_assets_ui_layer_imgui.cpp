@@ -27,6 +27,7 @@ class LayerAssetsUILayerImGUI : public LayerAssetsUILayer {
           if (ImGui::MenuItem("Spot Light")) {
             // TODO
           }
+          ImGui::EndMenu();
         }
         ImGui::EndMenu();
       }
@@ -40,7 +41,6 @@ class LayerAssetsUILayerImGUI : public LayerAssetsUILayer {
           ImGui::TreePop();
         }
       }
-      ImGui::TreePop();
     }
     ImGui::End();
   }

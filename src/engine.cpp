@@ -26,7 +26,7 @@ void Engine::Run() {
   while (window_ && window_->IsOpen()) {
     window_->StartLoop();
     EngineMonitorData engine_monitor;
-    engine_monitor.frame_data.frame_time = time->GetTickCount();
+    engine_monitor.frame_data.frame_time = time->GetCurrentTime();
     auto time_delta = time->GetTimeDelta();
     time_controller += time_delta;
     frames++;
@@ -35,15 +35,15 @@ void Engine::Run() {
     for (auto& layer : layers_) {
       EngineMonitorData::LayerData layer_data;
 
-      layer_data.layer_update_time_ms = time->GetTickCount();
+      layer_data.layer_update_time_ms = time->GetCurrentTime();
       layer->OnUpdate(time_delta);
       layer_data.layer_update_time_ms =
-          (time->GetTickCount() - layer_data.layer_update_time_ms) * 1000.0f;
+          (time->GetCurrentTime() - layer_data.layer_update_time_ms) * 1000.0f;
 
-      layer_data.layer_draw_time_ms = time->GetTickCount();
+      layer_data.layer_draw_time_ms = time->GetCurrentTime();
       layer->OnDraw(*window_);
       layer_data.layer_draw_time_ms =
-          (time->GetTickCount() - layer_data.layer_draw_time_ms) * 1000.0f;
+          (time->GetCurrentTime() - layer_data.layer_draw_time_ms) * 1000.0f;
       layer_data.identity = *layer;
       layer_data.layer_name = layer->layer_name_;
       engine_monitor.frame_data.layer_data.push_back(layer_data);
@@ -53,33 +53,33 @@ void Engine::Run() {
       EngineMonitorData::Structure custom_layer_data;
       custom_layer_data.identity = *ele;
       custom_layer_data.structure_name = ele->structure_name;
-      custom_layer_data.total_update_time = time->GetTickCount();
+      custom_layer_data.total_update_time = time->GetCurrentTime();
       ele->before_run();
       for (auto& layer : ele->layer_array) {
         EngineMonitorData::LayerData layer_data;
 
-        layer_data.layer_update_time_ms = time->GetTickCount();
+        layer_data.layer_update_time_ms = time->GetCurrentTime();
         layer->OnUpdate(time_delta);
         layer_data.layer_update_time_ms =
-            (time->GetTickCount() - layer_data.layer_update_time_ms) * 1000.0f;
+            (time->GetCurrentTime() - layer_data.layer_update_time_ms) * 1000.0f;
 
-        layer_data.layer_draw_time_ms = time->GetTickCount();
+        layer_data.layer_draw_time_ms = time->GetCurrentTime();
         layer->OnDraw(*window_);
         layer_data.layer_draw_time_ms =
-            (time->GetTickCount() - layer_data.layer_draw_time_ms) * 1000.0f;
+            (time->GetCurrentTime() - layer_data.layer_draw_time_ms) * 1000.0f;
         layer_data.identity = *layer;
         layer_data.layer_name = layer->layer_name_;
         custom_layer_data.layer_array.push_back(layer_data);
       }
       ele->after_run();
       custom_layer_data.total_update_time =
-          time->GetTickCount() - custom_layer_data.total_update_time;
+          time->GetCurrentTime() - custom_layer_data.total_update_time;
       engine_monitor.frame_data.structure_data.push_back(custom_layer_data);
     }
 
     window_->FinishLoop();
     engine_monitor.frame_data.frame_time =
-        (time->GetTickCount() - engine_monitor.frame_data.frame_time) * 1000.0f;
+        (time->GetCurrentTime() - engine_monitor.frame_data.frame_time) * 1000.0f;
     engine_monitor_ = engine_monitor;
     if (time_controller > 1.0) {
       engine_monitor_.fps = frames;
