@@ -2,18 +2,15 @@
 #define ENGINE_DATA_UI_LAYER_HPP
 
 #include <MEP-3D/layer.hpp>
+#include <MEP-3D/window_observer.hpp>
 
-class EngineDataUILayer final : public Layer {
+class EngineDataUILayer : public Layer, public WindowObserver {
  public:
-  EngineDataUILayer();
-  void OnAttach() override;
-  void OnDetach() override;
-  void OnUpdate(float time_delta);
-  void OnDraw(RenderTarget& render_target);
+  static std::unique_ptr<EngineDataUILayer> Create();
   ~EngineDataUILayer() = default;
 
- private:
-  bool ShouldIgnoreLayer() const override;
+ protected:
+  EngineDataUILayer();
 };
 
 #endif

@@ -109,6 +109,7 @@ int Engine::AttachStructure(std::unique_ptr<CustomLayerStructure> str) {
   custom_layers_.emplace_back(std::move(str));
   for (auto& layer : custom_layers_.back()->layer_array) {
     layer->RegisterEngine(shared_from_this());
+    layer->OnAttach();
   }
   return custom_layers_.size() - 1;
 }

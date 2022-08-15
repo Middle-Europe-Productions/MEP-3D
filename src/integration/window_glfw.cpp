@@ -12,7 +12,11 @@
 class GLFWWindowController : public Window {
  public:
   GLFWWindowController(WindowConfig config)
-      : init_(false), main_window_(nullptr), config_(config) {}
+      : init_(false),
+        block_events_(false),
+        exception_(Keyboard::UnknownKey),
+        main_window_(nullptr),
+        config_(config) {}
 
   bool Init() override {
     if (!glfwInit()) {
@@ -51,10 +55,9 @@ class GLFWWindowController : public Window {
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
     ImGui::StyleColorsDark();
     ImGuiStyle& style = ImGui::GetStyle();
-    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-    {
-        style.WindowRounding = 0.0f;
-        style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+      style.WindowRounding = 0.0f;
+      style.Colors[ImGuiCol_WindowBg].w = 1.0f;
     }
     ImGui_ImplGlfw_InitForOpenGL(main_window_, true);
     ImGui_ImplOpenGL3_Init("#version 330");
@@ -83,6 +86,14 @@ class GLFWWindowController : public Window {
   bool IsOpen() override {
     return init_ && !glfwWindowShouldClose(main_window_);
   }
+
+  void BlockEvents(bool status,
+                   Keyboard exception) override {
+    block_events_ = status;
+    exception_ = exception;
+  }
+
+  bool ShouldBlockEvent() { return block_events_; }
 
   void Clear(Color color = Black) override {
     glClearColor(color.Rf(), color.Gf(), color.Bf(), color.Af());
@@ -114,6 +125,8 @@ class GLFWWindowController : public Window {
 
  private:
   bool init_;
+  bool block_events_;
+  Keyboard exception_;
   GLFWwindow* main_window_;
   GLFWWindowController* shared_window_;
   WindowConfig config_;
@@ -138,9 +151,14 @@ void GLFWWindowController::OnKeyEventHandler(GLFWwindow* window,
                                              int mode) {
   GLFWWindowController* master_window =
       static_cast<GLFWWindowController*>(glfwGetWindowUserPointer(window));
+
   if (key >= (int)'A' && key <= (int)'Z') {
     KeyEvent key_event;
     key_event.code = static_cast<Keyboard>(key - 'A');
+    if (master_window->ShouldBlockEvent() && key_event.code != master_window->exception_) {
+      return;
+    }
+
     if (action == GLFW_PRESS) {
       key_event.action = Action::Pressed;
     } else if (action == GLFW_RELEASE) {
@@ -156,6 +174,8 @@ void GLFWWindowController::OnMouseEventHandler(GLFWwindow* window,
                                                double yPos) {
   GLFWWindowController* master_window =
       static_cast<GLFWWindowController*>(glfwGetWindowUserPointer(window));
+  if (master_window->ShouldBlockEvent())
+    return;
   MouseEvent mouse_event{xPos, yPos};
   master_window->ForAllObservers(
       [&mouse_event](WindowObserver* obs) { obs->OnMouseEvent(mouse_event); });

@@ -19,6 +19,8 @@ class Window : public ObserverList<WindowObserver>, public RenderTarget {
   virtual bool Init() = 0;
   virtual void Close() = 0;
   virtual bool IsOpen() = 0;
+  virtual void BlockEvents(bool status = false,
+                           Keyboard exception = Keyboard::UnknownKey) = 0;
   virtual void Clear(Color color = Black) = 0;
   virtual void StartLoop() = 0;
   virtual void FinishLoop() = 0;

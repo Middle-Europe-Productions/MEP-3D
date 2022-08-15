@@ -11,19 +11,21 @@
 #include <MEP-3D/engine_pool.hpp>
 #include <MEP-3D/figures.hpp>
 #include <MEP-3D/image.hpp>
+#include <MEP-3D/layer_assets.hpp>
 #include <MEP-3D/light_controller.hpp>
 #include <MEP-3D/material.hpp>
 #include <MEP-3D/model.hpp>
 #include <MEP-3D/perspective_view.hpp>
 #include <MEP-3D/shader.hpp>
 #include <MEP-3D/spot_light.hpp>
+#include <MEP-3D/template/engine_data_ui_layer.hpp>
+#include <MEP-3D/template/layer_assets_ui_layer.hpp>
 #include <MEP-3D/texture.hpp>
 #include <MEP-3D/user_interface.hpp>
 #include <MEP-3D/utils.hpp>
 #include <MEP-3D/vector.hpp>
 #include <MEP-3D/window.hpp>
 #include <MEP-3D/window_observer.hpp>
-#include <MEP-3D/template/engine_data_ui_layer.hpp>
 
 const std::unordered_map<LightUniforms, std::string>
     kDirectionalLightUniformMap = {
@@ -38,7 +40,7 @@ const std::unordered_map<MaterialUniform, std::string> kMaterialUniformMap = {
     {MaterialUniform::SpecularIntensity, "material.specular_intensity"},
     {MaterialUniform::Shininess, "material.shininess"}};
 
-class BenchmarkLayer final : public Layer {
+class BenchmarkLayer final : public Layer, public LayerAssets {
  public:
   BenchmarkLayer(unsigned int triangles_count)
       : Layer("benchmark_layer_" + std::to_string(triangles_count)),
@@ -77,6 +79,12 @@ class BenchmarkLayer final : public Layer {
         AmbientConfig{Color(255, 255, 255), 0.1f},
         DiffuseConfig{Vec3f(-2.0f, -1.0f, -2.0f), 1.0f});
     light->BindUniforms(shader_, kDirectionalLightUniformMap);
+
+    AttachDirectionaLight(std::move(light));
+    // Add UI
+    auto ui_layer = LayerAssetsUILayer::Create();
+    LayerAssets::AddObserver(ui_layer.get());
+    GetEngine()->AttachLayerToStructure(std::move(ui_layer), 0);
     // Create elements
     for (int i = 0; i < triangles_count_; i++) {
       triangles_.emplace_back(std::make_unique<Pyramid>(
@@ -92,7 +100,7 @@ class BenchmarkLayer final : public Layer {
   void OnUpdate(float time_delta) { camera_->Update(); }
   void OnDraw(RenderTarget& render_target) {
     shader_.StartUsing();
-    light->Use();
+    UseAllDirectionalLights();
     plain_tex->Use();
     shader_.SetUniform("use_texture", 1);
     for (auto& tr : triangles_) {
@@ -118,19 +126,20 @@ int main() {
   auto window = Window::GetInstance({{1280, 720}, "ImGui Example"});
   window->Init();
   auto main_engine = std::make_shared<Engine>();
-  main_engine->AttachWindow(std::move(window));
-  std::unique_ptr<Layer> master_layer = std::make_unique<BenchmarkLayer>(10000);
-  main_engine->AttachLayer(std::move(master_layer));
 
-  auto engine_data = std::make_unique<EngineDataUILayer>();
+  auto engine_data = EngineDataUILayer::Create();
   std::unique_ptr<Engine::CustomLayerStructure> custom_structure =
       std::make_unique<Engine::CustomLayerStructure>();
+  window->AddObserver(engine_data.get());
   custom_structure->structure_name = std::string("ImGui"),
   custom_structure->before_run = UI::BeforeRender;
   custom_structure->after_run = UI::AfterRender;
   custom_structure->layer_array.push_back(std::move(engine_data));
 
   main_engine->AttachStructure(std::move(custom_structure));
+  main_engine->AttachWindow(std::move(window));
+  std::unique_ptr<Layer> master_layer = std::make_unique<BenchmarkLayer>(10000);
+  main_engine->AttachLayer(std::move(master_layer));
 
   EnginePool::AttachEngineAndExecuteTask(std::move(main_engine), ENGINE_RUN);
 }

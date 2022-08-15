@@ -7,6 +7,8 @@ class DirectionalLight : public Light {
  public:
   DirectionalLight(const AmbientConfig& ambient_config,
                    const DiffuseConfig& diffuse_config);
+  AmbientConfig& GetAmbientConfigRef();
+  DiffuseConfig& GetDiffuseConfigRef();
 };
 
 #endif
