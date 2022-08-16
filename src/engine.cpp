@@ -1,6 +1,6 @@
 #include <MEP-3D/engine.hpp>
 
-Engine::Engine() : window_(nullptr) {
+Engine::Engine() : Identity(__FUNCTION__), window_(nullptr) {
   LOG(INFO) << "Engine created: " << ToString();
 }
 
@@ -88,6 +88,16 @@ void Engine::Run() {
       frames = 0;
     }
   }
+  for (auto& layer : layers_) {
+    layer->UnregisterEngine();
+    layer->OnDetach();
+  }
+  for (auto& str : custom_layers_) {
+    for (auto& layer : str->layer_array) {
+      layer->UnregisterEngine();
+      layer->OnDetach();
+    }
+  }
 }
 
 void Engine::AttachLayer(std::unique_ptr<Layer> obs) {
@@ -153,4 +163,8 @@ bool Engine::EvaluateLayer(const std::unique_ptr<Layer>& layer) const {
     return false;
   }
   return true;
+}
+
+Engine::~Engine() {
+  LOG(INFO) << "Engine destroyed, id: " << ToString();
 }

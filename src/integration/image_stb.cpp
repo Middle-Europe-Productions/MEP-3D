@@ -11,7 +11,7 @@ bool Image::LoadFromFile(const std::string& name) {
   std::string path = kDefaultTexturePath + name;
   Uint8* pixels = stbi_load(path.c_str(), &size_.x_, &size_.y_, &bit_depth_, 0);
   if (!pixels) {
-    LOG(ERROR) << "Could not open " << name;
+    LOG(ERROR) << "Could not open " << name << ", path: " << path;
     return false;
   }
   image_data_ =
@@ -25,6 +25,7 @@ bool Image::LoadFromFile(const std::string& name) {
     LOG(WARNING) << "Unknown bit depth: " << name;
   }
   stbi_image_free(pixels);
+  return true;
 }
 
 Uint8* Image::GetPixels() {

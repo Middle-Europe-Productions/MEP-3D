@@ -10,7 +10,6 @@
 #include <MEP-3D/model_controller.hpp>
 
 class Mesh : public MeshBase,
-             public Drawable,
              public AssetController,
              public ModelController {
  public:

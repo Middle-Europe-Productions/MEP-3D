@@ -18,15 +18,19 @@ std::shared_ptr<Engine> Layer::GetEngine() const {
   return engine_;
 }
 Layer::~Layer() {
-  LOG(INFO) << __FUNCTION__;
+  LOG(INFO) << __FUNCTION__ << ", " << ToString();
 }
 
 void Layer::RegisterEngine(const std::shared_ptr<Engine>& engine) {
-  LOG(INFO) << __FUNCTION__;
+  LOG(INFO) << __FUNCTION__ << ", Layer: " << ToString();
   engine_ = engine;
-  LOG(INFO) << engine.use_count();
 }
 
 bool Layer::ShouldIgnoreLayer() const {
   return false;
+}
+
+void Layer::UnregisterEngine() {
+  LOG(INFO) << __FUNCTION__ << ", Layer: " << ToString();
+  engine_ = nullptr;
 }

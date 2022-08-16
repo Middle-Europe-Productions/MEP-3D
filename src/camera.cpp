@@ -92,6 +92,14 @@ void Camera::OnMouseEvent(MouseEvent event) {
   Changed();
 }
 
+void Camera::OnEventStatusChanged(bool events_blocked) {
+  if (events_blocked == false) {
+    initial_move_ = true;
+  } else {
+    InitKeyboardMap();
+  }
+}
+
 std::string Camera::ToString() const {
   return std::string(
       "camera: { \nPosition: " +

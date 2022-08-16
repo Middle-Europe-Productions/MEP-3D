@@ -57,6 +57,7 @@ class Camera : public Updatable,
   glm::vec3 GetNormalizedDirection() const;
   void OnKeyEvent(KeyEvent event) override;
   void OnMouseEvent(MouseEvent event) override;
+  void OnEventStatusChanged(bool events_blocked) override;
   std::string ToString() const;
 
  private:

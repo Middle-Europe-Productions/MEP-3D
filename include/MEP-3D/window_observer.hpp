@@ -7,6 +7,7 @@ class WindowObserver {
  public:
   virtual void OnKeyEvent(KeyEvent event) = 0;
   virtual void OnMouseEvent(MouseEvent event) = 0;
+  virtual void OnEventStatusChanged(bool events_blocked) = 0;
   virtual ~WindowObserver() = default;
 };
 

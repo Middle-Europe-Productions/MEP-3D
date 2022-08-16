@@ -12,6 +12,7 @@ glm::vec3 utils::AxisToGlm(Axis axis) {
     case Axis::Z:
       return glm::vec3(0.0f, 0.0f, 1.0f);
   }
+  assert(true);
 }
 
 float utils::DegToRadians(float degress) {

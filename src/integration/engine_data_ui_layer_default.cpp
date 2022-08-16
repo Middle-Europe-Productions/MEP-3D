@@ -8,6 +8,7 @@ class EngineDataUILayerDefault : public EngineDataUILayer {
   void OnDraw(RenderTarget& render_target) override {}
   void OnKeyEvent(KeyEvent event) override {}
   void OnMouseEvent(MouseEvent event) override {}
+  void OnEventStatusChanged(bool events_blocked) override {}
   bool ShouldIgnoreLayer() const { return true; }
 };
 

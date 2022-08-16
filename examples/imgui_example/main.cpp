@@ -8,7 +8,6 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <MEP-3D/directional_light.hpp>
-#include <MEP-3D/engine_pool.hpp>
 #include <MEP-3D/figures.hpp>
 #include <MEP-3D/image.hpp>
 #include <MEP-3D/layer_assets.hpp>
@@ -26,6 +25,7 @@
 #include <MEP-3D/vector.hpp>
 #include <MEP-3D/window.hpp>
 #include <MEP-3D/window_observer.hpp>
+#include <MEP-3D/engine.hpp>
 
 const std::unordered_map<LightUniforms, std::string>
     kDirectionalLightUniformMap = {
@@ -138,8 +138,8 @@ int main() {
 
   main_engine->AttachStructure(std::move(custom_structure));
   main_engine->AttachWindow(std::move(window));
-  std::unique_ptr<Layer> master_layer = std::make_unique<BenchmarkLayer>(10000);
+  std::unique_ptr<Layer> master_layer = std::make_unique<BenchmarkLayer>(100);
   main_engine->AttachLayer(std::move(master_layer));
 
-  EnginePool::AttachEngineAndExecuteTask(std::move(main_engine), ENGINE_RUN);
+  main_engine->Run();
 }

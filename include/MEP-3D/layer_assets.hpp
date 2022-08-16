@@ -5,6 +5,7 @@
 #include <MEP-3D/observer_list.hpp>
 #include <MEP-3D/spot_light.hpp>
 #include <vector>
+#include <memory>
 
 class LayerAssets;
 class LayerAssetsObserver {

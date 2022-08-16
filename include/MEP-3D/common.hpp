@@ -5,7 +5,7 @@
 
 using Uint8 = unsigned char;
 
-constexpr char* kDefaultTexturePath = "Textures/";
+extern const char* kDefaultTexturePath;
 
 enum class Axis { X, Y, Z };
 

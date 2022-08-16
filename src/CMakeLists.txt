@@ -30,7 +30,6 @@ set(SOURCE
   ${SRC_ROOT}/executor.cpp
   ${SRC_ROOT}/resource_base.cpp
   ${SRC_ROOT}/engine.cpp
-  ${SRC_ROOT}/engine_pool.cpp
   ${SRC_ROOT}/layer.cpp
   ${SRC_ROOT}/layer_assets.cpp
   ${SRC_ROOT}/template/layer_assets_ui_layer.cpp
@@ -83,7 +82,6 @@ set(HEADERS
   ${INC_ROOT}/executor.hpp
   ${INC_ROOT}/layer.hpp
   ${INC_ROOT}/engine.hpp
-  ${INC_ROOT}/engine_pool.hpp
   ${INC_ROOT}/user_interface.hpp
   ${INC_ROOT}/layer_assets.hpp
   ${INC_ROOT}/template/engine_data_ui_layer.hpp

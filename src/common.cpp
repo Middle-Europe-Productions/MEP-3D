@@ -1,5 +1,7 @@
 #include <MEP-3D/common.hpp>
 
+const char* kDefaultTexturePath = "textures/";
+
 std::string ToString(const Axis& axis) {
   switch (axis) {
     case Axis::X:

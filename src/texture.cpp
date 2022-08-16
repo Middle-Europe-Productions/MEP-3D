@@ -42,6 +42,6 @@ void Texture::Clear() {
 }
 
 Texture::~Texture() {
-  LOG(INFO) << __FUNCTION__;
+  LOG(INFO) << __FUNCTION__ << ", " << ToString();
   Clear();
 }

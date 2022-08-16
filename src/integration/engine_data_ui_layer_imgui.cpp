@@ -60,6 +60,7 @@ class EngineDataUILayerImGUI : public EngineDataUILayer {
     }
   }
   void OnMouseEvent(MouseEvent event) override {}
+  void OnEventStatusChanged(bool events_blocked) override {}
 
  private:
   bool block_events_ = false;

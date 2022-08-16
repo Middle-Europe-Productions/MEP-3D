@@ -21,6 +21,7 @@ class Layer : public Identity {
 
  private:
   void RegisterEngine(const std::shared_ptr<Engine>& engine);
+  void UnregisterEngine();
   virtual bool ShouldIgnoreLayer() const;
   std::shared_ptr<Engine> engine_;
   const std::string layer_name_;

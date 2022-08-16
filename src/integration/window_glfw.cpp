@@ -92,6 +92,8 @@ class GLFWWindowController : public Window {
                    Keyboard exception) override {
     block_events_ = status;
     exception_ = exception;
+    ForAllObservers(
+      [status](WindowObserver* obs) { obs->OnEventStatusChanged(status); });
   }
 
   bool ShouldBlockEvent() { return block_events_; }
@@ -114,7 +116,8 @@ class GLFWWindowController : public Window {
            static_cast<float>(buffer_size.y_);
   }
 
-  ~GLFWWindowController() {
+  ~GLFWWindowController() override {
+    LOG(INFO) << "Destroying window!";
 #ifdef MEP_ENGINE_USE_IMGUI
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
@@ -156,7 +159,9 @@ void GLFWWindowController::OnKeyEventHandler(GLFWwindow* window,
   if (key >= (int)'A' && key <= (int)'Z') {
     KeyEvent key_event;
     key_event.code = static_cast<Keyboard>(key - 'A');
-    if (master_window->ShouldBlockEvent() && key_event.code != master_window->exception_) {
+    if (action != GLFW_RELEASE &&
+        master_window->ShouldBlockEvent() && 
+        key_event.code != master_window->exception_) {
       return;
     }
 

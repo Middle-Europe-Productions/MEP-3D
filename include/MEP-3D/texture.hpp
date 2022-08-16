@@ -7,6 +7,8 @@
 #include <MEP-3D/image.hpp>
 #include <MEP-3D/observer_list.hpp>
 
+#include <memory>
+
 class Texture : public Asset {
  public:
   Texture();
