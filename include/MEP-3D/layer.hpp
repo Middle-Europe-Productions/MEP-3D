@@ -15,7 +15,6 @@ class Layer : public Identity {
   virtual void OnDetach() = 0;
   virtual void OnUpdate(float time_delta) = 0;
   virtual void OnDraw(RenderTarget& render_target) = 0;
-  const std::string& GetName() const;
   std::shared_ptr<Engine> GetEngine() const;
   virtual ~Layer();
 
@@ -24,7 +23,6 @@ class Layer : public Identity {
   void UnregisterEngine();
   virtual bool ShouldIgnoreLayer() const;
   std::shared_ptr<Engine> engine_;
-  const std::string layer_name_;
 };
 
 #endif

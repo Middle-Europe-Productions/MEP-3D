@@ -1,4 +1,5 @@
 #include <imgui.h>
+#include <MEP-3D/common_names.hpp>
 #include <MEP-3D/engine.hpp>
 #include <MEP-3D/template/engine_data_ui_layer.hpp>
 
@@ -12,11 +13,14 @@ class EngineDataUILayerImGUI : public EngineDataUILayer {
     if (engine && engine->GetWindow()) {
       engine->GetWindow()->AddObserver(this);
     }
+    block_events_ = true;
+    block_applied_ = false;
   }
   void OnDetach() override {}
   void OnUpdate(float time_delta) override {
-    if (GetEngine() && GetEngine()->GetWindow()) {
+    if (!block_applied_ && GetEngine() && GetEngine()->GetWindow()) {
       GetEngine()->GetWindow()->BlockEvents(block_events_, Keyboard::B);
+      block_applied_ = true;
     }
   }
   void OnDraw(RenderTarget& render_target) override {
@@ -57,6 +61,7 @@ class EngineDataUILayerImGUI : public EngineDataUILayer {
     if (event.action == Action::Released && event.code == Keyboard::B) {
       LOG(INFO) << "Blocking events!";
       block_events_ = !block_events_;
+      block_applied_ = false;
     }
   }
   void OnMouseEvent(MouseEvent event) override {}
@@ -64,9 +69,10 @@ class EngineDataUILayerImGUI : public EngineDataUILayer {
 
  private:
   bool block_events_ = false;
+  bool block_applied_ = true;
 };
 
-EngineDataUILayer::EngineDataUILayer() : Layer(__FUNCTION__) {}
+EngineDataUILayer::EngineDataUILayer() : Layer(kEngineDataUILayer) {}
 
 std::unique_ptr<EngineDataUILayer> EngineDataUILayer::Create() {
   return std::make_unique<EngineDataUILayerImGUI>();

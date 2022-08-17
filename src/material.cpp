@@ -1,3 +1,4 @@
+#include <MEP-3D/common_names.hpp>
 #include <MEP-3D/material.hpp>
 
 std::string ToString(MaterialUniform material_uniform) {
@@ -11,7 +12,7 @@ std::string ToString(MaterialUniform material_uniform) {
 }
 
 Material::Material(std::optional<MaterialConfig> material_config)
-    : Asset(__FUNCTION__), material_config_(material_config) {}
+    : Asset(kMaterial), material_config_(material_config) {}
 
 void Material::SetMaterialConfig(const MaterialConfig& material_config) {
   if (material_config_.has_value()) {

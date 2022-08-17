@@ -8,6 +8,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <MEP-3D/directional_light.hpp>
+#include <MEP-3D/engine.hpp>
 #include <MEP-3D/figures.hpp>
 #include <MEP-3D/image.hpp>
 #include <MEP-3D/layer_assets.hpp>
@@ -25,7 +26,6 @@
 #include <MEP-3D/vector.hpp>
 #include <MEP-3D/window.hpp>
 #include <MEP-3D/window_observer.hpp>
-#include <MEP-3D/engine.hpp>
 
 const std::unordered_map<LightUniforms, std::string>
     kDirectionalLightUniformMap = {
@@ -39,6 +39,26 @@ const std::unordered_map<LightUniforms, std::string>
 const std::unordered_map<MaterialUniform, std::string> kMaterialUniformMap = {
     {MaterialUniform::SpecularIntensity, "material.specular_intensity"},
     {MaterialUniform::Shininess, "material.shininess"}};
+
+const std::unordered_map<LightUniforms, std::string> kPointLightUniformMap = {
+    {LightUniforms::AmbientColor, "base.color"},
+    {LightUniforms::AmbientIntensity, "base.ambient_intensity"},
+    {LightUniforms::DiffuseIntensity, "base.diffuse_intensity"},
+    {LightUniforms::Position, "position"},
+    {LightUniforms::Constant, "constant"},
+    {LightUniforms::Linear, "linear"},
+    {LightUniforms::Quadratic, "quadratic"}};
+
+const std::unordered_map<LightUniforms, std::string> kSpotLightUniformMap = {
+    {LightUniforms::AmbientColor, "base.base.color"},
+    {LightUniforms::AmbientIntensity, "base.base.ambient_intensity"},
+    {LightUniforms::DiffuseIntensity, "base.base.diffuse_intensity"},
+    {LightUniforms::Position, "base.position"},
+    {LightUniforms::Constant, "base.constant"},
+    {LightUniforms::Linear, "base.linear"},
+    {LightUniforms::Quadratic, "base.quadratic"},
+    {LightUniforms::Direction, "direction"},
+    {LightUniforms::Edge, "edge"}};
 
 class BenchmarkLayer final : public Layer, public LayerAssets {
  public:
@@ -75,10 +95,19 @@ class BenchmarkLayer final : public Layer, public LayerAssets {
         "model", static_cast<unsigned int>(CommonUniform::Model));
     shader_.SaveUniformToMemory(
         "eye_position", static_cast<unsigned int>(CommonUniform::Position));
+    // Directional light
     light = std::make_unique<DirectionalLight>(
         AmbientConfig{Color(255, 255, 255), 0.1f},
         DiffuseConfig{Vec3f(-2.0f, -1.0f, -2.0f), 1.0f});
     light->BindUniforms(shader_, kDirectionalLightUniformMap);
+    // Point lights
+    point_light_con = std::make_unique<PointLightController>(
+        16, "point_light", shader_.GetUniform("point_light_count"),
+        kPointLightUniformMap);
+    point_light_con->Bind(&shader_);
+    point_light_con->MakeAndBind(std::make_unique<PointLight>(
+        AmbientConfig{Color(255, 0, 0), 0.5f},
+        PointConfig{Vec3f{1.0f, 1.0f, 1.0f}, 1, 1, 0.001}, 0.5f));
 
     AttachDirectionaLight(std::move(light));
     // Add UI
@@ -95,6 +124,8 @@ class BenchmarkLayer final : public Layer, public LayerAssets {
     }
     // Init plane
     plane = std::make_unique<Plane>(100.0f);
+    plane->Bind(plain_tex.get());
+    plane->Bind(&shader_);
   }
   void OnDetach() override {}
   void OnUpdate(float time_delta) { camera_->Update(); }
@@ -102,6 +133,7 @@ class BenchmarkLayer final : public Layer, public LayerAssets {
     shader_.StartUsing();
     UseAllDirectionalLights();
     plain_tex->Use();
+    point_light_con->Use();
     shader_.SetUniform("use_texture", 1);
     for (auto& tr : triangles_) {
       tr->Draw(render_target);
@@ -120,6 +152,7 @@ class BenchmarkLayer final : public Layer, public LayerAssets {
   std::unique_ptr<Camera> camera_;
   std::unique_ptr<PerspectiveView> view_;
   std::unique_ptr<DirectionalLight> light;
+  std::unique_ptr<PointLightController> point_light_con;
 };
 
 int main() {

@@ -33,6 +33,7 @@ set(SOURCE
   ${SRC_ROOT}/layer.cpp
   ${SRC_ROOT}/layer_assets.cpp
   ${SRC_ROOT}/template/layer_assets_ui_layer.cpp
+  ${SRC_ROOT}/common_names.cpp
 )
 
 set(HEADERS
@@ -86,6 +87,8 @@ set(HEADERS
   ${INC_ROOT}/layer_assets.hpp
   ${INC_ROOT}/template/engine_data_ui_layer.hpp
   ${INC_ROOT}/template/layer_assets_ui_layer.hpp
+  ${INC_ROOT}/template/util_common_draw.hpp
+  ${INC_ROOT}/common_names.hpp
 )
 
 set(INCLUDE_DIRECTORIES
@@ -136,6 +139,7 @@ if (MEP_USE_IMGUI)
     ${SRC_ROOT}/integration/user_interface_imgui.cpp
     ${SRC_ROOT}/integration/engine_data_ui_layer_imgui.cpp
     ${SRC_ROOT}/integration/layer_assets_ui_layer_imgui.cpp
+    ${SRC_ROOT}/integration/util_common_draw_imgui.cpp
   )
   list(APPEND LINK_TARGETS
     imgui
@@ -145,6 +149,7 @@ else()
     ${SRC_ROOT}/integration/user_interface_default.cpp
     ${SRC_ROOT}/integration/engine_data_ui_layer_default.cpp
     ${SRC_ROOT}/integration/layer_assets_ui_layer_default.cpp
+    ${SRC_ROOT}/integration/util_common_draw_default.cpp
   )
 endif (MEP_USE_IMGUI)
 

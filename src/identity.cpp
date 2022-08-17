@@ -4,26 +4,28 @@ std::unordered_map<std::string, int> Identity::identity_ =
     std::unordered_map<std::string, int>();
 unsigned int Identity::global_id_provider_ = 0;
 
-Identity::Identity() : identity_char_(), id_(-1), global_id_(-1) {}
+Identity::Identity() : class_name_(), name_(), id_(-1), global_id_(-1) {}
 
-Identity::Identity(const char* name)
-    : identity_char_(name), global_id_(global_id_provider_++) {
-  auto temp = identity_.find(name);
+Identity::Identity(const char* class_name) : Identity(class_name, "") {
+  name_ = class_name_ + '_' + std::to_string(GetId());
+}
+
+Identity::Identity(const char* class_name, const char* name)
+    : class_name_(class_name), name_(name), global_id_(global_id_provider_++) {
+  auto temp = identity_.find(class_name);
   if (temp == identity_.end()) {
-    identity_[name] = 0;
+    identity_[class_name] = 0;
     id_ = 0;
   } else {
-    id_ = ++identity_[name];
+    id_ = ++identity_[class_name];
   }
 }
 
 Identity::Identity(const Identity& id)
-    : identity_char_(id.identity_char_),
-      global_id_(id.global_id_),
-      id_(id.id_) {}
+    : class_name_(id.class_name_), global_id_(id.global_id_), id_(id.id_) {}
 
 bool Identity::IsValid() {
-  return identity_char_.size() == 0;
+  return class_name_.size() == 0;
 }
 
 unsigned int Identity::GetId() const {
@@ -34,15 +36,20 @@ unsigned int Identity::GetGlobalId() const {
   return global_id_provider_;
 }
 
+const std::string& Identity::GetName() const {
+  return name_;
+}
+
 std::string Identity::ToString() const {
-  return "\"Identity\": { name: " + std::string(identity_char_) +
+  return "\"Identity\": { name: " + std::string(class_name_) +
          ", id: " + std::to_string(id_) +
          ", global_id: " + std::to_string(global_id_) + "}";
 }
 
 Identity& Identity::operator=(const Identity& id) {
   if (this != &id) {
-    identity_char_ = id.identity_char_;
+    class_name_ = id.class_name_;
+    name_ = id.name_;
     global_id_ = id.global_id_;
     id_ = id.id_;
   }
@@ -58,5 +65,5 @@ const std::unordered_map<std::string, int>& Identity::GetIdentityMap() {
 }
 
 Identity::~Identity() {
-  identity_[identity_char_]--;
+  identity_[class_name_]--;
 }

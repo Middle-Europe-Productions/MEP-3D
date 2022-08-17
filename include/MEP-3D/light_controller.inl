@@ -11,15 +11,19 @@ LightController<LightPtr>::LightController(
 
 template <typename LightPtr>
 typename std::vector<LightPtr>::iterator LightController<LightPtr>::MakeAndBind(
-    LightPtr light_ptr,
-    const Shader& shader_) {
+    LightPtr light_ptr) {
   if (point_light_container_.size() >= max_size_) {
     LOG(INFO) << "Reached maximal number of point lights (" << max_size_ << ")";
     return point_light_container_.end();
   }
+  if (!Get<Shader>()) {
+    LOG(ERROR) << "You did not bind shader to " << __FUNCTION__;
+    return point_light_container_.end();
+  }
   point_light_container_.emplace_back(std::move(light_ptr));
-  point_light_container_.back()->BindUniforms(
-      shader_, point_light_container_.size() - 1, struct_name_, uniform_map_);
+  point_light_container_.back()->BindUniforms(*Get<Shader>(),
+                                              point_light_container_.size() - 1,
+                                              struct_name_, uniform_map_);
   return point_light_container_.end() - 1;
 }
 

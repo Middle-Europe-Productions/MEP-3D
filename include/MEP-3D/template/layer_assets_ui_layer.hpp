@@ -10,6 +10,7 @@ class LayerAssetsUILayer : public Layer, public LayerAssetsObserver {
   void OnDetach();
   LayerAssets* GetLayerAssetsPtr();
   static std::unique_ptr<LayerAssetsUILayer> Create();
+  virtual ~LayerAssetsUILayer();
 
  protected:
   LayerAssets* scene_ptr_;

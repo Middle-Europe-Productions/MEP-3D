@@ -1,8 +1,9 @@
 #include <glog/logging.h>
 #include <stb_image.h>
+#include <MEP-3D/common_names.hpp>
 #include <MEP-3D/texture.hpp>
 
-Texture::Texture() : Asset(__FUNCTION__) {
+Texture::Texture() : Asset(kTexture) {
   texture_id_ = 0;
 }
 

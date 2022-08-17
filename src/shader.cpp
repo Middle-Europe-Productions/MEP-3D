@@ -1,8 +1,9 @@
 #include <glog/logging.h>
+#include <MEP-3D/common_names.hpp>
 #include <MEP-3D/shader.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-Shader::Shader() : Identity(__FUNCTION__), status_(false) {
+Shader::Shader() : Identity(kShader), status_(false) {
   LOG(INFO) << __FUNCTION__ << ", " << ToString();
   shader_id_ = 0;
 }

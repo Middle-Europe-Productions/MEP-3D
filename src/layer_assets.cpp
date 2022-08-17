@@ -16,8 +16,22 @@ std::size_t LayerAssets::AttachDirectionaLight(
   return directional_lights_.size() - 1;
 }
 
-std::vector<std::unique_ptr<SpotLight>>& LayerAssets::GetSpotLights() {
-  return spot_lights_;
+void LayerAssets::AttachSpotLightController(
+    std::unique_ptr<SpotLightController> spot_light_controller_) {
+  spot_light_controller_ = std::move(spot_light_controller_);
+}
+
+std::unique_ptr<SpotLightController>& LayerAssets::GetSpotLightController() {
+  return spot_light_controller_;
+}
+
+void LayerAssets::AttachPointLightController(
+    std::unique_ptr<PointLightController> point_light_controller) {
+  point_light_controller_ = std::move(point_light_controller);
+}
+
+std::unique_ptr<PointLightController>& LayerAssets::GetPointLightController() {
+  return point_light_controller_;
 }
 
 void LayerAssets::UseAllDirectionalLights() {

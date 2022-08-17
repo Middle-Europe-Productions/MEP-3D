@@ -1,6 +1,7 @@
+#include <MEP-3D/common_names.hpp>
 #include <MEP-3D/engine.hpp>
 
-Engine::Engine() : Identity(__FUNCTION__), window_(nullptr) {
+Engine::Engine() : Identity(kEngine), window_(nullptr) {
   LOG(INFO) << "Engine created: " << ToString();
 }
 
@@ -45,7 +46,7 @@ void Engine::Run() {
       layer_data.layer_draw_time_ms =
           (time->GetCurrentTime() - layer_data.layer_draw_time_ms) * 1000.0f;
       layer_data.identity = *layer;
-      layer_data.layer_name = layer->layer_name_;
+      layer_data.layer_name = layer->GetName();
       engine_monitor.frame_data.layer_data.push_back(layer_data);
     }
 
@@ -61,14 +62,15 @@ void Engine::Run() {
         layer_data.layer_update_time_ms = time->GetCurrentTime();
         layer->OnUpdate(time_delta);
         layer_data.layer_update_time_ms =
-            (time->GetCurrentTime() - layer_data.layer_update_time_ms) * 1000.0f;
+            (time->GetCurrentTime() - layer_data.layer_update_time_ms) *
+            1000.0f;
 
         layer_data.layer_draw_time_ms = time->GetCurrentTime();
         layer->OnDraw(*window_);
         layer_data.layer_draw_time_ms =
             (time->GetCurrentTime() - layer_data.layer_draw_time_ms) * 1000.0f;
         layer_data.identity = *layer;
-        layer_data.layer_name = layer->layer_name_;
+        layer_data.layer_name = layer->GetName();
         custom_layer_data.layer_array.push_back(layer_data);
       }
       ele->after_run();
@@ -79,7 +81,8 @@ void Engine::Run() {
 
     window_->FinishLoop();
     engine_monitor.frame_data.frame_time =
-        (time->GetCurrentTime() - engine_monitor.frame_data.frame_time) * 1000.0f;
+        (time->GetCurrentTime() - engine_monitor.frame_data.frame_time) *
+        1000.0f;
     engine_monitor_ = engine_monitor;
     if (time_controller > 1.0) {
       engine_monitor_.fps = frames;

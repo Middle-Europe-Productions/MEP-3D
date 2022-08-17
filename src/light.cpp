@@ -1,3 +1,4 @@
+#include <MEP-3D/common_names.hpp>
 #include <MEP-3D/light.hpp>
 
 std::string ToString(LightUniforms uniform_type) {
@@ -27,13 +28,13 @@ std::string ToString(LightUniforms uniform_type) {
 }
 
 Light::Light()
-    : Asset(__FUNCTION__),
+    : Asset(kLight),
       ambient_config_(std::nullopt),
       diffuse_config_(std::nullopt) {}
 
 Light::Light(std::optional<AmbientConfig> ambient_config,
              std::optional<DiffuseConfig> diffuse_config)
-    : Asset(__FUNCTION__),
+    : Asset(kLight),
       ambient_config_(ambient_config),
       diffuse_config_(diffuse_config) {}
 

@@ -4,18 +4,18 @@
 #include <MEP-3D/point_light.hpp>
 #include <MEP-3D/shader.hpp>
 #include <MEP-3D/spot_light.hpp>
+#include <MEP-3D/asset_controller.hpp>
 
 #include <unordered_map>
 
 template <typename LightPtr>
-class LightController {
+class LightController : public AssetController {
  public:
   LightController(unsigned int max_point_light,
                   const std::string& struct_name,
                   GLint light_count_location,
                   std::unordered_map<LightUniforms, std::string> uniform_map);
-  typename std::vector<LightPtr>::iterator MakeAndBind(LightPtr light_ptr,
-                                                       const Shader& shader_);
+  typename std::vector<LightPtr>::iterator MakeAndBind(LightPtr light_ptr);
   void ForAll(std::function<void(LightPtr&)> function);
   void Use();
   const std::vector<LightPtr>& GetContainer() const;

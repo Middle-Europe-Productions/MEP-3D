@@ -1,3 +1,4 @@
+#include <MEP-3D/common_names.hpp>
 #include <MEP-3D/template/engine_data_ui_layer.hpp>
 
 class EngineDataUILayerDefault : public EngineDataUILayer {
@@ -12,7 +13,7 @@ class EngineDataUILayerDefault : public EngineDataUILayer {
   bool ShouldIgnoreLayer() const { return true; }
 };
 
-EngineDataUILayer::EngineDataUILayer() : Layer(__FUNCTION__) {}
+EngineDataUILayer::EngineDataUILayer() : Layer(kEngineDataUILayer) {}
 
 std::unique_ptr<EngineDataUILayer> EngineDataUILayer::Create() {
   return std::make_unique<EngineDataUILayerDefault>();

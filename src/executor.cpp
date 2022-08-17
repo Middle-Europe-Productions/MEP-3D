@@ -1,3 +1,4 @@
+#include <MEP-3D/common_names.hpp>
 #include <MEP-3D/executor.hpp>
 
 Task::Task(TaskCallback task) : task_(task) {}
@@ -15,7 +16,7 @@ void TaskWithCallback::Execute() {
 }
 
 Executor::Executor(Type type, std::size_t number_of_thread)
-    : Identity(__FUNCTION__), type_(type) {
+    : Identity(kExecutor), type_(type) {
   LOG(INFO) << "Starting the executor: " << ToString()
             << ", type: " << TypeToString()
             << ", number of threads: " << number_of_thread;
