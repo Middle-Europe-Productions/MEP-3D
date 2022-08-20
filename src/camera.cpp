@@ -103,7 +103,7 @@ std::string Camera::ToString() const {
   return std::string(
       "camera: { \nPosition: " +
       glm::to_string(Get(CameraVariables::Position)) + ", \n" +
-      "Front: " + glm::to_string(Get(CameraVariables::Direction)) + ", \n" +
+      "Direction: " + glm::to_string(Get(CameraVariables::Direction)) + ", \n" +
       "Up: " + glm::to_string(up_) + ", \n" +
       "Right: " + glm::to_string(right_) + ", \n" + "World_up: " +
       glm::to_string(world_up_) + ", \n" + "Yaw: " + std::to_string(yaw_) +

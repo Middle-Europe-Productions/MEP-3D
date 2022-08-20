@@ -1,8 +1,9 @@
+#include <MEP-3D/common_names.hpp>
 #include <MEP-3D/directional_light.hpp>
 
 DirectionalLight::DirectionalLight(const AmbientConfig& ambient_config,
                                    const DiffuseConfig& diffuse_config)
-    : Light(ambient_config, diffuse_config, __FUNCTION__) {}
+    : Light(ambient_config, diffuse_config, kDirectionalLight) {}
 
 AmbientConfig& DirectionalLight::GetAmbientConfigRef() {
   assert(ambient_config_.has_value());

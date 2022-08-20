@@ -2,10 +2,12 @@
 #include <MEP-3D/common_names.hpp>
 #include <MEP-3D/engine.hpp>
 #include <MEP-3D/template/engine_data_ui_layer.hpp>
+#include <MEP-3D/template/util_common_draw.hpp>
 
 namespace {
 constexpr Keyboard kBlockEventKey = Keyboard::B;
-}
+constexpr int kPlotElementsBuffer = 100;
+}  // namespace
 
 class EngineDataUILayerImGUI : public EngineDataUILayer {
   void OnAttach() override {
@@ -18,44 +20,29 @@ class EngineDataUILayerImGUI : public EngineDataUILayer {
   }
   void OnDetach() override {}
   void OnUpdate(float time_delta) override {
-    if (!block_applied_ && GetEngine() && GetEngine()->GetWindow()) {
+    if (!GetEngine())
+      return;
+    if (!block_applied_ && GetEngine()->GetWindow()) {
       GetEngine()->GetWindow()->BlockEvents(block_events_, Keyboard::B);
       block_applied_ = true;
     }
   }
   void OnDraw(RenderTarget& render_target) override {
-    const auto& engine_data = GetEngine()->GetEngineMonitor();
     ImGui::Begin("Engine Data");
-    ImGui::Text("Frame rate: %.1f", ImGui::GetIO().Framerate);
-    ImGui::Text("Total frame time: %.1f", engine_data.frame_data.frame_time);
-    if (ImGui::TreeNode("Layers")) {
-      for (auto& ld : engine_data.frame_data.layer_data) {
-        if (ImGui::TreeNode(ld.layer_name.c_str())) {
-          ImGui::Text(ld.identity.ToString().c_str());
-          ImGui::Text("Layer draw time: %.3f", ld.layer_draw_time_ms);
-          ImGui::Text("Layer update time: %.3f", ld.layer_update_time_ms);
-          ImGui::TreePop();
-        }
+    ImGui::Checkbox("Pause", &should_not_update_);
+    if (should_not_update_) {
+      if (!buffer_applied) {
+        buffer = GetEngine()->GetEngineMonitor();
+        buffer_applied = true;
       }
-      ImGui::TreePop();
-    }
-    ImGui::Separator();
-    for (auto& sd : engine_data.frame_data.structure_data) {
-      if (ImGui::TreeNode(sd.structure_name.c_str())) {
-        for (auto& ld : sd.layer_array) {
-          if (ImGui::TreeNode(ld.layer_name.c_str())) {
-            ImGui::Text(ld.identity.ToString().c_str());
-            ImGui::Text("Layer draw time: %.3f", ld.layer_draw_time_ms);
-            ImGui::Text("Layer update time: %.3f", ld.layer_update_time_ms);
-            ImGui::TreePop();
-          }
-        }
-        ImGui::TreePop();
-      }
+      UI::DrawEngineMonitorDataConst(buffer);
+    } else {
+      const auto& engine_data = GetEngine()->GetEngineMonitor();
+      UI::DrawEngineMonitorDataConst(engine_data);
+      buffer_applied = false;
     }
     ImGui::End();
   }
-
   bool ShouldIgnoreLayer() const { return false; }
   void OnKeyEvent(KeyEvent event) override {
     if (event.action == Action::Released && event.code == Keyboard::B) {
@@ -68,8 +55,11 @@ class EngineDataUILayerImGUI : public EngineDataUILayer {
   void OnEventStatusChanged(bool events_blocked) override {}
 
  private:
+  EngineMonitorData buffer;
   bool block_events_ = false;
   bool block_applied_ = true;
+  bool should_not_update_ = false;
+  bool buffer_applied = false;
 };
 
 EngineDataUILayer::EngineDataUILayer() : Layer(kEngineDataUILayer) {}

@@ -1,11 +1,14 @@
+
+#include <MEP-3D/common_names.hpp>
 #include <MEP-3D/point_light.hpp>
+
 
 PointLight::PointLight(const AmbientConfig& ambient_config,
                        const PointConfig& point_config,
                        float diffuse_intensity)
     : Light(ambient_config,
             DiffuseConfig{std::nullopt, diffuse_intensity},
-            __FUNCTION__),
+            kPointLight),
       point_config_(point_config) {
   LOG(INFO) << __FUNCTION__ << ", " << ToString();
 }
@@ -43,6 +46,12 @@ AmbientConfig& PointLight::GetAmbientConfigRef() {
 PointConfig& PointLight::GetPointConfigRef() {
   return point_config_;
 }
+
+DiffuseConfig& PointLight::GetDiffuseConfigRef() {
+  assert(diffuse_config_.has_value());
+  return diffuse_config_.value();
+}
+
 float& PointLight::GetDiffuseIntensityRef() {
   assert(diffuse_config_.has_value());
   return diffuse_config_.value().intensity;

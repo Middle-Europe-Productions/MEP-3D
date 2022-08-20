@@ -28,6 +28,23 @@ typename std::vector<LightPtr>::iterator LightController<LightPtr>::MakeAndBind(
 }
 
 template <typename LightPtr>
+bool LightController<LightPtr>::IsValid(
+    typename const std::vector<LightPtr>::iterator& iter) const {
+  return iter != point_light_container_.end();
+}
+template <typename LightPtr>
+void LightController<LightPtr>::Remove(const Identity& id) {
+  LOG(INFO) << __FUNCTION__ << ", " << id.ToString();
+  point_light_container_.erase(std::remove_if(point_light_container_.begin(),
+                                              point_light_container_.end(),
+                                              [&id](const auto& in) {
+                                                return in->GetGlobalId() ==
+                                                       id.GetGlobalId();
+                                              }),
+                               point_light_container_.end());
+}
+
+template <typename LightPtr>
 void LightController<LightPtr>::ForAll(
     std::function<void(LightPtr&)> function) {
   for (auto& light : point_light_container_) {

@@ -8,4 +8,5 @@ void DrawSpotConfig(SpotConfig& point_config) {}
 void DrawSpotLight(SpotLight& point_light) {}
 void DrawPointConfig(PointConfig& point_config) {}
 void DrawPointLight(PointLight& point_light) {}
+void DrawEngineMonitorDataConst(const EngineMonitorData& engine_monitor_data) {}
 }  // namespace UI

@@ -33,7 +33,7 @@ unsigned int Identity::GetId() const {
 }
 
 unsigned int Identity::GetGlobalId() const {
-  return global_id_provider_;
+  return global_id_;
 }
 
 const std::string& Identity::GetName() const {

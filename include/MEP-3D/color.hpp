@@ -5,6 +5,7 @@
 
 class Color {
  public:
+  constexpr Color() : r_(0), g_(0), b_(0), a_(0) {}
   constexpr Color(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255)
       : r_(r), g_(g), b_(b), a_(a) {}
 

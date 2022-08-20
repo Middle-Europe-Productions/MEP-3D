@@ -21,6 +21,7 @@ class SpotLight : public PointLight {
  private:
   SpotConfig spot_config_;
   GLfloat processed_edge_;
+  float last_edge_;
 };
 
 #endif

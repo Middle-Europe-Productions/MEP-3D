@@ -11,7 +11,7 @@
 #include <MEP-3D/engine.hpp>
 #include <MEP-3D/figures.hpp>
 #include <MEP-3D/image.hpp>
-#include <MEP-3D/layer_assets.hpp>
+#include <MEP-3D/layer_controller.hpp>
 #include <MEP-3D/light_controller.hpp>
 #include <MEP-3D/material.hpp>
 #include <MEP-3D/model.hpp>
@@ -19,7 +19,7 @@
 #include <MEP-3D/shader.hpp>
 #include <MEP-3D/spot_light.hpp>
 #include <MEP-3D/template/engine_data_ui_layer.hpp>
-#include <MEP-3D/template/layer_assets_ui_layer.hpp>
+#include <MEP-3D/template/layer_controller_ui_layer.hpp>
 #include <MEP-3D/texture.hpp>
 #include <MEP-3D/user_interface.hpp>
 #include <MEP-3D/utils.hpp>
@@ -60,10 +60,10 @@ const std::unordered_map<LightUniforms, std::string> kSpotLightUniformMap = {
     {LightUniforms::Direction, "direction"},
     {LightUniforms::Edge, "edge"}};
 
-class BenchmarkLayer final : public Layer, public LayerAssets {
+class BenchmarkLayer final : public LayerController {
  public:
   BenchmarkLayer(unsigned int triangles_count)
-      : Layer("benchmark_layer_" + std::to_string(triangles_count)),
+      : LayerController("benchmark_layer_" + std::to_string(triangles_count)),
         triangles_count_(triangles_count) {}
   void OnAttach() override {
     auto& window = GetEngine()->GetWindow();
@@ -106,13 +106,20 @@ class BenchmarkLayer final : public Layer, public LayerAssets {
         kPointLightUniformMap);
     point_light_con->Bind(&shader_);
     point_light_con->MakeAndBind(std::make_unique<PointLight>(
-        AmbientConfig{Color(255, 0, 0), 0.5f},
+        AmbientConfig{Color(0, 247, 255), 0.5f},
         PointConfig{Vec3f{1.0f, 1.0f, 1.0f}, 1, 1, 0.001}, 0.5f));
 
     AttachDirectionaLight(std::move(light));
+    AttachPointLightController(std::move(point_light_con));
+
+    auto spot_light_con = std::make_unique<SpotLightController>(
+        16, "spot_light", shader_.GetUniform("spot_light_count"),
+        kSpotLightUniformMap);
+    spot_light_con->Bind(&shader_);
+    AttachSpotLightController(std::move(spot_light_con));
     // Add UI
-    auto ui_layer = LayerAssetsUILayer::Create();
-    LayerAssets::AddObserver(ui_layer.get());
+    auto ui_layer = LayerControllerUILayer::Create();
+    LayerController::AddObserver(ui_layer.get());
     GetEngine()->AttachLayerToStructure(std::move(ui_layer), 0);
     // Create elements
     for (int i = 0; i < triangles_count_; i++) {
@@ -132,8 +139,9 @@ class BenchmarkLayer final : public Layer, public LayerAssets {
   void OnDraw(RenderTarget& render_target) {
     shader_.StartUsing();
     UseAllDirectionalLights();
+    UseAllPointLights();
+    UseAllSpotLights();
     plain_tex->Use();
-    point_light_con->Use();
     shader_.SetUniform("use_texture", 1);
     for (auto& tr : triangles_) {
       tr->Draw(render_target);

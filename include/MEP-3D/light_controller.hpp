@@ -1,10 +1,10 @@
 #ifndef POINT_LIGHT_CONTROLLER_HPP
 #define POINT_LIGHT_CONTROLLER_HPP
 
+#include <MEP-3D/asset_controller.hpp>
 #include <MEP-3D/point_light.hpp>
 #include <MEP-3D/shader.hpp>
 #include <MEP-3D/spot_light.hpp>
-#include <MEP-3D/asset_controller.hpp>
 
 #include <unordered_map>
 
@@ -16,6 +16,8 @@ class LightController : public AssetController {
                   GLint light_count_location,
                   std::unordered_map<LightUniforms, std::string> uniform_map);
   typename std::vector<LightPtr>::iterator MakeAndBind(LightPtr light_ptr);
+  bool IsValid(typename const std::vector<LightPtr>::iterator& iter) const;
+  void Remove(const Identity& id);
   void ForAll(std::function<void(LightPtr&)> function);
   void Use();
   const std::vector<LightPtr>& GetContainer() const;

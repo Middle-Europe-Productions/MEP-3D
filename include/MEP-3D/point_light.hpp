@@ -20,6 +20,7 @@ class PointLight : public Light {
   void Use() override;
   AmbientConfig& GetAmbientConfigRef();
   PointConfig& GetPointConfigRef();
+  DiffuseConfig& GetDiffuseConfigRef();
   float& GetDiffuseIntensityRef();
 
  protected:
