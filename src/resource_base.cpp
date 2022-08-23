@@ -4,8 +4,14 @@ std::string ToString(Status status) {
   switch (status) {
     case Status::Unknown:
       return "Unknown";
+    case Status::Waiting:
+      return "Waiting";
     case Status::Loading:
       return "Loading";
+    case Status::Failed:
+      return "Failed";
+    case Status::Uninitialized:
+      return "Uninitialized";
     case Status::Avalible:
       return "Avalible";
   }

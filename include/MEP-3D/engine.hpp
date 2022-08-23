@@ -59,6 +59,7 @@ class Engine : public std::enable_shared_from_this<Engine>, public Identity {
 
  private:
   bool EvaluateLayer(const std::unique_ptr<Layer>& layer) const;
+  bool StructureExists(int index) const;
   WindowPtr window_;
   EngineMonitorData engine_monitor_;
   std::vector<std::unique_ptr<Layer>> layers_;

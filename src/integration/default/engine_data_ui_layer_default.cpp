@@ -1,8 +1,12 @@
 #include <MEP-3D/common_names.hpp>
+#include <MEP-3D/engine.hpp>
 #include <MEP-3D/template/engine_data_ui_layer.hpp>
 
 class EngineDataUILayerDefault : public EngineDataUILayer {
-  EngineDataUILayerDefault() : EngineDataUILayer() {}
+ public:
+  EngineDataUILayerDefault() : EngineDataUILayer() {
+    LOG(INFO) << __FUNCTION__;
+  }
   void OnAttach() override {}
   void OnDetach() override {}
   void OnUpdate(float time_delta) override {}
@@ -11,6 +15,10 @@ class EngineDataUILayerDefault : public EngineDataUILayer {
   void OnMouseEvent(MouseEvent event) override {}
   void OnEventStatusChanged(bool events_blocked) override {}
   bool ShouldIgnoreLayer() const { return true; }
+  virtual ~EngineDataUILayerDefault() {
+    if (GetEngine() && GetEngine()->GetWindow())
+      GetEngine()->GetWindow()->RemoveObserver(this);
+  }
 };
 
 EngineDataUILayer::EngineDataUILayer() : Layer(kEngineDataUILayer) {}

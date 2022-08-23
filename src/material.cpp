@@ -21,6 +21,11 @@ void Material::SetMaterialConfig(const MaterialConfig& material_config) {
   material_config_ = material_config;
 }
 
+MaterialConfig& Material::GetMaterialConfigRef() {
+  assert(material_config_.has_value());
+  return material_config_.value();
+}
+
 void Material::Use() {
   if (!material_config_.has_value())
     return;

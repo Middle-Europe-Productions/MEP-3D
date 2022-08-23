@@ -114,7 +114,15 @@ void Engine::AttachLayer(std::unique_ptr<Layer> obs) {
 int Engine::AttachStructure(std::unique_ptr<CustomLayerStructure> str) {
   str->layer_array.erase(
       std::remove_if(str->layer_array.begin(), str->layer_array.end(),
-                     [](const auto& in) { return in->ShouldIgnoreLayer(); }),
+                     [this](const auto& in) {
+                       if (!EvaluateLayer(in)) {
+                         in->RegisterEngine(shared_from_this());
+                         LOG(INFO)
+                             << in->ToString() << ", layer ignored! Detaching";
+                         return true;
+                       }
+                       return false;
+                     }),
       str->layer_array.end());
   if (str->layer_array.empty()) {
     LOG(INFO) << "Attaching empty structure";
@@ -129,9 +137,12 @@ int Engine::AttachStructure(std::unique_ptr<CustomLayerStructure> str) {
 
 void Engine::AttachLayerToStructure(std::unique_ptr<Layer> layer,
                                     int custom_layer_index) {
+  layer->RegisterEngine(shared_from_this());
+  if (!EvaluateLayer(layer) || !StructureExists(custom_layer_index)) {
+    layer->OnDetach();
+    return;
+  }
   custom_layers_[custom_layer_index]->layer_array.push_back(std::move(layer));
-  custom_layers_[custom_layer_index]->layer_array.back()->RegisterEngine(
-      shared_from_this());
 }
 
 std::unique_ptr<Layer> Engine::Detachlayer(const Identity& id) {
@@ -166,6 +177,9 @@ bool Engine::EvaluateLayer(const std::unique_ptr<Layer>& layer) const {
     return false;
   }
   return true;
+}
+bool Engine::StructureExists(int index) const {
+  return index >= 0 && index < custom_layers_.size();
 }
 
 Engine::~Engine() {

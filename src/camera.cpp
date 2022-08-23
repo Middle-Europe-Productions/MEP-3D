@@ -101,13 +101,13 @@ void Camera::OnEventStatusChanged(bool events_blocked) {
 
 std::string Camera::ToString() const {
   return std::string(
-      "camera: { \nPosition: " +
+      "\"camera\": { \n\"Position\": " +
       glm::to_string(Get(CameraVariables::Position)) + ", \n" +
-      "Direction: " + glm::to_string(Get(CameraVariables::Direction)) + ", \n" +
-      "Up: " + glm::to_string(up_) + ", \n" +
-      "Right: " + glm::to_string(right_) + ", \n" + "World_up: " +
-      glm::to_string(world_up_) + ", \n" + "Yaw: " + std::to_string(yaw_) +
-      ", \n" + "Pitch: " + std::to_string(pitch_) + "\n}");
+      "\"Direction\": " + glm::to_string(Get(CameraVariables::Direction)) +
+      ", \n" + "\"Up\": " + glm::to_string(up_) + ", \n" +
+      "\"Right\": " + glm::to_string(right_) + ", \n" + "\"World_up\": " +
+      glm::to_string(world_up_) + ", \n" + "\"Yaw\": " + std::to_string(yaw_) +
+      ", \n" + "\"Pitch\": " + std::to_string(pitch_) + "\n}");
 }
 
 void Camera::InitKeyboardMap() {

@@ -8,6 +8,12 @@ Shader::Shader() : Identity(kShader), status_(false) {
   shader_id_ = 0;
 }
 
+Shader::Shader(const std::string& name)
+    : Identity(kShader, name.c_str()), status_(false) {
+  LOG(INFO) << __FUNCTION__ << ", " << ToString();
+  shader_id_ = 0;
+}
+
 bool Shader::Compile(const std::string& vertex_code,
                      const std::string& fragment_code) {
   LOG(INFO) << __FUNCTION__ << ", " << ToString();

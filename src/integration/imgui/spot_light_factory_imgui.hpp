@@ -10,8 +10,8 @@ class SpotLightFactoryImGui
   using T = ElementFactoryImGui<SpotLight, SpotLightPtr>;
   SpotLightFactoryImGui(T::ElementAddCallback add_callback,
                         T::ElementRemoveCallback remove_callback);
-  bool New() override;
-  void ImGUIDraw() override;
+  bool New(SpotLightPtr element) override;
+  void ImGUIDraw(LayerController& layer_controller) override;
 };
 
 #endif

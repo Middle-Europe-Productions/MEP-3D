@@ -22,6 +22,7 @@ class Material : public Asset, public UniformContainer<MaterialUniform> {
  public:
   Material(std::optional<MaterialConfig> material_config);
   void SetMaterialConfig(const MaterialConfig& material_config);
+  MaterialConfig& GetMaterialConfigRef();
   void Use() override;
   void Stop() override;
   virtual ~Material();

@@ -8,16 +8,19 @@
 #include <MEP-3D/resource_base.hpp>
 #include <MEP-3D/texture.hpp>
 
-class Model : public Drawable,
+class Model : public Identity,
+              public Drawable,
               public ModelController,
               public AssetController,
               public ResourceBase {
  public:
   Model();
+  Model(const std::string& name);
   void Load(const std::string& file_path);
   void Init();
   void Draw(RenderTarget& render_target) override;
   void Clear();
+  virtual std::string ToString() const;
 
  private:
   std::vector<MeshBaseFactoryPtr> master_mesh_factory_;
@@ -26,5 +29,7 @@ class Model : public Drawable,
   std::vector<unsigned int> mesh_to_texture_;
   bool status;
 };
+
+using ModelPtr = std::unique_ptr<Model>;
 
 #endif

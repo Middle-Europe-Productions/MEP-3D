@@ -22,6 +22,7 @@ class ModelController {
   void Scale(float x, float y, float z);
   void ResetModel();
   glm::mat4& GetModel();
+  const glm::mat4& GetModel() const;
   std::string ToString() const;
 
  private:

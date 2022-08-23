@@ -6,6 +6,9 @@ class LayerControllerUILayerDefault : public LayerControllerUILayer {
   void OnDetach() override {}
   void OnUpdate(float time_delta) override {}
   void OnDraw(RenderTarget& render_target) override {}
+
+ private:
+  virtual bool ShouldIgnoreLayer() const override { return true; }
 };
 
 std::unique_ptr<LayerControllerUILayer> LayerControllerUILayer::Create() {

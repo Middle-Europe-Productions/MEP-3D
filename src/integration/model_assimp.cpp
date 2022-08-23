@@ -87,14 +87,21 @@ void LoadTextures(const aiScene* scene,
 
 }  // namespace
 
-Model::Model() {}
+Model::Model() : Identity(__FUNCTION__) {
+  LOG(INFO) << __FUNCTION__ << ", " << ToString();
+}
+
+Model::Model(const std::string& name) : Identity(__FUNCTION__, name.c_str()) {
+  LOG(INFO) << __FUNCTION__ << ", " << ToString();
+}
 
 void Model::Load(const std::string& file_path) {
-  UpdateStatus(Status::Loading);
+  UpdateStatus(Status::Waiting);
   ThreadPool::PostTaskWithCallback(
       Executors::Resource,
       std::make_unique<TaskWithCallback>(
-          [this, file_path]() {
+          [this, file_path]() -> bool {
+            this->UpdateStatus(Status::Loading);
             Assimp::Importer importer;
             const aiScene* scene = importer.ReadFile(
                 file_path, aiProcess_Triangulate | aiProcess_FlipUVs |
@@ -103,13 +110,20 @@ void Model::Load(const std::string& file_path) {
             if (!scene) {
               LOG(ERROR) << "Could not load the model, path: " << file_path
                          << ", message: " << importer.GetErrorString();
-              return;
+              return false;
             }
             LoadNode(scene->mRootNode, scene, this->master_mesh_factory_,
                      this->mesh_to_texture_);
             LoadTextures(scene, this->textures_container_);
+            return true;
           },
-          [this]() { this->UpdateStatus(Status::Uninitialized); }));
+          [this](bool status) {
+            if (status) {
+              this->UpdateStatus(Status::Uninitialized);
+            } else {
+              this->UpdateStatus(Status::Failed);
+            }
+          }));
 }
 
 void Model::Init() {
@@ -117,6 +131,7 @@ void Model::Init() {
   for (auto& mesh_factory_ele : master_mesh_factory_) {
     mesh_container_.emplace_back(std::move(mesh_factory_ele->Create()));
   }
+  UpdateStatus(Status::Avalible);
   master_mesh_factory_.clear();
 }
 
@@ -153,4 +168,9 @@ void Model::Clear() {
   mesh_container_.clear();
   textures_container_.clear();
   mesh_to_texture_.clear();
+}
+
+std::string Model::ToString() const {
+  return Identity::ToString() + ", \n" + AssetController::ToString() + ", \n" +
+         ModelController::ToString();
 }

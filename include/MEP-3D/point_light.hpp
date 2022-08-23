@@ -10,6 +10,7 @@ struct PointConfig {
   float constant;
   float linear;
   float quadratic;
+  static PointConfig Create();
 };
 
 class PointLight : public Light {
@@ -22,6 +23,7 @@ class PointLight : public Light {
   PointConfig& GetPointConfigRef();
   DiffuseConfig& GetDiffuseConfigRef();
   float& GetDiffuseIntensityRef();
+  static std::unique_ptr<PointLight> Create();
 
  protected:
   PointLight(const AmbientConfig& ambient_config,

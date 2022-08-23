@@ -16,11 +16,13 @@
 struct AmbientConfig {
   Color color;
   float intensity;
+  static AmbientConfig Create();
 };
 
 struct DiffuseConfig {
   std::optional<Vec3f> direction;
   float intensity;
+  static DiffuseConfig Create();
 };
 
 enum class LightUniforms : unsigned int {

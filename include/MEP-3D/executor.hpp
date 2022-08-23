@@ -6,35 +6,36 @@
 
 #include <glog/logging.h>
 
+#include <condition_variable>
 #include <functional>
 #include <mutex>
 #include <queue>
 #include <thread>
-#include <condition_variable>
 #include <unordered_map>
 #include <vector>
 
 enum class Executors : unsigned int { Resource = 0, Count };
 
-using TaskCallback = std::function<void()>;
+using TaskCallback = std::function<bool()>;
+using TaskNotifyCallback = std::function<void(bool)>;
 
 class Task {
  public:
   Task(TaskCallback task);
   virtual void Execute();
 
- private:
+ protected:
   TaskCallback task_;
 };
 using TaskPtr = std::unique_ptr<Task>;
 
 class TaskWithCallback : public Task {
  public:
-  TaskWithCallback(TaskCallback task, TaskCallback callback);
+  TaskWithCallback(TaskCallback task, TaskNotifyCallback on_complete);
   void Execute() override;
 
  private:
-  TaskCallback callback_;
+  TaskNotifyCallback callback_;
 };
 using TaskWithCallbackPtr = std::unique_ptr<TaskWithCallback>;
 

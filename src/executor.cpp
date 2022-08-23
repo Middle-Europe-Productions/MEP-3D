@@ -7,12 +7,13 @@ void Task::Execute() {
   task_();
 }
 
-TaskWithCallback::TaskWithCallback(TaskCallback task, TaskCallback callback)
-    : Task(task), callback_(callback) {}
+TaskWithCallback::TaskWithCallback(TaskCallback task,
+                                   TaskNotifyCallback on_complete)
+    : Task(task), callback_(on_complete) {}
 
 void TaskWithCallback::Execute() {
-  Task::Execute();
-  callback_();
+  bool status = task_();
+  callback_(status);
 }
 
 Executor::Executor(Type type, std::size_t number_of_thread)

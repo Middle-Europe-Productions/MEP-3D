@@ -2,6 +2,8 @@
 
 #include <imgui.h>
 #include <numeric>
+
+#include "imgui_addons.hpp"
 namespace {
 Color ToMepColor(ImVec4& im_color) {
   return Color(255 * im_color.x, 255 * im_color.y, 255 * im_color.z,
@@ -10,6 +12,23 @@ Color ToMepColor(ImVec4& im_color) {
 ImVec4 FromMepColor(Color& color) {
   return ImVec4(color.Rf(), color.Gf(), color.Bf(), color.Af());
 }
+
+template <typename Element>
+int DrawComboMenuFromMEP(std::vector<std::unique_ptr<Element>>& array,
+                         int selected) {
+  std::vector<const char*> ele;
+  ele.push_back("");
+  for (auto& element : array) {
+    ele.push_back(element->GetName().c_str());
+  }
+  int index = selected + 1;
+  if (ele.size() == 0) {
+    return -1;
+  }
+  ImGui::Combo("##combo", &index, ele.data(), ele.size());
+  return index - 1;
+}
+
 constexpr int kGlobalPlotBufferSize = 100;
 // Framerate
 static std::vector<float> framerate_cache = std::vector<float>();
@@ -93,6 +112,19 @@ void DrawPointLight(PointLight& point_light) {
   ImGui::Text("Diffuse Config");
   UI::DrawDiffuseConfig(point_light.GetDiffuseConfigRef());
 }
+void DrawModel(Model& model) {
+  auto status = model.GetStatus();
+  ImGui::Text("Model Status ");
+  ImGui::SameLine();
+  ImGui::Text(ToString(status).c_str());
+  if (status == Status::Loading)
+    ImGui::Spinner("spinner", 10, 4, ImGui::GetColorU32(ImGuiCol_Button));
+}
+int DrawShaderComboMenu(std::vector<std::unique_ptr<Shader>>& array,
+                        int selected) {
+  return DrawComboMenuFromMEP(array, selected);
+}
+
 void DrawEngineMonitorDataConst(const EngineMonitorData& engine_monitor_data) {
   ImGui::Text("Frame rate: %.1f", ImGui::GetIO().Framerate);
   ImGui::Text("Total frame time: %.1f",
@@ -121,6 +153,23 @@ void DrawEngineMonitorDataConst(const EngineMonitorData& engine_monitor_data) {
       }
       ImGui::TreePop();
     }
+  }
+}
+void DrawAssetControllerConst(const AssetController& layer_controller) {
+  if (auto* texture = layer_controller.Get<Texture>()) {
+    ImGui::Text("Texture: ");
+    ImGui::SameLine();
+    ImGui::Text(texture->GetName().c_str());
+  }
+  if (auto* shader = layer_controller.Get<Shader>()) {
+    ImGui::Text("Shader: ");
+    ImGui::SameLine();
+    ImGui::Text(shader->GetName().c_str());
+  }
+  if (auto* model = layer_controller.Get<Material>()) {
+    ImGui::Text("Material: ");
+    ImGui::SameLine();
+    ImGui::Text(model->GetName().c_str());
   }
 }
 }  // namespace UI

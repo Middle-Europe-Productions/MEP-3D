@@ -12,6 +12,7 @@
 class Shader : public Identity, public ObserverList<AssetObserver> {
  public:
   Shader();
+  Shader(const std::string& name);
   bool Compile(const std::string& vertex_code,
                const std::string& fragment_code);
   bool IsCompiled() const;

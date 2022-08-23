@@ -1,7 +1,8 @@
 #include <glog/logging.h>
 #include <MEP-3D/asset_controller.hpp>
 
-AssetController::AssetController() : texture_(nullptr), shader_(nullptr) {}
+AssetController::AssetController()
+    : texture_(nullptr), shader_(nullptr), material_(nullptr) {}
 
 void AssetController::Bind(Texture* object) {
   if (texture_) {
@@ -19,6 +20,14 @@ void AssetController::Bind(Shader* object) {
   shader_->AddObserver(this);
 }
 
+void AssetController::Bind(Material* object) {
+  if (material_) {
+    material_->RemoveObserver(this);
+  }
+  material_ = object;
+  material_->AddObserver(this);
+}
+
 void AssetController::OnDelete(Identity& caller_identity) {
   LOG(INFO) << __FUNCTION__ << ", caller_id: " << caller_identity.ToString();
   if (texture_ && texture_->GetGlobalId() == caller_identity.GetGlobalId()) {
@@ -30,7 +39,7 @@ void AssetController::OnDelete(Identity& caller_identity) {
 }
 
 void AssetController::RemoveAssets() {
-  LOG(INFO) << __FUNCTION__ << ", observer_id: " << GetObsserverId();
+  LOG(INFO) << __FUNCTION__ << ", observer_id: " << GetObserverId();
   if (texture_) {
     LOG(INFO) << texture_->ToString();
     texture_->RemoveObserver(this);
@@ -47,7 +56,7 @@ std::string AssetController::ToString() const {
   std::string tex_temp =
       (texture_ ? "texture_id: " + texture_->ToString() : "");
   std::string sh_temp = (texture_ ? "shader_id: " + texture_->ToString() : "");
-  return "AssetController: { \n" + tex_temp +
+  return "\"AssetController\": { \n" + tex_temp +
          (tex_temp.size() != 0 ? ", " + sh_temp : sh_temp) + "\n}";
 }
 

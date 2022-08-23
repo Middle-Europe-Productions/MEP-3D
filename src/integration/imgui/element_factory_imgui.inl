@@ -20,3 +20,11 @@ template <typename Element, typename ElementPtr>
 Element* ElementFactoryImGui<Element, ElementPtr>::Get() {
   return element_;
 }
+
+template <typename Element, typename ElementPtr>
+void ElementFactoryImGui<Element, ElementPtr>::Remove() {
+  if (Exists()) {
+    remove_callback_(*Get());
+    Update(nullptr);
+  }
+}

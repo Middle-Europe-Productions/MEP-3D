@@ -8,6 +8,6 @@ bool Observer::IsEqual(Observer* obs) const {
   return obs && id_ == obs->id_;
 }
 
-bool Observer::GetObsserverId() const {
+bool Observer::GetObserverId() const {
   return id_;
 }

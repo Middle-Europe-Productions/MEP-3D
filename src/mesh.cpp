@@ -40,6 +40,6 @@ void Mesh::Draw(RenderTarget& render_target) {
 }
 
 std::string Mesh::ToString() const {
-  return "Mesh: {\n" + AssetController::ToString() + ",\n" +
+  return "\"Mesh\": {\n" + AssetController::ToString() + ",\n" +
          ModelController::ToString() + "\n}";
 }

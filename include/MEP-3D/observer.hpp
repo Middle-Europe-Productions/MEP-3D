@@ -5,7 +5,7 @@ class Observer {
  public:
   Observer();
   bool IsEqual(Observer* obs) const;
-  bool GetObsserverId() const;
+  bool GetObserverId() const;
 
  private:
   static int id_couter_;

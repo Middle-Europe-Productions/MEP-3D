@@ -85,7 +85,7 @@ void Light::Stop() {
 
 std::string Light::ToString() const {
   std::string output =
-      "Light: {\n" + Identity::ToString() + ",\nUniformCache: {\n";
+      "\"Light\": {\n" + Identity::ToString() + ",\n\"UniformCache\": {\n";
   for (auto it = uniform_cache_.begin(); it != uniform_cache_.end();) {
     output += ::ToString(it->first) + ": " + std::to_string(it->second);
     if (++it != uniform_cache_.end())

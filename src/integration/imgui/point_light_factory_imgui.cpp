@@ -6,19 +6,15 @@ PointLightFactoryImGui::PointLightFactoryImGui(
     T::ElementAddCallback add_callback,
     T::ElementRemoveCallback remove_callback)
     : T(add_callback, remove_callback) {}
-bool PointLightFactoryImGui::New() {
-  AmbientConfig ambient_config = {White, 0.1f};
-  PointConfig point_config = {{0.0, 0.0, 0.0}, 0.1, 0.1, 1.0};
-  float diffuse_intensity = 1;
-  auto pl = std::make_unique<PointLight>(ambient_config, point_config,
-                                         diffuse_intensity);
-  Update(GetAddCallback()(std::move(pl)));
+bool PointLightFactoryImGui::New(PointLightPtr element) {
+  LOG(INFO) << __FUNCTION__;
+  Update(GetAddCallback()(std::move(element)));
   return Exists();
 }
 
-void PointLightFactoryImGui::ImGUIDraw() {
+void PointLightFactoryImGui::ImGUIDraw(LayerController& layer_controller) {
   if (!Exists()) {
-    if (!New())
+    if (!New(PointLight::Create()))
       return;
   }
   UI::DrawPointLight(*Get());
@@ -27,7 +23,7 @@ void PointLightFactoryImGui::ImGUIDraw() {
     ImGui::CloseCurrentPopup();
   }
   ImGui::SameLine();
-  if (ImGui::Button("Close")) {
+  if (ImGui::Button("Cancel")) {
     Remove();
     ImGui::CloseCurrentPopup();
   }

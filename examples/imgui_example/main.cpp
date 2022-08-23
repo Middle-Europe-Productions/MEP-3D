@@ -64,7 +64,8 @@ class BenchmarkLayer final : public LayerController {
  public:
   BenchmarkLayer(unsigned int triangles_count)
       : LayerController("benchmark_layer_" + std::to_string(triangles_count)),
-        triangles_count_(triangles_count) {}
+        triangles_count_(triangles_count),
+        shader_(std::make_unique<Shader>("main_shader")) {}
   void OnAttach() override {
     auto& window = GetEngine()->GetWindow();
     // Camera config
@@ -86,25 +87,25 @@ class BenchmarkLayer final : public LayerController {
     window->AddCamera(camera_.get());
     window->AddObserver(camera_.get());
     // Load shader
-    shader_.CreateFromFile("shaders/shader.vert", "shaders/shader.frag");
-    shader_.SaveUniformToMemory(
+    shader_->CreateFromFile("shaders/shader.vert", "shaders/shader.frag");
+    shader_->SaveUniformToMemory(
         "projection", static_cast<unsigned int>(CommonUniform::Projection));
-    shader_.SaveUniformToMemory("view",
-                                static_cast<unsigned int>(CommonUniform::View));
-    shader_.SaveUniformToMemory(
+    shader_->SaveUniformToMemory(
+        "view", static_cast<unsigned int>(CommonUniform::View));
+    shader_->SaveUniformToMemory(
         "model", static_cast<unsigned int>(CommonUniform::Model));
-    shader_.SaveUniformToMemory(
+    shader_->SaveUniformToMemory(
         "eye_position", static_cast<unsigned int>(CommonUniform::Position));
     // Directional light
     light = std::make_unique<DirectionalLight>(
         AmbientConfig{Color(255, 255, 255), 0.1f},
         DiffuseConfig{Vec3f(-2.0f, -1.0f, -2.0f), 1.0f});
-    light->BindUniforms(shader_, kDirectionalLightUniformMap);
+    light->BindUniforms(*shader_, kDirectionalLightUniformMap);
     // Point lights
     point_light_con = std::make_unique<PointLightController>(
-        16, "point_light", shader_.GetUniform("point_light_count"),
+        16, "point_light", shader_->GetUniform("point_light_count"),
         kPointLightUniformMap);
-    point_light_con->Bind(&shader_);
+    point_light_con->Bind(shader_.get());
     point_light_con->MakeAndBind(std::make_unique<PointLight>(
         AmbientConfig{Color(0, 247, 255), 0.5f},
         PointConfig{Vec3f{1.0f, 1.0f, 1.0f}, 1, 1, 0.001}, 0.5f));
@@ -113,9 +114,9 @@ class BenchmarkLayer final : public LayerController {
     AttachPointLightController(std::move(point_light_con));
 
     auto spot_light_con = std::make_unique<SpotLightController>(
-        16, "spot_light", shader_.GetUniform("spot_light_count"),
+        16, "spot_light", shader_->GetUniform("spot_light_count"),
         kSpotLightUniformMap);
-    spot_light_con->Bind(&shader_);
+    spot_light_con->Bind(shader_.get());
     AttachSpotLightController(std::move(spot_light_con));
     // Add UI
     auto ui_layer = LayerControllerUILayer::Create();
@@ -127,32 +128,32 @@ class BenchmarkLayer final : public LayerController {
           Vec3f{static_cast<float>(triangles_count_ % 10 * 10.f), 1.0f,
                 static_cast<float>(i + 10)}));
       triangles_.back()->Bind(plain_tex.get());
-      triangles_.back()->Bind(&shader_);
+      triangles_.back()->Bind(shader_.get());
     }
     // Init plane
     plane = std::make_unique<Plane>(100.0f);
     plane->Bind(plain_tex.get());
-    plane->Bind(&shader_);
+    plane->Bind(shader_.get());
+    AttachShader(std::move(shader_));
   }
   void OnDetach() override {}
   void OnUpdate(float time_delta) { camera_->Update(); }
   void OnDraw(RenderTarget& render_target) {
-    shader_.StartUsing();
-    UseAllDirectionalLights();
-    UseAllPointLights();
-    UseAllSpotLights();
+    GetShader()[0]->StartUsing();
+    UseAllLights();
+    DrawAllModels(render_target);
     plain_tex->Use();
-    shader_.SetUniform("use_texture", 1);
+    GetShader()[0]->SetUniform("use_texture", 1);
     for (auto& tr : triangles_) {
       tr->Draw(render_target);
     }
     plane->Draw(render_target);
-    shader_.StopUsing();
+    GetShader()[0]->StopUsing();
   }
 
  private:
   std::vector<std::unique_ptr<Pyramid>> triangles_;
-  Shader shader_;
+  std::unique_ptr<Shader> shader_;
   unsigned int triangles_count_;
   Image image;
   std::unique_ptr<Plane> plane;
@@ -171,14 +172,13 @@ int main() {
   auto engine_data = EngineDataUILayer::Create();
   std::unique_ptr<Engine::CustomLayerStructure> custom_structure =
       std::make_unique<Engine::CustomLayerStructure>();
-  window->AddObserver(engine_data.get());
   custom_structure->structure_name = std::string("ImGui"),
   custom_structure->before_run = UI::BeforeRender;
   custom_structure->after_run = UI::AfterRender;
   custom_structure->layer_array.push_back(std::move(engine_data));
 
-  main_engine->AttachStructure(std::move(custom_structure));
   main_engine->AttachWindow(std::move(window));
+  main_engine->AttachStructure(std::move(custom_structure));
   std::unique_ptr<Layer> master_layer = std::make_unique<BenchmarkLayer>(100);
   main_engine->AttachLayer(std::move(master_layer));
 

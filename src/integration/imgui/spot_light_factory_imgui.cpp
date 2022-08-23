@@ -6,21 +6,15 @@ SpotLightFactoryImGui::SpotLightFactoryImGui(
     T::ElementAddCallback add_callback,
     T::ElementRemoveCallback remove_callback)
     : T(add_callback, remove_callback) {}
-bool SpotLightFactoryImGui::New() {
+bool SpotLightFactoryImGui::New(SpotLightPtr element) {
   LOG(INFO) << __FUNCTION__;
-  AmbientConfig ambient_config = {White, 0.1f};
-  PointConfig point_config = {{0.0, 0.0, 0.0}, 0.1, 0.1, 1.0};
-  float diffuse_intensity = 1;
-  SpotConfig spot_config = {{0.0, -1.0, 0.0}, 90};
-  auto pl = std::make_unique<SpotLight>(ambient_config, point_config,
-                                        diffuse_intensity, spot_config);
-  Update(GetAddCallback()(std::move(pl)));
+  Update(GetAddCallback()(std::move(element)));
   return Exists();
 }
 
-void SpotLightFactoryImGui::ImGUIDraw() {
+void SpotLightFactoryImGui::ImGUIDraw(LayerController& layer_controller) {
   if (!Exists()) {
-    if (!New()) {
+    if (!New(SpotLight::Create())) {
       return;
     }
   }
@@ -30,7 +24,7 @@ void SpotLightFactoryImGui::ImGUIDraw() {
     ImGui::CloseCurrentPopup();
   }
   ImGui::SameLine();
-  if (ImGui::Button("Close")) {
+  if (ImGui::Button("Cancel")) {
     Remove();
     ImGui::CloseCurrentPopup();
   }

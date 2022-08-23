@@ -44,7 +44,11 @@ glm::mat4& ModelController::GetModel() {
   return model_;
 }
 
+const glm::mat4& ModelController::GetModel() const {
+  return model_;
+}
+
 std::string ModelController::ToString() const {
-  return "ObjectActionController: {\nmodel_matrix: " + glm::to_string(model_) +
-         "\n}";
+  return "\"ObjectActionController\": {\n\"model_matrix\": " +
+         glm::to_string(model_) + "\n}";
 }

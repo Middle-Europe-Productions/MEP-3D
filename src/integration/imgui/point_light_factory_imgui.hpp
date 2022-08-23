@@ -10,8 +10,8 @@ class PointLightFactoryImGui
   using T = ElementFactoryImGui<PointLight, PointLightPtr>;
   PointLightFactoryImGui(T::ElementAddCallback add_callback,
                          T::ElementRemoveCallback remove_callback);
-  bool New() override;
-  void ImGUIDraw() override;
+  bool New(PointLightPtr element) override;
+  void ImGUIDraw(LayerController& layer_controller) override;
 };
 
 #endif

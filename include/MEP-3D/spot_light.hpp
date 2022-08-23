@@ -6,6 +6,7 @@
 struct SpotConfig {
   Vec3f direction;
   float edge_deg;
+  static SpotConfig Create();
 };
 
 class SpotLight : public PointLight {
@@ -17,6 +18,7 @@ class SpotLight : public PointLight {
   void Use() override;
   void CalcuateEdge();
   SpotConfig& GetSpotConfigRef();
+  static std::unique_ptr<SpotLight> Create();
 
  private:
   SpotConfig spot_config_;

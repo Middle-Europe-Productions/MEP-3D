@@ -42,8 +42,8 @@ const std::string& Identity::GetName() const {
 
 std::string Identity::ToString() const {
   return "\"Identity\": { name: " + std::string(class_name_) +
-         ", id: " + std::to_string(id_) +
-         ", global_id: " + std::to_string(global_id_) + "}";
+         ", \"id\": " + std::to_string(id_) +
+         ", \"global_id\": " + std::to_string(global_id_) + "}";
 }
 
 Identity& Identity::operator=(const Identity& id) {

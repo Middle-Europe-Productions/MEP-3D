@@ -1,6 +1,7 @@
 #ifndef ELEMENT_FACTORY_IMGUI_HPP
 #define ELEMENT_FACTORY_IMGUI_HPP
 
+#include <MEP-3D/layer_controller.hpp>
 #include <functional>
 
 template <typename Element, typename ElementPtr>
@@ -15,14 +16,9 @@ class ElementFactoryImGui {
   Element* Get();
   ElementAddCallback GetAddCallback() { return add_callback_; }
   ElementRemoveCallback GetRemoveCallback() { return remove_callback_; }
-  virtual bool New() = 0;
-  virtual void Remove() {
-    if (Exists()) {
-      remove_callback_(*Get());
-      Update(nullptr);
-    }
-  }
-  virtual void ImGUIDraw() = 0;
+  virtual void Remove();
+  virtual bool New(ElementPtr element) = 0;
+  virtual void ImGUIDraw(LayerController&) = 0;
 
  private:
   ElementAddCallback add_callback_;

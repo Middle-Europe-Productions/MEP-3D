@@ -88,12 +88,11 @@ class GLFWWindowController : public Window {
     return init_ && !glfwWindowShouldClose(main_window_);
   }
 
-  void BlockEvents(bool status,
-                   Keyboard exception) override {
+  void BlockEvents(bool status, Keyboard exception) override {
     block_events_ = status;
     exception_ = exception;
     ForAllObservers(
-      [status](WindowObserver* obs) { obs->OnEventStatusChanged(status); });
+        [status](WindowObserver* obs) { obs->OnEventStatusChanged(status); });
   }
 
   bool ShouldBlockEvent() { return block_events_; }
@@ -159,8 +158,7 @@ void GLFWWindowController::OnKeyEventHandler(GLFWwindow* window,
   if (key >= (int)'A' && key <= (int)'Z') {
     KeyEvent key_event;
     key_event.code = static_cast<Keyboard>(key - 'A');
-    if (action != GLFW_RELEASE &&
-        master_window->ShouldBlockEvent() && 
+    if (action != GLFW_RELEASE && master_window->ShouldBlockEvent() &&
         key_event.code != master_window->exception_) {
       return;
     }

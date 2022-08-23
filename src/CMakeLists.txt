@@ -34,6 +34,7 @@ set(SOURCE
   ${SRC_ROOT}/layer_controller.cpp
   ${SRC_ROOT}/template/layer_controller_ui_layer.cpp
   ${SRC_ROOT}/common_names.cpp
+  ${SRC_ROOT}/config_create_impl.cpp
 )
 
 set(HEADERS
@@ -133,8 +134,9 @@ else()
   )
 endif(MEP_USE_ASSIMP)
 
-if (MEP_USE_IMGUI)
+if (NOT MEP_STANDALONE_APP)
   add_definitions(-DMEP_ENGINE_USE_IMGUI)
+  set(MEP_USE_IMGUI TRUE)
   list(APPEND SOURCE
     ${SRC_ROOT}/integration/imgui/user_interface_imgui.cpp
     ${SRC_ROOT}/integration/imgui/engine_data_ui_layer_imgui.cpp
@@ -146,10 +148,12 @@ if (MEP_USE_IMGUI)
     ${SRC_ROOT}/integration/imgui/point_light_factory_imgui.hpp
     ${SRC_ROOT}/integration/imgui/spot_light_factory_imgui.cpp
     ${SRC_ROOT}/integration/imgui/spot_light_factory_imgui.hpp
+    ${SRC_ROOT}/integration/imgui/model_factory_imgui.cpp
+    ${SRC_ROOT}/integration/imgui/model_factory_imgui.hpp
+    ${SRC_ROOT}/integration/imgui/imgui_addons.cpp
+    ${SRC_ROOT}/integration/imgui/imgui_addons.hpp
   )
-  list(APPEND LINK_TARGETS
-    imgui
-  )
+
 else()
   list(APPEND SOURCE
     ${SRC_ROOT}/integration/default/user_interface_default.cpp
@@ -157,7 +161,14 @@ else()
     ${SRC_ROOT}/integration/default/layer_controller_ui_layer_default.cpp
     ${SRC_ROOT}/integration/default/util_common_draw_default.cpp
   )
-endif (MEP_USE_IMGUI)
+endif ()
+
+if (MEP_USE_IMGUI)
+  list(APPEND LINK_TARGETS
+    imgui
+  )
+endif () 
+
 
 source_group("Header Files" FILES ${HEADERS})
 
