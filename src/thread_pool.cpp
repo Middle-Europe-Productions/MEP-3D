@@ -18,6 +18,6 @@ ThreadPool::ThreadPool() {
        exe = utils::IncEnum(exe)) {
     // TOOD: Add config
     executor_pool_[exe] =
-        std::make_unique<Executor>(Executor::Type::Blocking, 1);
+        std::make_unique<Executor>(Executor::Type::NonBlocking, 1);
   }
 }

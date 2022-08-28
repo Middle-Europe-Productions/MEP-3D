@@ -23,10 +23,12 @@ class ModelController {
   void ResetModel();
   glm::mat4& GetModel();
   const glm::mat4& GetModel() const;
+  const glm::vec3& GetRotationTracker() const;
   std::string ToString() const;
 
  private:
   glm::mat4 model_;
+  glm::vec3 rotation_tracker_deg_;
 };
 
 #endif

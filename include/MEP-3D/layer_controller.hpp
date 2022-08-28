@@ -4,6 +4,7 @@
 #include <MEP-3D/directional_light.hpp>
 #include <MEP-3D/layer.hpp>
 #include <MEP-3D/light_controller.hpp>
+#include <MEP-3D/material.hpp>
 #include <MEP-3D/model.hpp>
 #include <MEP-3D/observer.hpp>
 #include <MEP-3D/observer_list.hpp>
@@ -47,6 +48,10 @@ class LayerController : public Layer,
   std::vector<std::unique_ptr<Model>>& GetModels();
   std::size_t AttachShader(std::unique_ptr<Shader> shader);
   std::vector<std::unique_ptr<Shader>>& GetShader();
+  std::size_t AttachMaterial(std::unique_ptr<Material> material);
+  std::vector<std::unique_ptr<Material>>& GetMaterial();
+  std::size_t AttachTexture(std::unique_ptr<Texture> texture);
+  std::vector<std::unique_ptr<Texture>>& GetTexture();
   void UseAllDirectionalLights();
   void UseAllPointLights();
   void UseAllSpotLights();
@@ -61,6 +66,8 @@ class LayerController : public Layer,
   std::vector<std::unique_ptr<DirectionalLight>> directional_lights_;
   std::vector<std::unique_ptr<Model>> models_;
   std::vector<std::unique_ptr<Shader>> shaders_;
+  std::vector<std::unique_ptr<Material>> materials_;
+  std::vector<std::unique_ptr<Texture>> textures_;
   std::unique_ptr<SpotLightController> spot_light_controller_;
   std::unique_ptr<PointLightController> point_light_controller_;
 };

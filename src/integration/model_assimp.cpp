@@ -1,3 +1,4 @@
+#include <MEP-3D/common_names.hpp>
 #include <MEP-3D/model.hpp>
 #include <MEP-3D/shader.hpp>
 #include <MEP-3D/thread_pool.hpp>
@@ -87,11 +88,11 @@ void LoadTextures(const aiScene* scene,
 
 }  // namespace
 
-Model::Model() : Identity(__FUNCTION__) {
+Model::Model() : Identity(kModel) {
   LOG(INFO) << __FUNCTION__ << ", " << ToString();
 }
 
-Model::Model(const std::string& name) : Identity(__FUNCTION__, name.c_str()) {
+Model::Model(const std::string& name) : Identity(kModel, name.c_str()) {
   LOG(INFO) << __FUNCTION__ << ", " << ToString();
 }
 
@@ -128,11 +129,12 @@ void Model::Load(const std::string& file_path) {
 
 void Model::Init() {
   assert(GetStatus() == Status::Uninitialized);
+  LOG(INFO) << __FUNCTION__ << ", " << __LINE__;
   for (auto& mesh_factory_ele : master_mesh_factory_) {
     mesh_container_.emplace_back(std::move(mesh_factory_ele->Create()));
   }
-  UpdateStatus(Status::Avalible);
   master_mesh_factory_.clear();
+  UpdateStatus(Status::Avalible);
 }
 
 void Model::Draw(RenderTarget& render_target) {
@@ -163,7 +165,7 @@ void Model::Draw(RenderTarget& render_target) {
 
 void Model::Clear() {
   if (GetStatus() == Status::Loading) {
-    LOG(ERROR) << "Resrouce is still loading!";
+    LOG(ERROR) << "Resource is still loading!";
   }
   mesh_container_.clear();
   textures_container_.clear();

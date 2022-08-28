@@ -135,20 +135,21 @@ class BenchmarkLayer final : public LayerController {
     plane->Bind(plain_tex.get());
     plane->Bind(shader_.get());
     AttachShader(std::move(shader_));
+    AttachTexture(std::move(plain_tex));
   }
   void OnDetach() override {}
   void OnUpdate(float time_delta) { camera_->Update(); }
   void OnDraw(RenderTarget& render_target) {
-    GetShader()[0]->StartUsing();
+    GetShader()[0]->Use();
     UseAllLights();
     DrawAllModels(render_target);
-    plain_tex->Use();
+    GetTexture()[0]->Use();
     GetShader()[0]->SetUniform("use_texture", 1);
     for (auto& tr : triangles_) {
       tr->Draw(render_target);
     }
     plane->Draw(render_target);
-    GetShader()[0]->StopUsing();
+    GetShader()[0]->Stop();
   }
 
  private:

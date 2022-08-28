@@ -15,7 +15,9 @@ ModelFactoryImGui::ModelFactoryImGui(T::ElementAddCallback add_callback,
     : T(add_callback, remove_callback),
       buffer_name(""),
       buffer_path(""),
-      selected_shader_(-1) {}
+      selected_shader_(-1),
+      selected_material_(-1),
+      selected_texture_(-1) {}
 bool ModelFactoryImGui::New(ModelPtr element) {
   Update(GetAddCallback()(std::move(element)));
   return Exists();
@@ -25,8 +27,15 @@ void ModelFactoryImGui::ImGUIDraw(LayerController& layer_controller) {
                            ImGuiInputTextFlags_CharsNoBlank);
   ImGui::InputTextWithHint("##model_path", kInputPathName, buffer_path, 64,
                            ImGuiInputTextFlags_CharsNoBlank);
+  ImGui::Text("Shader");
   selected_shader_ =
       UI::DrawShaderComboMenu(layer_controller.GetShader(), selected_shader_);
+  ImGui::Text("Texture");
+  selected_texture_ = UI::DrawTextureComboMenu(layer_controller.GetTexture(),
+                                               selected_texture_);
+  ImGui::Text("Material");
+  selected_material_ = UI::DrawMaterialComboMenu(layer_controller.GetMaterial(),
+                                                 selected_material_);
   if (ImGui::Button("Open File")) {
     LOG(INFO) << "Open file";
   }
@@ -36,6 +45,16 @@ void ModelFactoryImGui::ImGUIDraw(LayerController& layer_controller) {
   }
   if (ImGui::Button("Load")) {
     New(std::make_unique<Model>(buffer_name));
+    Get()->Load(buffer_path);
+    if (selected_shader_ != -1) {
+      Get()->Bind(layer_controller.GetShader()[selected_shader_].get());
+    }
+    if (selected_texture_ != -1) {
+      Get()->Bind(layer_controller.GetTexture()[selected_texture_].get());
+    }
+    if (selected_material_ != -1) {
+      Get()->Bind(layer_controller.GetMaterial()[selected_material_].get());
+    }
     Get()->Load(buffer_path);
     Update(nullptr);
     ImGui::CloseCurrentPopup();

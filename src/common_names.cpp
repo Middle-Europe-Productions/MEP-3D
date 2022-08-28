@@ -6,6 +6,7 @@ const char* kTexture = "texture";
 const char* kShader = "shader";
 const char* kMaterial = "material";
 const char* kLight = "light";
+const char* kModel = "model";
 const char* kDirectionalLight = "directional_light";
 const char* kSpotLight = "spot_light";
 const char* kPointLight = "point_light";

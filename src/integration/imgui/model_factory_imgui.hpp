@@ -18,6 +18,8 @@ class ModelFactoryImGui : public ElementFactoryImGui<Model, ModelPtr> {
   char buffer_name[64];
   char buffer_path[64];
   int selected_shader_;
+  int selected_material_;
+  int selected_texture_;
 };
 
 #endif

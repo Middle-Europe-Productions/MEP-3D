@@ -1,8 +1,10 @@
 project(simple_example)
 
+set(SHADERS_DIR ${PROJECT_SOURCE_DIR}/../../shaders)
+
 set(SHADERS
-  ${PROJECT_SOURCE_DIR}/shaders/shader.frag
-  ${PROJECT_SOURCE_DIR}/shaders/shader.vert
+  ${SHADERS_DIR}/shader.frag
+  ${SHADERS_DIR}/shader.vert
 )
 
 set(RESOURCE_DIR
@@ -18,7 +20,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC mep-3d)
 
 file(
   COPY
-  ${PROJECT_SOURCE_DIR}/shaders
+  ${SHADERS_DIR}/
   DESTINATION
   ${PROJECT_BINARY_DIR}/
 )

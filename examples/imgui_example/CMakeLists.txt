@@ -1,13 +1,10 @@
 project(imgui_example)
 
-set(SHADERS
-  ${PROJECT_SOURCE_DIR}/shaders/shader.frag
-  ${PROJECT_SOURCE_DIR}/shaders/shader.vert
-)
+set(SHADERS_DIR ${PROJECT_SOURCE_DIR}/../../shaders)
 
-set(RESOURCE_DIR
-  ${PROJECT_SOURCE_DIR}/shaders
-  ${PROJECT_SOURCE_DIR}/textures
+set(SHADERS
+  ${SHADERS_DIR}/shader.frag
+  ${SHADERS_DIR}/shader.vert
 )
 
 source_group("Shader Files" FILES ${SHADERS})
@@ -18,7 +15,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC mep-3d)
 
 file(
   COPY
-  ${PROJECT_SOURCE_DIR}/shaders
+  ${SHADERS_DIR}/
   DESTINATION
   ${PROJECT_BINARY_DIR}/
 )

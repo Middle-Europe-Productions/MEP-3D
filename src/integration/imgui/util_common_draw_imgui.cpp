@@ -1,4 +1,5 @@
 #include <MEP-3D/template/util_common_draw.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <imgui.h>
 #include <numeric>
@@ -15,7 +16,8 @@ ImVec4 FromMepColor(Color& color) {
 
 template <typename Element>
 int DrawComboMenuFromMEP(std::vector<std::unique_ptr<Element>>& array,
-                         int selected) {
+                         int selected,
+                         const char* type) {
   std::vector<const char*> ele;
   ele.push_back("");
   for (auto& element : array) {
@@ -25,7 +27,7 @@ int DrawComboMenuFromMEP(std::vector<std::unique_ptr<Element>>& array,
   if (ele.size() == 0) {
     return -1;
   }
-  ImGui::Combo("##combo", &index, ele.data(), ele.size());
+  ImGui::Combo(type, &index, ele.data(), ele.size());
   return index - 1;
 }
 
@@ -38,6 +40,8 @@ static int frame = 0;
 // Deg
 constexpr int kDegMin = 1;
 constexpr int kDegMax = 180;
+// Jump value
+constexpr float kGlobalSlide = 0.05;
 }  // namespace
 
 namespace UI {
@@ -53,7 +57,7 @@ void DrawDiffuseConfig(DiffuseConfig& config) {
   if (config.direction.has_value()) {
     float v[3] = {config.direction.value().x_, config.direction.value().y_,
                   config.direction.value().z_};
-    ImGui::DragFloat3("Position", v, 0.05f, -FLT_MAX, FLT_MAX);
+    ImGui::DragFloat3("Position", v, kGlobalSlide, -FLT_MAX, FLT_MAX);
     config.direction.value().x_ = v[0];
     config.direction.value().y_ = v[1];
     config.direction.value().z_ = v[2];
@@ -99,7 +103,7 @@ void DrawPointConfig(PointConfig& point_config) {
                    "%.3f", ImGuiSliderFlags_None);
   float v[3] = {point_config.position.x_, point_config.position.y_,
                 point_config.position.z_};
-  ImGui::DragFloat3("Position", v, 0.05f, -FLT_MAX, FLT_MAX);
+  ImGui::DragFloat3("Position", v, kGlobalSlide, -FLT_MAX, FLT_MAX);
   point_config.position.x_ = v[0];
   point_config.position.y_ = v[1];
   point_config.position.z_ = v[2];
@@ -112,17 +116,73 @@ void DrawPointLight(PointLight& point_light) {
   ImGui::Text("Diffuse Config");
   UI::DrawDiffuseConfig(point_light.GetDiffuseConfigRef());
 }
+
+void DrawModelController(ModelController& model_controller) {
+  float* model_ptr = (float*)glm::value_ptr(model_controller.GetModel());
+  ImGui::Text("Position");
+  ImGui::DragFloat("x", model_ptr + 12, kGlobalSlide, -FLT_MAX, FLT_MAX);
+  ImGui::DragFloat("y", model_ptr + 13, kGlobalSlide, -FLT_MAX, FLT_MAX);
+  ImGui::DragFloat("z", model_ptr + 14, kGlobalSlide, -FLT_MAX, FLT_MAX);
+  ImGui::Separator();
+  ImGui::Text("Rotation [deg]");
+  const auto& rotation = model_controller.GetRotationTracker();
+  float x_rotation = rotation[0];
+  ImGui::DragFloat("Along x", &x_rotation, kGlobalSlide, -FLT_MAX, FLT_MAX,
+                   "%.2f deg");
+  if (x_rotation != rotation[0]) {
+    model_controller.Rotate(x_rotation - rotation[0], Axis::X);
+  }
+  float y_rotation = rotation[1];
+  ImGui::DragFloat("Along y", &y_rotation, kGlobalSlide, -FLT_MAX, FLT_MAX,
+                   "%.2f deg");
+  if (y_rotation != rotation[1]) {
+    model_controller.Rotate(y_rotation - rotation[1], Axis::Y);
+  }
+  float z_rotation = rotation[2];
+  ImGui::DragFloat("Along z", &z_rotation, kGlobalSlide, -FLT_MAX, FLT_MAX,
+                   "%.2f deg");
+  if (z_rotation != rotation[2]) {
+    model_controller.Rotate(z_rotation - rotation[2], Axis::Z);
+  }
+
+  ImGui::Separator();
+  ImGui::Text("Transformation matrix");
+  ImGui::DragFloat4("##row_1", model_ptr, kGlobalSlide, -FLT_MAX, FLT_MAX);
+  ImGui::DragFloat4("##row_2", model_ptr + 4, kGlobalSlide, -FLT_MAX, FLT_MAX);
+  ImGui::DragFloat4("##row_3", model_ptr + 8, kGlobalSlide, -FLT_MAX, FLT_MAX);
+  ImGui::DragFloat4("##row_4", model_ptr + 12, kGlobalSlide, -FLT_MAX, FLT_MAX);
+}
+
 void DrawModel(Model& model) {
+  ImGui::Text("Draw ");
+  ImGui::SameLine();
+  std::string id =
+      "##should_render_model" + std::to_string(model.GetGlobalId());
+  ImGui::Checkbox(id.c_str(), &model.GetShouldDraw());
   auto status = model.GetStatus();
   ImGui::Text("Model Status ");
   ImGui::SameLine();
   ImGui::Text(ToString(status).c_str());
-  if (status == Status::Loading)
+  if (status == Status::Loading) {
     ImGui::Spinner("spinner", 10, 4, ImGui::GetColorU32(ImGuiCol_Button));
+  } else if (status == Status::Avalible) {
+    ImGui::Separator();
+    DrawModelController(model);
+  }
 }
 int DrawShaderComboMenu(std::vector<std::unique_ptr<Shader>>& array,
                         int selected) {
-  return DrawComboMenuFromMEP(array, selected);
+  return DrawComboMenuFromMEP(array, selected, "##shader");
+}
+
+int DrawMaterialComboMenu(std::vector<std::unique_ptr<Material>>& array,
+                          int selected) {
+  return DrawComboMenuFromMEP(array, selected, "##material");
+}
+
+int DrawTextureComboMenu(std::vector<std::unique_ptr<Texture>>& array,
+                         int selected) {
+  return DrawComboMenuFromMEP(array, selected, "##texture");
 }
 
 void DrawEngineMonitorDataConst(const EngineMonitorData& engine_monitor_data) {

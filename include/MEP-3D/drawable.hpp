@@ -7,8 +7,15 @@
 
 class Drawable {
  public:
+  Drawable();
   virtual void Draw(RenderTarget& render_target) = 0;
+  virtual bool ShouldDraw() const;
+  virtual void SetShouldDraw(bool should_draw);
+  virtual bool& GetShouldDraw();
   virtual ~Drawable() = default;
+
+ private:
+  bool should_draw_;
 };
 
 #endif

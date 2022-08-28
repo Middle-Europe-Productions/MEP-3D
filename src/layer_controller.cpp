@@ -54,6 +54,24 @@ std::vector<std::unique_ptr<Shader>>& LayerController::GetShader() {
   return shaders_;
 }
 
+std::size_t LayerController::AttachMaterial(
+    std::unique_ptr<Material> material) {
+  materials_.emplace_back(std::move(material));
+  return materials_.size() - 1;
+}
+std::vector<std::unique_ptr<Material>>& LayerController::GetMaterial() {
+  return materials_;
+}
+
+std::size_t LayerController::AttachTexture(std::unique_ptr<Texture> texture) {
+  textures_.emplace_back(std::move(texture));
+  return textures_.size() - 1;
+}
+
+std::vector<std::unique_ptr<Texture>>& LayerController::GetTexture() {
+  return textures_;
+}
+
 void LayerController::UseAllDirectionalLights() {
   for (auto& dl : directional_lights_) {
     dl->Use();
@@ -78,10 +96,14 @@ void LayerController::UseAllLights(UsableElements usable_elements) {
 }
 
 std::size_t LayerController::DrawAllModels(RenderTarget& render_target) {
+  int draw_calls = 0;
   for (auto& model : models_) {
-    model->Draw(render_target);
+    if (model->ShouldDraw()) {
+      model->Draw(render_target);
+      draw_calls++;
+    }
   }
-  return models_.size();
+  return draw_calls;
 }
 
 std::size_t LayerController::DrawAll(RenderTarget& render_target,

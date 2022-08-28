@@ -21,6 +21,7 @@ Executor::Executor(Type type, std::size_t number_of_thread)
   LOG(INFO) << "Starting the executor: " << ToString()
             << ", type: " << TypeToString()
             << ", number of threads: " << number_of_thread;
+  active_.store(true, std::memory_order_release);
   for (std::size_t i = 0; i < number_of_thread; ++i) {
     thread_pool_.emplace_back(&Executor::RunThread, this);
   }
@@ -63,8 +64,10 @@ void Executor::RunThread() noexcept {
       auto active = this->active_.load(std::memory_order_acquire);
       return !(this->task_queue_.empty() && active);
     });
-    if (task_queue_.empty())
+    if (task_queue_.empty()) {
+      LOG(INFO) << __FUNCTION__ << ", thread finished life!";
       break;
+    }
     auto next = std::move(task_queue_.front());
     task_queue_.pop();
     lock.unlock();

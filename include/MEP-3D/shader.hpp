@@ -2,22 +2,22 @@
 #define SHADER_HPP
 
 #include <GL/glew.h>
+#include <MEP-3D/asset.hpp>
 #include <MEP-3D/asset_observer.hpp>
-#include <MEP-3D/identity.hpp>
 #include <MEP-3D/observer_list.hpp>
 #include <fstream>
 #include <glm/glm.hpp>
 #include <string>
 
-class Shader : public Identity, public ObserverList<AssetObserver> {
+class Shader : public Asset {
  public:
   Shader();
   Shader(const std::string& name);
   bool Compile(const std::string& vertex_code,
                const std::string& fragment_code);
   bool IsCompiled() const;
-  void StartUsing();
-  void StopUsing();
+  void Use() override;
+  void Stop() override;
   bool CreateFromFile(const std::string& vertex_location,
                       const std::string& fragment_location);
   bool CreateFromString(const std::string& vertex_code,
@@ -37,7 +37,6 @@ class Shader : public Identity, public ObserverList<AssetObserver> {
   bool SetUniformExt(GLuint uniform_location, int value);
   bool SaveUniformToMemory(const std::string& name, unsigned int memory_id);
   GLint GetUniform(const std::string& name) const;
-  static std::string LoadFromFile(const std::string& path);
   virtual ~Shader();
 
  protected:

@@ -7,6 +7,7 @@ extern const char* kTexture;
 extern const char* kShader;
 extern const char* kMaterial;
 extern const char* kLight;
+extern const char* kModel;
 extern const char* kDirectionalLight;
 extern const char* kSpotLight;
 extern const char* kPointLight;

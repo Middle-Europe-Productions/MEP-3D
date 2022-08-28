@@ -18,3 +18,7 @@ glm::vec3 utils::AxisToGlm(Axis axis) {
 float utils::DegToRadians(float degress) {
   return degress * 3.14159265f / 180.0f;
 }
+
+float utils::RadiansToDeg(float radians) {
+  return radians * 180.0f / 3.14159265f;
+}

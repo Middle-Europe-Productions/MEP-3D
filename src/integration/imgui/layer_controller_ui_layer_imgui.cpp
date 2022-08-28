@@ -9,7 +9,16 @@
 #include "spot_light_factory_imgui.hpp"
 
 namespace {
-enum MenuAction { None, AddPointLight, AddSpotLight, AddModel };
+enum MenuAction {
+  None,
+  AddPointLight,
+  AddSpotLight,
+  AddModel,
+  AddShader,
+  AddImage,
+  AddTexture,
+  AddMaterial
+};
 };  // namespace
 
 class LayerControllerUILayerImGUI : public LayerControllerUILayer {
@@ -54,6 +63,18 @@ class LayerControllerUILayerImGUI : public LayerControllerUILayer {
         }
         if (ImGui::MenuItem("Model")) {
           menu_action_ = MenuAction::AddModel;
+        }
+        if (ImGui::MenuItem("Shader")) {
+          menu_action_ = MenuAction::AddShader;
+        }
+        if (ImGui::MenuItem("Image")) {
+          menu_action_ = MenuAction::AddImage;
+        }
+        if (ImGui::MenuItem("Texture")) {
+          menu_action_ = MenuAction::AddTexture;
+        }
+        if (ImGui::MenuItem("Material")) {
+          menu_action_ = MenuAction::AddMaterial;
         }
         ImGui::EndMenu();
       }

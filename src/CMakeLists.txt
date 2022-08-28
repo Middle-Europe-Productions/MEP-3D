@@ -16,6 +16,7 @@ set(SOURCE
   ${SRC_ROOT}/perspective_view.cpp
   ${SRC_ROOT}/updatable.cpp
   ${SRC_ROOT}/utils.cpp
+  ${SRC_ROOT}/drawable.cpp
   ${SRC_ROOT}/texture.cpp
   ${SRC_ROOT}/identity.cpp
   ${SRC_ROOT}/observer.cpp

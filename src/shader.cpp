@@ -3,13 +3,30 @@
 #include <MEP-3D/shader.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-Shader::Shader() : Identity(kShader), status_(false) {
+namespace {
+std::string LoadFromFile(const std::string& path) {
+  std::ifstream file_stream(path, std::ios::in);
+  if (!file_stream.is_open()) {
+    LOG(ERROR) << "Could not open a file: " << path << "!";
+    return "";
+  }
+  std::string output;
+  std::string line = "";
+  while (!file_stream.eof()) {
+    std::getline(file_stream, line);
+    output.append(line + "\n");
+  }
+  return output;
+}
+}  // namespace
+
+Shader::Shader() : Asset(kShader), status_(false) {
   LOG(INFO) << __FUNCTION__ << ", " << ToString();
   shader_id_ = 0;
 }
 
 Shader::Shader(const std::string& name)
-    : Identity(kShader, name.c_str()), status_(false) {
+    : Asset(kShader, name.c_str()), status_(false) {
   LOG(INFO) << __FUNCTION__ << ", " << ToString();
   shader_id_ = 0;
 }
@@ -52,18 +69,18 @@ bool Shader::Compile(const std::string& vertex_code,
   return true;
 }
 
-void Shader::StartUsing() {
+void Shader::Use() {
   glUseProgram(shader_id_);
 }
 
-void Shader::StopUsing() {
+void Shader::Stop() {
   glUseProgram(0);
 }
 
 bool Shader::CreateFromFile(const std::string& vertex_location,
                             const std::string& fragment_location) {
-  std::string vertex_code = Shader::LoadFromFile(vertex_location);
-  std::string fragment_code = Shader::LoadFromFile(fragment_location);
+  std::string vertex_code = LoadFromFile(vertex_location);
+  std::string fragment_code = LoadFromFile(fragment_location);
   if (vertex_code == "" || fragment_code == "")
     return false;
   return CreateFromString(vertex_code, fragment_code);
@@ -192,21 +209,6 @@ GLint Shader::GetUniform(const std::string& name) const {
     LOG(ERROR) << "Could not find a variable: " << name << "!";
   }
   return uniform_value_loc;
-}
-
-std::string Shader::LoadFromFile(const std::string& path) {
-  std::ifstream file_stream(path, std::ios::in);
-  if (!file_stream.is_open()) {
-    LOG(ERROR) << "Could not open a file: " << path << "!";
-    return "";
-  }
-  std::string output;
-  std::string line = "";
-  while (!file_stream.eof()) {
-    std::getline(file_stream, line);
-    output.append(line + "\n");
-  }
-  return output;
 }
 
 Shader::~Shader() {
