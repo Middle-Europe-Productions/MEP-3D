@@ -23,27 +23,22 @@ enum MenuAction {
 
 class LayerControllerUILayerImGUI : public LayerControllerUILayer {
  public:
-  LayerControllerUILayerImGUI()
-      : point_light_fact_(
-            std::bind(&LayerControllerUILayerImGUI::AddPointLight,
-                      this,
-                      std::placeholders::_1),
-            std::bind(&LayerControllerUILayerImGUI::RemovePointLight,
-                      this,
-                      std::placeholders::_1)),
-        spot_light_fact_(
-            std::bind(&LayerControllerUILayerImGUI::AddSpotLight,
-                      this,
-                      std::placeholders::_1),
-            std::bind(&LayerControllerUILayerImGUI::RemoveSpotLight,
-                      this,
-                      std::placeholders::_1)),
-        model_fact_(std::bind(&LayerControllerUILayerImGUI::AddModel,
-                              this,
-                              std::placeholders::_1),
-                    std::bind(&LayerControllerUILayerImGUI::RemoveModel,
-                              this,
-                              std::placeholders::_1)) {
+  LayerControllerUILayerImGUI() {
+    factory.emplace_back(std::make_unique<PointLightFactoryImGui>(
+        std::bind(&LayerControllerUILayerImGUI::AddPointLight, this,
+                  std::placeholders::_1),
+        std::bind(&LayerControllerUILayerImGUI::RemovePointLight, this,
+                  std::placeholders::_1)));
+    factory.emplace_back(std::make_unique<SpotLightFactoryImGui>(
+        std::bind(&LayerControllerUILayerImGUI::AddSpotLight, this,
+                  std::placeholders::_1),
+        std::bind(&LayerControllerUILayerImGUI::RemoveSpotLight, this,
+                  std::placeholders::_1)));
+    factory.emplace_back(std::make_unique<ModelFactoryImGui>(
+        std::bind(&LayerControllerUILayerImGUI::AddModel, this,
+                  std::placeholders::_1),
+        std::bind(&LayerControllerUILayerImGUI::RemoveModel, this,
+                  std::placeholders::_1)));
     LOG(INFO) << __FUNCTION__;
   }
   void OnAttach() override {}
@@ -177,9 +172,9 @@ class LayerControllerUILayerImGUI : public LayerControllerUILayer {
         menu_action_ = MenuAction::None;
         break;
     };
-    DrawFactory("New Point Light", point_light_fact_);
-    DrawFactory("New Spot Light", spot_light_fact_);
-    DrawFactory("New Model", model_fact_);
+    DrawFactory("New Point Light", factory[0].get());
+    DrawFactory("New Spot Light", factory[1].get());
+    DrawFactory("New Model", factory[2].get());
     DrawMenu();
     ImGui::End();
   }
@@ -187,12 +182,12 @@ class LayerControllerUILayerImGUI : public LayerControllerUILayer {
 
  private:
   template <typename What>
-  void DrawFactory(const std::string& name, What& factory) {
+  void DrawFactory(const std::string& name, What* factory) {
     if (ImGui::BeginPopup(name.c_str(), ImGuiWindowFlags_MenuBar)) {
-      factory.ImGUIDraw(*GetLayerControllerPtr());
+      factory->ImGUIDraw(*GetLayerControllerPtr());
       ImGui::EndPopup();
     } else {
-      factory.Remove();
+      factory->Remove();
     }
   }
   PointLight* AddPointLight(PointLightPtr point_light) {
@@ -249,9 +244,7 @@ class LayerControllerUILayerImGUI : public LayerControllerUILayer {
                cont.end());
   }
   virtual bool ShouldIgnoreLayer() const override { return false; }
-  PointLightFactoryImGui point_light_fact_;
-  SpotLightFactoryImGui spot_light_fact_;
-  ModelFactoryImGui model_fact_;
+  std::vector<std::unique_ptr<ElementFactoryImGuiBase>> factory;
   MenuAction menu_action_;
 };
 

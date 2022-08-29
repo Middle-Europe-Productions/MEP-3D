@@ -4,8 +4,15 @@
 #include <MEP-3D/layer_controller.hpp>
 #include <functional>
 
+class ElementFactoryImGuiBase {
+ public:
+  virtual void Remove() = 0;
+  virtual void ImGUIDraw(LayerController&) = 0;
+  virtual ~ElementFactoryImGuiBase() = default;
+};
+
 template <typename Element, typename ElementPtr>
-class ElementFactoryImGui {
+class ElementFactoryImGui : public ElementFactoryImGuiBase {
  public:
   using ElementAddCallback = std::function<Element*(ElementPtr)>;
   using ElementRemoveCallback = std::function<void(const Identity&)>;
@@ -18,7 +25,7 @@ class ElementFactoryImGui {
   ElementRemoveCallback GetRemoveCallback() { return remove_callback_; }
   virtual void Remove();
   virtual bool New(ElementPtr element) = 0;
-  virtual void ImGUIDraw(LayerController&) = 0;
+  virtual ~ElementFactoryImGui() = default;
 
  private:
   ElementAddCallback add_callback_;

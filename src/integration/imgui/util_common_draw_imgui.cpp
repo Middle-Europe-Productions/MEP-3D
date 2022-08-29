@@ -144,6 +144,11 @@ void DrawModelController(ModelController& model_controller) {
   if (z_rotation != rotation[2]) {
     model_controller.Rotate(z_rotation - rotation[2], Axis::Z);
   }
+  ImGui::Separator();
+  ImGui::Text("Scale");
+  ImGui::DragFloat("x scale", model_ptr + 0, kGlobalSlide, -FLT_MAX, FLT_MAX);
+  ImGui::DragFloat("y scale", model_ptr + 5, kGlobalSlide, -FLT_MAX, FLT_MAX);
+  ImGui::DragFloat("z scale", model_ptr + 10, kGlobalSlide, -FLT_MAX, FLT_MAX);
 
   ImGui::Separator();
   ImGui::Text("Transformation matrix");
@@ -169,6 +174,7 @@ void DrawModel(Model& model) {
     ImGui::Separator();
     DrawModelController(model);
   }
+  UI::DrawAssetControllerConst(model);
 }
 int DrawShaderComboMenu(std::vector<std::unique_ptr<Shader>>& array,
                         int selected) {
