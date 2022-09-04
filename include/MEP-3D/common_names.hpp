@@ -1,7 +1,7 @@
 #ifndef COMMON_NAMES_HPP
 #define COMMON_NAMES_HPP
 
-extern const char* kLayerControllerUILayer;
+extern const char* kSceneUILayer;
 extern const char* kEngineDataUILayer;
 extern const char* kTexture;
 extern const char* kShader;

@@ -11,21 +11,22 @@
 #include <MEP-3D/engine.hpp>
 #include <MEP-3D/figures.hpp>
 #include <MEP-3D/image.hpp>
-#include <MEP-3D/layer_controller.hpp>
 #include <MEP-3D/light_controller.hpp>
 #include <MEP-3D/material.hpp>
 #include <MEP-3D/model.hpp>
 #include <MEP-3D/perspective_view.hpp>
+#include <MEP-3D/scene.hpp>
 #include <MEP-3D/shader.hpp>
 #include <MEP-3D/spot_light.hpp>
 #include <MEP-3D/template/engine_data_ui_layer.hpp>
-#include <MEP-3D/template/layer_controller_ui_layer.hpp>
+#include <MEP-3D/template/scene_ui_layer.hpp>
 #include <MEP-3D/texture.hpp>
 #include <MEP-3D/user_interface.hpp>
 #include <MEP-3D/utils.hpp>
 #include <MEP-3D/vector.hpp>
 #include <MEP-3D/window.hpp>
 #include <MEP-3D/window_observer.hpp>
+
 
 const std::unordered_map<LightUniforms, std::string>
     kDirectionalLightUniformMap = {
@@ -60,10 +61,10 @@ const std::unordered_map<LightUniforms, std::string> kSpotLightUniformMap = {
     {LightUniforms::Direction, "direction"},
     {LightUniforms::Edge, "edge"}};
 
-class BenchmarkLayer final : public LayerController {
+class BenchmarkLayer final : public Scene {
  public:
   BenchmarkLayer(unsigned int triangles_count)
-      : LayerController("benchmark_layer_" + std::to_string(triangles_count)),
+      : Scene("benchmark_layer_" + std::to_string(triangles_count)),
         triangles_count_(triangles_count),
         shader_(std::make_unique<Shader>("main_shader")) {}
   void OnAttach() override {
@@ -119,9 +120,8 @@ class BenchmarkLayer final : public LayerController {
     spot_light_con->Bind(shader_.get());
     AttachSpotLightController(std::move(spot_light_con));
     // Add UI
-    auto ui_layer =
-        LayerControllerUILayer::Create();
-    LayerController::AddObserver(ui_layer.get());
+    auto ui_layer = SceneUILayer::Create();
+    Scene::AddObserver(ui_layer.get());
     GetEngine()->AttachLayerToStructure(std::move(ui_layer), 0);
     // Create elements
     for (int i = 0; i < triangles_count_; i++) {

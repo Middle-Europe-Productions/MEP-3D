@@ -32,8 +32,8 @@ set(SOURCE
   ${SRC_ROOT}/resource_base.cpp
   ${SRC_ROOT}/engine.cpp
   ${SRC_ROOT}/layer.cpp
-  ${SRC_ROOT}/layer_controller.cpp
-  ${SRC_ROOT}/template/layer_controller_ui_layer.cpp
+  ${SRC_ROOT}/scene.cpp
+  ${SRC_ROOT}/template/scene_ui_layer.cpp
   ${SRC_ROOT}/common_names.cpp
   ${SRC_ROOT}/config_create_impl.cpp
   ${SRC_ROOT}/scene_ui_parser.cpp
@@ -87,9 +87,9 @@ set(HEADERS
   ${INC_ROOT}/layer.hpp
   ${INC_ROOT}/engine.hpp
   ${INC_ROOT}/user_interface.hpp
-  ${INC_ROOT}/layer_controller.hpp
+  ${INC_ROOT}/scene.hpp
   ${INC_ROOT}/template/engine_data_ui_layer.hpp
-  ${INC_ROOT}/template/layer_controller_ui_layer.hpp
+  ${INC_ROOT}/template/scene_ui_layer.hpp
   ${INC_ROOT}/template/util_common_draw.hpp
   ${INC_ROOT}/common_names.hpp
   ${INC_ROOT}/scene_ui_parser.hpp
@@ -144,7 +144,7 @@ if (NOT MEP_STANDALONE_APP)
   list(APPEND SOURCE
     ${SRC_ROOT}/integration/imgui/user_interface_imgui.cpp
     ${SRC_ROOT}/integration/imgui/engine_data_ui_layer_imgui.cpp
-    ${SRC_ROOT}/integration/imgui/layer_controller_ui_layer_imgui.cpp
+    ${SRC_ROOT}/integration/imgui/scene_ui_layer_imgui.cpp
     ${SRC_ROOT}/integration/imgui/util_common_draw_imgui.cpp
     ${SRC_ROOT}/integration/imgui/element_factory_imgui.inl
     ${SRC_ROOT}/integration/imgui/element_factory_imgui.hpp
@@ -165,7 +165,7 @@ else()
   list(APPEND SOURCE
     ${SRC_ROOT}/integration/default/user_interface_default.cpp
     ${SRC_ROOT}/integration/default/engine_data_ui_layer_default.cpp
-    ${SRC_ROOT}/integration/default/layer_controller_ui_layer_default.cpp
+    ${SRC_ROOT}/integration/default/scene_ui_layer_default.cpp
     ${SRC_ROOT}/integration/default/util_common_draw_default.cpp
   )
 endif ()

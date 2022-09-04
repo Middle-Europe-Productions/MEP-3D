@@ -24,5 +24,5 @@ int DrawTextureComboMenu(std::vector<std::unique_ptr<Texture>>& array,
 }
 
 void DrawEngineMonitorDataConst(const EngineMonitorData& engine_monitor_data) {}
-void DrawAssetControllerConst(const AssetController& layer_controller) {}
+void DrawAssetControllerConst(const AssetController& scene) {}
 }  // namespace UI

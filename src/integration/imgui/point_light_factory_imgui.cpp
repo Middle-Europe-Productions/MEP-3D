@@ -12,7 +12,7 @@ bool PointLightFactoryImGui::New(PointLightPtr element) {
   return Exists();
 }
 
-void PointLightFactoryImGui::ImGUIDraw(LayerController& layer_controller) {
+void PointLightFactoryImGui::ImGUIDraw(Scene& scene) {
   if (!Exists()) {
     if (!New(PointLight::Create()))
       return;

@@ -1,13 +1,13 @@
 #ifndef ELEMENT_FACTORY_IMGUI_HPP
 #define ELEMENT_FACTORY_IMGUI_HPP
 
-#include <MEP-3D/layer_controller.hpp>
+#include <MEP-3D/scene.hpp>
 #include <functional>
 
 class ElementFactoryImGuiBase {
  public:
   virtual void Remove() = 0;
-  virtual void ImGUIDraw(LayerController&) = 0;
+  virtual void ImGUIDraw(Scene&) = 0;
   virtual ~ElementFactoryImGuiBase() = default;
 };
 

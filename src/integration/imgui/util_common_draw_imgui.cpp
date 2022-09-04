@@ -221,18 +221,18 @@ void DrawEngineMonitorDataConst(const EngineMonitorData& engine_monitor_data) {
     }
   }
 }
-void DrawAssetControllerConst(const AssetController& layer_controller) {
-  if (auto* texture = layer_controller.Get<Texture>()) {
+void DrawAssetControllerConst(const AssetController& scene) {
+  if (auto* texture = scene.Get<Texture>()) {
     ImGui::Text("Texture: ");
     ImGui::SameLine();
     ImGui::Text(texture->GetName().c_str());
   }
-  if (auto* shader = layer_controller.Get<Shader>()) {
+  if (auto* shader = scene.Get<Shader>()) {
     ImGui::Text("Shader: ");
     ImGui::SameLine();
     ImGui::Text(shader->GetName().c_str());
   }
-  if (auto* model = layer_controller.Get<Material>()) {
+  if (auto* model = scene.Get<Material>()) {
     ImGui::Text("Material: ");
     ImGui::SameLine();
     ImGui::Text(model->GetName().c_str());

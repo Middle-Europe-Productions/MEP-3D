@@ -1,92 +1,88 @@
-#include <MEP-3D/layer_controller.hpp>
+#include <MEP-3D/scene.hpp>
 
-void LayerController::AddObserver(LayerControllerObserver* obs) {
+void Scene::AddObserver(SceneObserver* obs) {
   if (obs) {
-    ObserverList<LayerControllerObserver>::AddObserver(obs);
+    ObserverList<SceneObserver>::AddObserver(obs);
     obs->OnAttach(this);
   }
 }
-std::vector<std::unique_ptr<DirectionalLight>>&
-LayerController::GetDirectionaLights() {
+std::vector<std::unique_ptr<DirectionalLight>>& Scene::GetDirectionaLights() {
   return directional_lights_;
 }
-std::size_t LayerController::AttachDirectionaLight(
+std::size_t Scene::AttachDirectionaLight(
     std::unique_ptr<DirectionalLight> directional_light) {
   directional_lights_.emplace_back(std::move(directional_light));
   return directional_lights_.size() - 1;
 }
 
-void LayerController::AttachSpotLightController(
+void Scene::AttachSpotLightController(
     std::unique_ptr<SpotLightController> spot_light_controller) {
   spot_light_controller_ = std::move(spot_light_controller);
 }
 
-std::unique_ptr<SpotLightController>&
-LayerController::GetSpotLightController() {
+std::unique_ptr<SpotLightController>& Scene::GetSpotLightController() {
   return spot_light_controller_;
 }
 
-void LayerController::AttachPointLightController(
+void Scene::AttachPointLightController(
     std::unique_ptr<PointLightController> point_light_controller) {
   point_light_controller_ = std::move(point_light_controller);
 }
 
-std::unique_ptr<PointLightController>&
-LayerController::GetPointLightController() {
+std::unique_ptr<PointLightController>& Scene::GetPointLightController() {
   return point_light_controller_;
 }
 
-std::size_t LayerController::AttachModel(std::unique_ptr<Model> model) {
+std::size_t Scene::AttachModel(std::unique_ptr<Model> model) {
   models_.emplace_back(std::move(model));
   return models_.size() - 1;
 }
 
-std::vector<std::unique_ptr<Model>>& LayerController::GetModels() {
+std::vector<std::unique_ptr<Model>>& Scene::GetModels() {
   return models_;
 }
 
-std::size_t LayerController::AttachShader(std::unique_ptr<Shader> shader) {
+std::size_t Scene::AttachShader(std::unique_ptr<Shader> shader) {
   shaders_.emplace_back(std::move(shader));
   return shaders_.size() - 1;
 }
 
-std::vector<std::unique_ptr<Shader>>& LayerController::GetShader() {
+std::vector<std::unique_ptr<Shader>>& Scene::GetShader() {
   return shaders_;
 }
 
-std::size_t LayerController::AttachMaterial(
-    std::unique_ptr<Material> material) {
+std::size_t Scene::AttachMaterial(std::unique_ptr<Material> material) {
   materials_.emplace_back(std::move(material));
   return materials_.size() - 1;
 }
-std::vector<std::unique_ptr<Material>>& LayerController::GetMaterial() {
+std::vector<std::unique_ptr<Material>>& Scene::GetMaterial() {
   return materials_;
 }
 
-std::size_t LayerController::AttachTexture(std::unique_ptr<Texture> texture) {
+std::size_t Scene::AttachTexture(std::unique_ptr<Texture> texture) {
   textures_.emplace_back(std::move(texture));
   return textures_.size() - 1;
 }
 
-std::vector<std::unique_ptr<Texture>>& LayerController::GetTexture() {
+std::vector<std::unique_ptr<Texture>>& Scene::GetTexture() {
   return textures_;
 }
 
-void LayerController::UseAllDirectionalLights() {
+void Scene::UseAllDirectionalLights() {
   for (auto& dl : directional_lights_) {
     dl->Use();
   }
 }
 
-void LayerController::UseAllSpotLights() {
+void Scene::UseAllSpotLights() {
   spot_light_controller_->Use();
 }
 
-void LayerController::UseAllPointLights() {
+void Scene::UseAllPointLights() {
   point_light_controller_->Use();
 }
 
-void LayerController::UseAllLights(UsableElements usable_elements) {
+void Scene::UseAllLights(UsableElements usable_elements) {
   if (usable_elements & UsableElements::DirectionalLights)
     UseAllDirectionalLights();
   if (usable_elements & UsableElements::SpotLights)
@@ -95,7 +91,7 @@ void LayerController::UseAllLights(UsableElements usable_elements) {
     UseAllPointLights();
 }
 
-std::size_t LayerController::DrawAllModels(RenderTarget& render_target) {
+std::size_t Scene::DrawAllModels(RenderTarget& render_target) {
   int draw_calls = 0;
   for (auto& model : models_) {
     if (model->ShouldDraw()) {
@@ -106,9 +102,9 @@ std::size_t LayerController::DrawAllModels(RenderTarget& render_target) {
   return draw_calls;
 }
 
-std::size_t LayerController::DrawAll(RenderTarget& render_target,
-                                     // TODO: Fix
-                                     DrawableElements drawable_elements) {
+std::size_t Scene::DrawAll(RenderTarget& render_target,
+                           // TODO: Fix
+                           DrawableElements drawable_elements) {
   std::size_t draw_calls = 0;
   if (drawable_elements & DrawableElements::Models) {
     draw_calls += DrawAllModels(render_target);
@@ -116,7 +112,7 @@ std::size_t LayerController::DrawAll(RenderTarget& render_target,
   return draw_calls;
 }
 
-LayerController::~LayerController() {
+Scene::~Scene() {
   LOG(INFO) << __FUNCTION__;
   ForAllObservers([](auto* obs) { obs->OnDetach(); });
 }

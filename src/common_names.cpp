@@ -1,6 +1,6 @@
 #include <MEP-3D/common_names.hpp>
 
-const char* kLayerControllerUILayer = "layer_controller_ui_layer";
+const char* kSceneUILayer = "scene_ui_layer";
 const char* kEngineDataUILayer = "engine_data_ui_layer";
 const char* kTexture = "texture";
 const char* kShader = "shader";

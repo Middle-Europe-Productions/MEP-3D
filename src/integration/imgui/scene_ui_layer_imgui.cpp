@@ -2,7 +2,7 @@
 #include <functional>
 
 #include <MEP-3D/scene_ui_parser.hpp>
-#include <MEP-3D/template/layer_controller_ui_layer.hpp>
+#include <MEP-3D/template/scene_ui_layer.hpp>
 #include <MEP-3D/template/util_common_draw.hpp>
 
 #include "model_factory_imgui.hpp"
@@ -22,7 +22,7 @@ enum MenuAction {
   AddMaterial,
   MenuActionCount
 };
-constexpr char kDefaultLayerControllerConfig[] = R"({
+constexpr char kDefaultSceneConfig[] = R"({
    "menu":[
       {
         "name":"New",
@@ -50,23 +50,22 @@ constexpr char kDefaultLayerControllerConfig[] = R"({
 })";
 };  // namespace
 
-class LayerControllerUILayerImGUI : public LayerControllerUILayer {
+class SceneUILayerImGUI : public SceneUILayer {
  public:
-  LayerControllerUILayerImGUI(const std::string& config) {
+  SceneUILayerImGUI(const std::string& config) {
     factory.emplace_back(std::make_unique<PointLightFactoryImGui>(
-        std::bind(&LayerControllerUILayerImGUI::AddPointLight, this,
+        std::bind(&SceneUILayerImGUI::AddPointLight, this,
                   std::placeholders::_1),
-        std::bind(&LayerControllerUILayerImGUI::RemovePointLight, this,
+        std::bind(&SceneUILayerImGUI::RemovePointLight, this,
                   std::placeholders::_1)));
     factory.emplace_back(std::make_unique<SpotLightFactoryImGui>(
-        std::bind(&LayerControllerUILayerImGUI::AddSpotLight, this,
+        std::bind(&SceneUILayerImGUI::AddSpotLight, this,
                   std::placeholders::_1),
-        std::bind(&LayerControllerUILayerImGUI::RemoveSpotLight, this,
+        std::bind(&SceneUILayerImGUI::RemoveSpotLight, this,
                   std::placeholders::_1)));
     factory.emplace_back(std::make_unique<ModelFactoryImGui>(
-        std::bind(&LayerControllerUILayerImGUI::AddModel, this,
-                  std::placeholders::_1),
-        std::bind(&LayerControllerUILayerImGUI::RemoveModel, this,
+        std::bind(&SceneUILayerImGUI::AddModel, this, std::placeholders::_1),
+        std::bind(&SceneUILayerImGUI::RemoveModel, this,
                   std::placeholders::_1)));
     menu_.Parse(config.c_str());
     LOG(INFO) << __FUNCTION__;
@@ -79,7 +78,7 @@ class LayerControllerUILayerImGUI : public LayerControllerUILayer {
   }
   void DrawLightMenu() {
     if (ImGui::CollapsingHeader("Directional Light")) {
-      for (auto& dl_ptr : GetLayerControllerPtr()->GetDirectionaLights()) {
+      for (auto& dl_ptr : GetScenePtr()->GetDirectionaLights()) {
         if (ImGui::TreeNode(dl_ptr->Identity::GetName().c_str())) {
           UI::DrawDirectionalLight(*dl_ptr.get());
           ImGui::Separator();
@@ -87,14 +86,12 @@ class LayerControllerUILayerImGUI : public LayerControllerUILayer {
         }
       }
       ImGui::Separator();
-      UI::DrawAssetControllerConst(
-          *GetLayerControllerPtr()->GetSpotLightController());
+      UI::DrawAssetControllerConst(*GetScenePtr()->GetSpotLightController());
     }
     if (ImGui::CollapsingHeader("Spot Light")) {
-      if (GetLayerControllerPtr()->GetSpotLightController()) {
-        for (auto& sl_ptr : GetLayerControllerPtr()
-                                ->GetSpotLightController()
-                                ->GetContainer()) {
+      if (GetScenePtr()->GetSpotLightController()) {
+        for (auto& sl_ptr :
+             GetScenePtr()->GetSpotLightController()->GetContainer()) {
           if (ImGui::TreeNode(sl_ptr->Identity::GetName().c_str())) {
             UI::DrawSpotLight(*sl_ptr.get());
             ImGui::Separator();
@@ -102,15 +99,13 @@ class LayerControllerUILayerImGUI : public LayerControllerUILayer {
           }
         }
         ImGui::Separator();
-        UI::DrawAssetControllerConst(
-            *GetLayerControllerPtr()->GetSpotLightController());
+        UI::DrawAssetControllerConst(*GetScenePtr()->GetSpotLightController());
       }
     }
     if (ImGui::CollapsingHeader("Point Light")) {
-      if (GetLayerControllerPtr()->GetPointLightController()) {
-        for (auto& pl_ptr : GetLayerControllerPtr()
-                                ->GetPointLightController()
-                                ->GetContainer()) {
+      if (GetScenePtr()->GetPointLightController()) {
+        for (auto& pl_ptr :
+             GetScenePtr()->GetPointLightController()->GetContainer()) {
           if (ImGui::TreeNode(pl_ptr->Identity::GetName().c_str())) {
             UI::DrawPointLight(*pl_ptr.get());
             ImGui::Separator();
@@ -118,8 +113,7 @@ class LayerControllerUILayerImGUI : public LayerControllerUILayer {
           }
         }
         ImGui::Separator();
-        UI::DrawAssetControllerConst(
-            *GetLayerControllerPtr()->GetSpotLightController());
+        UI::DrawAssetControllerConst(*GetScenePtr()->GetSpotLightController());
       }
     }
   }
@@ -145,7 +139,7 @@ class LayerControllerUILayerImGUI : public LayerControllerUILayer {
   }
 
   void DrawModelMenu() {
-    for (auto& model : GetLayerControllerPtr()->GetModels()) {
+    for (auto& model : GetScenePtr()->GetModels()) {
       if (ImGui::TreeNode(model->Identity::GetName().c_str())) {
         UI::DrawModel(*model.get());
         ImGui::Separator();
@@ -155,7 +149,7 @@ class LayerControllerUILayerImGUI : public LayerControllerUILayer {
   }
 
   void OnDraw(RenderTarget& render_target) override {
-    if (!GetLayerControllerPtr())
+    if (!GetScenePtr())
       return;
     ImGui::Begin("Scene", NULL, ImGuiWindowFlags_MenuBar);
     DrawMenuBar();
@@ -179,13 +173,13 @@ class LayerControllerUILayerImGUI : public LayerControllerUILayer {
     DrawMenu();
     ImGui::End();
   }
-  ~LayerControllerUILayerImGUI() { LOG(INFO) << __FUNCTION__; }
+  ~SceneUILayerImGUI() { LOG(INFO) << __FUNCTION__; }
 
  private:
   template <typename What>
   void DrawFactory(const std::string& name, What* factory) {
     if (ImGui::BeginPopup(name.c_str(), ImGuiWindowFlags_MenuBar)) {
-      factory->ImGUIDraw(*GetLayerControllerPtr());
+      factory->ImGUIDraw(*GetScenePtr());
       ImGui::EndPopup();
     } else {
       factory->Remove();
@@ -193,7 +187,7 @@ class LayerControllerUILayerImGUI : public LayerControllerUILayer {
   }
   PointLight* AddPointLight(PointLightPtr point_light) {
     LOG(INFO) << __FUNCTION__ << ", " << __LINE__;
-    auto& cont = GetLayerControllerPtr()->GetPointLightController();
+    auto& cont = GetScenePtr()->GetPointLightController();
     if (!cont)
       return nullptr;
     auto it = cont->MakeAndBind(std::move(point_light));
@@ -204,7 +198,7 @@ class LayerControllerUILayerImGUI : public LayerControllerUILayer {
   }
   SpotLight* AddSpotLight(SpotLightPtr spot_light) {
     LOG(INFO) << __FUNCTION__ << ", " << __LINE__;
-    auto& cont = GetLayerControllerPtr()->GetSpotLightController();
+    auto& cont = GetScenePtr()->GetSpotLightController();
     if (!cont) {
       LOG(INFO) << __FUNCTION__ << ", " << __LINE__;
       return nullptr;
@@ -218,26 +212,26 @@ class LayerControllerUILayerImGUI : public LayerControllerUILayer {
   }
   Model* AddModel(ModelPtr model) {
     LOG(INFO) << __FUNCTION__ << ", " << __LINE__;
-    GetLayerControllerPtr()->GetModels().emplace_back(std::move(model));
-    return GetLayerControllerPtr()->GetModels().back().get();
+    GetScenePtr()->GetModels().emplace_back(std::move(model));
+    return GetScenePtr()->GetModels().back().get();
   }
   void RemovePointLight(const Identity& id) {
     LOG(INFO) << __FUNCTION__ << ", " << __LINE__;
-    auto& cont = GetLayerControllerPtr()->GetPointLightController();
+    auto& cont = GetScenePtr()->GetPointLightController();
     if (!cont)
       return;
     cont->Remove(id);
   }
   void RemoveSpotLight(const Identity& id) {
     LOG(INFO) << __FUNCTION__ << ", " << __LINE__;
-    auto& cont = GetLayerControllerPtr()->GetSpotLightController();
+    auto& cont = GetScenePtr()->GetSpotLightController();
     if (!cont)
       return;
     cont->Remove(id);
   }
   void RemoveModel(const Identity& id) {
     LOG(INFO) << __FUNCTION__ << ", " << __LINE__;
-    auto& cont = GetLayerControllerPtr()->GetModels();
+    auto& cont = GetScenePtr()->GetModels();
     cont.erase(std::remove_if(cont.begin(), cont.end(),
                               [&id](const auto& in) {
                                 return in->GetGlobalId() == id.GetGlobalId();
@@ -250,12 +244,10 @@ class LayerControllerUILayerImGUI : public LayerControllerUILayer {
   SceneUIParserImGui menu_;
 };
 
-std::unique_ptr<LayerControllerUILayer> LayerControllerUILayer::Create() {
-  return std::make_unique<LayerControllerUILayerImGUI>(
-      kDefaultLayerControllerConfig);
+std::unique_ptr<SceneUILayer> SceneUILayer::Create() {
+  return std::make_unique<SceneUILayerImGUI>(kDefaultSceneConfig);
 }
 
-std::unique_ptr<LayerControllerUILayer> LayerControllerUILayer::Create(
-    const std::string& config) {
-  return std::make_unique<LayerControllerUILayerImGUI>(config.c_str());
+std::unique_ptr<SceneUILayer> SceneUILayer::Create(const std::string& config) {
+  return std::make_unique<SceneUILayerImGUI>(config.c_str());
 }

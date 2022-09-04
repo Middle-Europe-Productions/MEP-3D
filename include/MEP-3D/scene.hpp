@@ -1,5 +1,5 @@
-#ifndef LAYER_CONTROLLER_HPP
-#define LAYER_CONTROLLER_HPP
+#ifndef SCENE_HPP
+#define SCENE_HPP
 
 #include <MEP-3D/directional_light.hpp>
 #include <MEP-3D/layer.hpp>
@@ -14,16 +14,15 @@
 #include <memory>
 #include <vector>
 
-class LayerController;
-class LayerControllerObserver : public Observer {
+class Scene;
+class SceneObserver : public Observer {
  public:
-  virtual void OnAttach(LayerController* scene) = 0;
+  virtual void OnAttach(Scene* scene) = 0;
   virtual void OnDetach() = 0;
-  virtual ~LayerControllerObserver() = default;
+  virtual ~SceneObserver() = default;
 };
 
-class LayerController : public Layer,
-                        public ObserverList<LayerControllerObserver> {
+class Scene : public Layer, public ObserverList<SceneObserver> {
  public:
   enum UsableElements : int {
     DirectionalLights = 1 << 1,
@@ -32,9 +31,9 @@ class LayerController : public Layer,
     Lights = DirectionalLights | PointLights | SpotLights,
   };
   enum DrawableElements : int { Models = 1 << 1, All = 1 << 2 };
-  LayerController() = default;
-  LayerController(const std::string& name) : Layer(name) {}
-  void AddObserver(LayerControllerObserver* obs);
+  Scene() = default;
+  Scene(const std::string& name) : Layer(name) {}
+  void AddObserver(SceneObserver* obs);
   std::vector<std::unique_ptr<DirectionalLight>>& GetDirectionaLights();
   std::size_t AttachDirectionaLight(
       std::unique_ptr<DirectionalLight> directional_light);
@@ -60,7 +59,7 @@ class LayerController : public Layer,
   std::size_t DrawAll(
       RenderTarget& render_target,
       DrawableElements drawable_elements = DrawableElements::All);
-  virtual ~LayerController();
+  virtual ~Scene();
 
  private:
   std::vector<std::unique_ptr<DirectionalLight>> directional_lights_;

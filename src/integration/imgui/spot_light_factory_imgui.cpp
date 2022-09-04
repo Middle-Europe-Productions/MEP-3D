@@ -12,7 +12,7 @@ bool SpotLightFactoryImGui::New(SpotLightPtr element) {
   return Exists();
 }
 
-void SpotLightFactoryImGui::ImGUIDraw(LayerController& layer_controller) {
+void SpotLightFactoryImGui::ImGUIDraw(Scene& scene) {
   if (!Exists()) {
     if (!New(SpotLight::Create())) {
       return;

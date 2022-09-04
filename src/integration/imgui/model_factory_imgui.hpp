@@ -10,7 +10,7 @@ class ModelFactoryImGui : public ElementFactoryImGui<Model, ModelPtr> {
   ModelFactoryImGui(T::ElementAddCallback add_callback,
                     T::ElementRemoveCallback remove_callback);
   bool New(ModelPtr element) override;
-  void ImGUIDraw(LayerController& layer_controller) override;
+  void ImGUIDraw(Scene& scene) override;
 
  private:
   bool ModelFactoryImGui::ValidData() const;
