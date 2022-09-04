@@ -1,29 +1,58 @@
 #include <imgui.h>
 #include <functional>
 
+#include <MEP-3D/scene_ui_parser.hpp>
 #include <MEP-3D/template/layer_controller_ui_layer.hpp>
 #include <MEP-3D/template/util_common_draw.hpp>
 
 #include "model_factory_imgui.hpp"
 #include "point_light_factory_imgui.hpp"
+#include "scene_ui_parser_imgui.hpp"
 #include "spot_light_factory_imgui.hpp"
 
 namespace {
 enum MenuAction {
-  None,
-  AddPointLight,
-  AddSpotLight,
+  None = -1,
+  AddPointLight = 0,
+  AddSpotLight = 1,
   AddModel,
   AddShader,
   AddImage,
   AddTexture,
-  AddMaterial
+  AddMaterial,
+  MenuActionCount
 };
+constexpr char kDefaultLayerControllerConfig[] = R"({
+   "menu":[
+      {
+        "name":"New",
+        "return":[
+          {
+             "name":"Light",
+             "return":[
+              {
+                "name":"Point Light",
+                "return":0
+              },
+              {
+                "name":"Spot Light",
+                "return":1
+              }
+            ]
+          },
+          {
+            "name":"Model",
+            "return":2
+          }
+        ]
+      }
+   ]
+})";
 };  // namespace
 
 class LayerControllerUILayerImGUI : public LayerControllerUILayer {
  public:
-  LayerControllerUILayerImGUI() {
+  LayerControllerUILayerImGUI(const std::string& config) {
     factory.emplace_back(std::make_unique<PointLightFactoryImGui>(
         std::bind(&LayerControllerUILayerImGUI::AddPointLight, this,
                   std::placeholders::_1),
@@ -39,42 +68,14 @@ class LayerControllerUILayerImGUI : public LayerControllerUILayer {
                   std::placeholders::_1),
         std::bind(&LayerControllerUILayerImGUI::RemoveModel, this,
                   std::placeholders::_1)));
+    menu_.Parse(config.c_str());
     LOG(INFO) << __FUNCTION__;
   }
   void OnAttach() override {}
   void OnDetach() override {}
   void OnUpdate(float time_delta) override {}
   void DrawMenuBar() {
-    if (ImGui::BeginMenuBar()) {
-      if (ImGui::BeginMenu("New")) {
-        if (ImGui::BeginMenu("Light")) {
-          if (ImGui::MenuItem("Point Light")) {
-            menu_action_ = MenuAction::AddPointLight;
-          }
-          if (ImGui::MenuItem("Spot Light")) {
-            menu_action_ = MenuAction::AddSpotLight;
-          }
-          ImGui::EndMenu();
-        }
-        if (ImGui::MenuItem("Model")) {
-          menu_action_ = MenuAction::AddModel;
-        }
-        if (ImGui::MenuItem("Shader")) {
-          menu_action_ = MenuAction::AddShader;
-        }
-        if (ImGui::MenuItem("Image")) {
-          menu_action_ = MenuAction::AddImage;
-        }
-        if (ImGui::MenuItem("Texture")) {
-          menu_action_ = MenuAction::AddTexture;
-        }
-        if (ImGui::MenuItem("Material")) {
-          menu_action_ = MenuAction::AddMaterial;
-        }
-        ImGui::EndMenu();
-      }
-      ImGui::EndMenuBar();
-    }
+    menu_action_ = static_cast<MenuAction>(menu_.DrawWithReplay());
   }
   void DrawLightMenu() {
     if (ImGui::CollapsingHeader("Directional Light")) {
@@ -246,8 +247,15 @@ class LayerControllerUILayerImGUI : public LayerControllerUILayer {
   virtual bool ShouldIgnoreLayer() const override { return false; }
   std::vector<std::unique_ptr<ElementFactoryImGuiBase>> factory;
   MenuAction menu_action_;
+  SceneUIParserImGui menu_;
 };
 
 std::unique_ptr<LayerControllerUILayer> LayerControllerUILayer::Create() {
-  return std::make_unique<LayerControllerUILayerImGUI>();
+  return std::make_unique<LayerControllerUILayerImGUI>(
+      kDefaultLayerControllerConfig);
+}
+
+std::unique_ptr<LayerControllerUILayer> LayerControllerUILayer::Create(
+    const std::string& config) {
+  return std::make_unique<LayerControllerUILayerImGUI>(config.c_str());
 }

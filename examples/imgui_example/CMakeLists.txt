@@ -17,7 +17,7 @@ file(
   COPY
   ${SHADERS_DIR}/
   DESTINATION
-  ${PROJECT_BINARY_DIR}/
+  ${PROJECT_BINARY_DIR}/shaders
 )
 
 file(

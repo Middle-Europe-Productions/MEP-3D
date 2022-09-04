@@ -14,3 +14,8 @@ class LayerControllerUILayerDefault : public LayerControllerUILayer {
 std::unique_ptr<LayerControllerUILayer> LayerControllerUILayer::Create() {
   return std::make_unique<LayerControllerUILayerDefault>();
 }
+
+std::unique_ptr<LayerControllerUILayer> LayerControllerUILayer::Create(
+    const std::string& config) {
+  return std::make_unique<LayerControllerUILayerDefault>();
+}

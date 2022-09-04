@@ -10,6 +10,8 @@ class LayerControllerUILayer : public Layer, public LayerControllerObserver {
   void OnDetach();
   LayerController* GetLayerControllerPtr();
   static std::unique_ptr<LayerControllerUILayer> Create();
+  static std::unique_ptr<LayerControllerUILayer> Create(
+      const std::string& config);
   virtual ~LayerControllerUILayer();
 
  protected:

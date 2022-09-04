@@ -119,7 +119,8 @@ class BenchmarkLayer final : public LayerController {
     spot_light_con->Bind(shader_.get());
     AttachSpotLightController(std::move(spot_light_con));
     // Add UI
-    auto ui_layer = LayerControllerUILayer::Create();
+    auto ui_layer =
+        LayerControllerUILayer::Create();
     LayerController::AddObserver(ui_layer.get());
     GetEngine()->AttachLayerToStructure(std::move(ui_layer), 0);
     // Create elements
@@ -165,7 +166,10 @@ class BenchmarkLayer final : public LayerController {
   std::unique_ptr<PointLightController> point_light_con;
 };
 
-int main() {
+int main(int argc, char* argv[]) {
+  FLAGS_logtostderr = 1;
+  google::InitGoogleLogging(argv[0]);
+
   auto window = Window::GetInstance({{1280, 720}, "ImGui Example"});
   window->Init();
   auto main_engine = std::make_shared<Engine>();
