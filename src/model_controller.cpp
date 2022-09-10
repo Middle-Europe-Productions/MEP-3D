@@ -7,7 +7,7 @@
 #include <vector>
 
 ModelController::ModelController() {
-  LOG(INFO) << __FUNCTION__;
+  VLOG(3) << __FUNCTION__;
   ResetModel();
 }
 

@@ -13,3 +13,6 @@ const char* kPointLight = "point_light";
 const char* kLayer = "layer";
 const char* kExecutor = "executor";
 const char* kEngine = "engine";
+
+extern const char* kMenuNodeName = "menu";
+extern const char* kSceneNodeName = "scene";

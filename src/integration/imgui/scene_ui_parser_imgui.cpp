@@ -3,7 +3,9 @@
 #include <glog/logging.h>
 #include <imgui.h>
 
-SceneUIParserImGui::SceneUIParserImGui() : SceneUIParser() {}
+SceneUIParserImGui::SceneUIParserImGui(
+    const std::unordered_map<int, Callback>& handler_map)
+    : SceneUIParser(handler_map) {}
 
 void SceneUIParserImGui::Parse(const std::string& json) {
   try {
@@ -13,18 +15,47 @@ void SceneUIParserImGui::Parse(const std::string& json) {
     return;
   }
   for (auto& [key, value] : root_.items()) {
-    if (key == "menu") {
-      if (value.is_array()) {
-        head_ = new SceneUIParserNode();
-        head_->start_callback = std::bind(&ImGui::BeginMenuBar);
-        head_->finish_callback = std::bind(&ImGui::EndMenuBar);
-        for (auto& ele : value) {
-          head_->next.push_back(ParseMenuItem(ele));
-        }
+    auto ele = ElementFromString(key);
+    if (ele == Element::Count) {
+      LOG(ERROR) << "Unknown parse key: " << key << ", ignoring tree!";
+      VLOG(1) << "Value: " << value;
+      continue;
+    }
+    auto it = nodes_.find(ele);
+    if (it == nodes_.end()) {
+      LOG(FATAL) << "Could not find " << key << ", something is not right!";
+      continue;
+    }
+    if (it->second != nullptr) {
+      LOG(INFO) << "Reparsing " << key;
+      ClearElement(ele);
+      if (it->second != nullptr) {
+        LOG(FATAL)
+            << "Element was not properly cleared something is not right!";
       }
-    } else {
-      LOG(INFO) << "Unknown parse key " << key << ", value " << value
-                << ", ignoring tree!";
+    }
+    LOG(INFO) << "Parsing: " << key << ", value: " << static_cast<int>(ele);
+    if (ele == Element::Menu) {
+      if (value.is_array()) {
+        it->second = new SceneUIParserNode();
+        it->second->start_callback = std::bind(&ImGui::BeginMenuBar);
+        it->second->finish_callback = std::bind(&ImGui::EndMenuBar);
+        for (auto& ele : value) {
+          it->second->next.push_back(ParseMenuItem(ele));
+        }
+      } else {
+        LOG(WARNING) << "Value is not an array";
+      }
+    } else if (ele == Element::Scene) {
+      if (value.is_array()) {
+        it->second = new SceneUIParserNode();
+        it->second->start_callback = []() { return true; };
+        for (auto& ele : value) {
+          it->second->next.push_back(ParseSceneItem(ele, 0));
+        }
+      } else {
+        LOG(WARNING) << "Value is not an array";
+      }
     }
   }
 }
@@ -62,5 +93,44 @@ SceneUIParser::SceneUIParserNode* SceneUIParserImGui::ParseMenuItem(
                   node->node_name.c_str(), (const char*)0, false, true);
   }
   LOG(INFO) << "Elements parsed " << node->next.size();
+  return node;
+}
+
+SceneUIParser::SceneUIParserNode* SceneUIParserImGui::ParseSceneItem(
+    nlohmann::json& json_data,
+    int depth) {
+  if (depth > 2) {
+    LOG(INFO) << "Invalid scene element depth is " << depth;
+    return nullptr;
+  }
+  SceneUIParserNode* node = new SceneUIParserNode();
+  for (auto& [key, value] : json_data.items()) {
+    if (key == "return" && value.is_array()) {
+      for (auto& ele : value) {
+        node->next.push_back(ParseSceneItem(ele, depth + 1));
+      }
+    } else if (key == "return" && value.is_number()) {
+      node->return_code = value;
+    } else if (key == "name") {
+      node->node_name = value;
+    } else {
+      LOG(ERROR) << "Invalid item: " << key;
+      delete node;
+      return nullptr;
+    }
+  }
+  if (depth == 0) {
+    node->start_callback = std::bind(
+        ImGui::BeginTabBar, node->node_name.c_str(), ImGuiTabBarFlags_None);
+    node->finish_callback = std::bind(ImGui::EndTabBar);
+  } else if (depth == 1) {
+    node->start_callback =
+        std::bind(ImGui::BeginTabItem, node->node_name.c_str(), (bool*)NULL, 0);
+    node->finish_callback = std::bind(ImGui::EndTabItem);
+  } else if (depth >= 2) {
+    node->start_callback = std::bind(
+        static_cast<bool (&)(const char*, int)>(ImGui::CollapsingHeader),
+        node->node_name.c_str(), 0);
+  }
   return node;
 }

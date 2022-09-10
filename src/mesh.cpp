@@ -1,7 +1,7 @@
 #include <MEP-3D/mesh.hpp>
 
 Mesh::Mesh() {
-  LOG(INFO) << __FUNCTION__;
+  VLOG(3) << __FUNCTION__;
   vertices_count_ = 0;
 }
 

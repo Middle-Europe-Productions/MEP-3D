@@ -5,11 +5,12 @@
 
 class SceneUIParserImGui : public SceneUIParser {
  public:
-  SceneUIParserImGui();
+  SceneUIParserImGui(const std::unordered_map<int, Callback>& handler_map);
   virtual void Parse(const std::string& json) override;
 
  private:
   SceneUIParserNode* ParseMenuItem(nlohmann::json& json_data);
+  SceneUIParserNode* ParseSceneItem(nlohmann::json& json_data, int depth);
 };
 
 #endif

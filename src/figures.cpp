@@ -51,7 +51,7 @@ void CalculateNormals(std::vector<GLfloat>& vertice_array,
 }  // namespace
 
 Pyramid::Pyramid(Vec3f initial_position) {
-  LOG(INFO) << __FUNCTION__;
+  VLOG(3) << __FUNCTION__;
   std::vector<GLfloat> vertices = {
       // x,     y,    z,    u,   v,     nx,   ny,   nz
       -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,  0.0f, 0.0f, -1.0f, 1.0f,
@@ -63,7 +63,7 @@ Pyramid::Pyramid(Vec3f initial_position) {
 }
 
 Plane::Plane(float size, Vec3f initial_position) {
-  LOG(INFO) << __FUNCTION__;
+  VLOG(3) << __FUNCTION__;
   std::vector<GLfloat> vertices = {
       -size, 0.0f, -size, 0.0f,  0.0f, 0.0f,  -1.0f, 0.0f, size,  0.0f, -size,
       size,  0.0f, 0.0f,  -1.0f, 0.0f, -size, 0.0f,  size, 0.0f,  size, 0.0f,
