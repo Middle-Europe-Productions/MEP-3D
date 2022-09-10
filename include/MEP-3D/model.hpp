@@ -18,9 +18,9 @@ class Model : public Identity,
   Model(const std::string& name);
   void Load(const std::string& file_path);
   void Init();
-  void Draw(RenderTarget& render_target) override;
+  virtual void Draw(RenderTarget& render_target) override;
+  virtual std::string ToString() const override;
   void Clear();
-  virtual std::string ToString() const;
 
  private:
   std::vector<MeshBaseFactoryPtr> master_mesh_factory_;

@@ -29,7 +29,7 @@ typename std::vector<LightPtr>::iterator LightController<LightPtr>::MakeAndBind(
 
 template <typename LightPtr>
 bool LightController<LightPtr>::IsValid(
-    typename const std::vector<LightPtr>::iterator& iter) const {
+    const typename std::vector<LightPtr>::iterator& iter) const {
   return iter != point_light_container_.end();
 }
 template <typename LightPtr>

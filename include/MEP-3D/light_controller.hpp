@@ -16,7 +16,7 @@ class LightController : public AssetController {
                   GLint light_count_location,
                   std::unordered_map<LightUniforms, std::string> uniform_map);
   typename std::vector<LightPtr>::iterator MakeAndBind(LightPtr light_ptr);
-  bool IsValid(typename const std::vector<LightPtr>::iterator& iter) const;
+  bool IsValid(const typename std::vector<LightPtr>::iterator& iter) const;
   void Remove(const Identity& id);
   void ForAll(std::function<void(LightPtr&)> function);
   void Use();

@@ -167,7 +167,7 @@ void DrawModel(Model& model) {
   auto status = model.GetStatus();
   ImGui::Text("Model Status ");
   ImGui::SameLine();
-  ImGui::Text(ToString(status).c_str());
+  ImGui::Text("%s", ToString(status).c_str());
   if (status == Status::Loading) {
     ImGui::Spinner("spinner", 10, 4, ImGui::GetColorU32(ImGuiCol_Button));
   } else if (status == Status::Avalible) {
@@ -198,7 +198,7 @@ void DrawEngineMonitorDataConst(const EngineMonitorData& engine_monitor_data) {
   if (ImGui::TreeNode("Layers")) {
     for (auto& ld : engine_monitor_data.frame_data.layer_data) {
       if (ImGui::TreeNode(ld.layer_name.c_str())) {
-        ImGui::Text(ld.identity.ToString().c_str());
+        ImGui::Text("%s", ld.identity.ToString().c_str());
         ImGui::Text("Layer draw time: %.3f", ld.layer_draw_time_ms);
         ImGui::Text("Layer update time: %.3f", ld.layer_update_time_ms);
         ImGui::TreePop();
@@ -211,7 +211,7 @@ void DrawEngineMonitorDataConst(const EngineMonitorData& engine_monitor_data) {
     if (ImGui::TreeNode(sd.structure_name.c_str())) {
       for (auto& ld : sd.layer_array) {
         if (ImGui::TreeNode(ld.layer_name.c_str())) {
-          ImGui::Text(ld.identity.ToString().c_str());
+          ImGui::Text("%s", ld.identity.ToString().c_str());
           ImGui::Text("Layer draw time: %.3f", ld.layer_draw_time_ms);
           ImGui::Text("Layer update time: %.3f", ld.layer_update_time_ms);
           ImGui::TreePop();
@@ -225,17 +225,17 @@ void DrawAssetControllerConst(const AssetController& scene) {
   if (auto* texture = scene.Get<Texture>()) {
     ImGui::Text("Texture: ");
     ImGui::SameLine();
-    ImGui::Text(texture->GetName().c_str());
+    ImGui::Text("%s", texture->GetName().c_str());
   }
   if (auto* shader = scene.Get<Shader>()) {
     ImGui::Text("Shader: ");
     ImGui::SameLine();
-    ImGui::Text(shader->GetName().c_str());
+    ImGui::Text("%s", shader->GetName().c_str());
   }
   if (auto* model = scene.Get<Material>()) {
     ImGui::Text("Material: ");
     ImGui::SameLine();
-    ImGui::Text(model->GetName().c_str());
+    ImGui::Text("%s", model->GetName().c_str());
   }
 }
 }  // namespace UI

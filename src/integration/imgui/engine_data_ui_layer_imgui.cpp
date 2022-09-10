@@ -43,7 +43,7 @@ class EngineDataUILayerImGUI : public EngineDataUILayer {
     }
     ImGui::End();
   }
-  bool ShouldIgnoreLayer() const { return false; }
+  bool ShouldIgnoreLayer() const override { return false; }
   void OnKeyEvent(KeyEvent event) override {
     if (event.action == Action::Released && event.code == Keyboard::B) {
       LOG(INFO) << "Blocking events!";

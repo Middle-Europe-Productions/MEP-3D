@@ -139,8 +139,8 @@ class BenchmarkLayer final : public Scene {
     AttachTexture(std::move(plain_tex));
   }
   void OnDetach() override {}
-  void OnUpdate(float time_delta) { camera_->Update(); }
-  void OnDraw(RenderTarget& render_target) {
+  void OnUpdate(float time_delta) override { camera_->Update(); }
+  void OnDraw(RenderTarget& render_target) override {
     GetShader()[0]->Use();
     UseAllLights();
     DrawAllModels(render_target);

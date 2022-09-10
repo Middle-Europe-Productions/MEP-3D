@@ -14,5 +14,5 @@ const char* kLayer = "layer";
 const char* kExecutor = "executor";
 const char* kEngine = "engine";
 
-extern const char* kMenuNodeName = "menu";
-extern const char* kSceneNodeName = "scene";
+const char* kMenuNodeName = "menu";
+const char* kSceneNodeName = "scene";

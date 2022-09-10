@@ -200,6 +200,8 @@ class SceneUILayerImGUI : public SceneUILayer {
         ImGui::OpenPopup("New Model");
         menu_action_ = MenuAction::None;
         break;
+      default:
+       menu_action_ = MenuAction::None;
     };
     DrawFactory("New Point Light", factory[0].get());
     DrawFactory("New Spot Light", factory[1].get());

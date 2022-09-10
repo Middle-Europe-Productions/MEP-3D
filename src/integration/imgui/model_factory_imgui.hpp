@@ -13,7 +13,7 @@ class ModelFactoryImGui : public ElementFactoryImGui<Model, ModelPtr> {
   void ImGUIDraw(Scene& scene) override;
 
  private:
-  bool ModelFactoryImGui::ValidData() const;
+  bool ValidData() const;
   std::string path_;
   char buffer_name[64];
   char buffer_path[64];
