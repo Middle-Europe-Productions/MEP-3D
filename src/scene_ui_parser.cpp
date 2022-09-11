@@ -14,10 +14,30 @@ SceneUIParser::SceneUIParserNode::SceneUIParserNode()
       node_name(""),
       return_code(-1) {}
 
-SceneUIParser::SceneUIParser(
-    const std::unordered_map<int, Callback>& handler_map)
-    : handler_map_(handler_map) {
+SceneUIParser::SceneUIParser() : handler_map_() {
   Init();
+}
+
+void SceneUIParser::SetHandler(
+    const std::unordered_map<int, Callback>& handler_map) {
+  handler_map_ = handler_map;
+}
+
+void SceneUIParser::MergeHandler(
+    const std::unordered_map<int, Callback>& handler_map,
+    Method method) {
+  for (auto& node : handler_map) {
+    auto it = handler_map_.find(node.first);
+    if (it != handler_map_.end()) {
+      if (utils::Contains(method, Method::Override)) {
+        it->second = node.second;
+      }
+    } else {
+      if (utils::Contains(method, Method::FillMissing)) {
+        handler_map_[node.first] = node.second;
+      }
+    }
+  }
 }
 
 void SceneUIParser::Draw() {

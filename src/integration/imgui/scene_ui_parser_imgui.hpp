@@ -5,7 +5,7 @@
 
 class SceneUIParserImGui : public SceneUIParser {
  public:
-  SceneUIParserImGui(const std::unordered_map<int, Callback>& handler_map);
+  SceneUIParserImGui();
   virtual void Parse(const std::string& json) override;
 
  private:

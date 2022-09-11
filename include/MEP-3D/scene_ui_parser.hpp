@@ -17,7 +17,16 @@ class SceneUIParser {
     SceneUIParserNode();
   };
   enum class Element : unsigned int { Menu = 0, Scene = 1, Count };
-  SceneUIParser(const std::unordered_map<int, Callback>& handler_map);
+  enum class Method : unsigned int {
+    Override = 1 << 0,
+    FillMissing = 1 << 1,
+    DoNotUseDefault = 2 << 1,
+    FillAndOverride = Override | FillMissing
+  };
+  SceneUIParser();
+  void SetHandler(const std::unordered_map<int, Callback>& handler_map);
+  void MergeHandler(const std::unordered_map<int, Callback>& handler_map,
+                    Method method = Method::FillAndOverride);
   virtual void Draw();
   virtual void Parse(const std::string& json) = 0;
   virtual void Clear();

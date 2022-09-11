@@ -3,9 +3,7 @@
 #include <glog/logging.h>
 #include <imgui.h>
 
-SceneUIParserImGui::SceneUIParserImGui(
-    const std::unordered_map<int, Callback>& handler_map)
-    : SceneUIParser(handler_map) {}
+SceneUIParserImGui::SceneUIParserImGui() : SceneUIParser() {}
 
 void SceneUIParserImGui::Parse(const std::string& json) {
   try {

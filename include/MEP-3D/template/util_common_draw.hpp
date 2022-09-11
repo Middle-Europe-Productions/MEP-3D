@@ -8,22 +8,25 @@
 #include <MEP-3D/shader.hpp>
 
 namespace UI {
+// Editable elements
 void DrawAmbientConfig(AmbientConfig& config);
 void DrawDiffuseConfig(DiffuseConfig& config);
-void DrawDirectionalLight(DirectionalLight& directional_light);
 void DrawSpotConfig(SpotConfig& point_config);
-void DrawSpotLight(SpotLight& point_light);
 void DrawPointConfig(PointConfig& point_config);
-void DrawPointLight(PointLight& point_light);
 void DrawModelController(ModelController& model_controller);
-void DrawModel(Model& model);
+// Deletable elements (return false if object should be deleted)
+bool DrawDirectionalLight(DirectionalLight& directional_light);
+bool DrawSpotLight(SpotLight& point_light);
+bool DrawPointLight(PointLight& point_light);
+bool DrawModel(Model& model);
+// Combo menus
 int DrawShaderComboMenu(std::vector<std::unique_ptr<Shader>>& array,
                         int selected);
 int DrawMaterialComboMenu(std::vector<std::unique_ptr<Material>>& array,
                           int selected);
 int DrawTextureComboMenu(std::vector<std::unique_ptr<Texture>>& array,
                          int selected);
-
+// Constant elements
 void DrawEngineMonitorDataConst(const EngineMonitorData& engine_monitor_data);
 void DrawAssetControllerConst(const AssetController& scene);
 

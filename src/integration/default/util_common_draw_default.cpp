@@ -3,13 +3,22 @@
 namespace UI {
 void DrawAmbientConfig(AmbientConfig& config) {}
 void DrawDiffuseConfig(DiffuseConfig& config) {}
-void DrawDirectionalLight(DirectionalLight& directional_light) {}
 void DrawSpotConfig(SpotConfig& point_config) {}
-void DrawSpotLight(SpotLight& point_light) {}
 void DrawPointConfig(PointConfig& point_config) {}
-void DrawPointLight(PointLight& point_light) {}
 void DrawModelController(ModelController& model_controller) {}
-void DrawModel(Model& model) {}
+
+bool DrawDirectionalLight(DirectionalLight& directional_light) {
+  return true;
+}
+bool DrawSpotLight(SpotLight& point_light) {
+  return true;
+}
+bool DrawPointLight(PointLight& point_light) {
+  return true;
+}
+bool DrawModel(Model& model) {
+  return true;
+}
 int DrawShaderComboMenu(std::vector<std::unique_ptr<Shader>>& array,
                         int selected) {
   return -1;

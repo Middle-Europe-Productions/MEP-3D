@@ -3,14 +3,18 @@
 
 #include <MEP-3D/layer.hpp>
 #include <MEP-3D/scene.hpp>
+#include <MEP-3D/scene_ui_parser.hpp>
 
 class SceneUILayer : public Layer, public SceneObserver {
  public:
   void OnAttach(Scene* scene);
   void OnDetach();
   Scene* GetScenePtr();
-  static std::unique_ptr<SceneUILayer> Create();
-  static std::unique_ptr<SceneUILayer> Create(const std::string& config);
+  static std::unique_ptr<SceneUILayer> Create(
+      const std::string& runtime_configuration = "",
+      std::unordered_map<int, SceneUIParser::Callback> handlers = {},
+      SceneUIParser::Method handler_attach_method =
+          SceneUIParser::Method::FillAndOverride);
   virtual ~SceneUILayer();
 
  protected:

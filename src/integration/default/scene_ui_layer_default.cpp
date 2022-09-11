@@ -11,10 +11,9 @@ class SceneUILayerDefault : public SceneUILayer {
   virtual bool ShouldIgnoreLayer() const override { return true; }
 };
 
-std::unique_ptr<SceneUILayer> SceneUILayer::Create() {
-  return std::make_unique<SceneUILayerDefault>();
-}
-
-std::unique_ptr<SceneUILayer> SceneUILayer::Create(const std::string& config) {
+std::unique_ptr<SceneUILayer> SceneUILayer::Create(
+    const std::string& runtime_configuration,
+    std::unordered_map<int, SceneUIParser::Callback> handlers,
+    SceneUIParser::Method handler_attach_method) {
   return std::make_unique<SceneUILayerDefault>();
 }

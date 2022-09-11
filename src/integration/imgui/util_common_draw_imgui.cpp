@@ -65,12 +65,6 @@ void DrawDiffuseConfig(DiffuseConfig& config) {
   ImGui::SliderFloat("Diffuse Intensity", &config.intensity, 0.0f, 1.0f, "%.3f",
                      ImGuiSliderFlags_None);
 }
-void DrawDirectionalLight(DirectionalLight& directional_light) {
-  ImGui::Text("Ambient Config");
-  UI::DrawAmbientConfig(directional_light.GetAmbientConfigRef());
-  ImGui::Text("Diffuse Config");
-  UI::DrawDiffuseConfig(directional_light.GetDiffuseConfigRef());
-}
 void DrawSpotConfig(SpotConfig& point_config) {
   int deg = static_cast<int>(point_config.edge_deg);
   ImGui::DragScalar("Degree", ImGuiDataType_S32, &deg, 1.0, &kDegMin, &kDegMax,
@@ -82,16 +76,6 @@ void DrawSpotConfig(SpotConfig& point_config) {
   point_config.direction.x_ = v[0];
   point_config.direction.y_ = v[1];
   point_config.direction.z_ = v[2];
-}
-void DrawSpotLight(SpotLight& point_light) {
-  ImGui::Text("Ambient Config");
-  UI::DrawAmbientConfig(point_light.GetAmbientConfigRef());
-  ImGui::Text("Point Config");
-  UI::DrawPointConfig(point_light.GetPointConfigRef());
-  ImGui::Text("Diffuse Config");
-  UI::DrawDiffuseConfig(point_light.GetDiffuseConfigRef());
-  ImGui::Text("Spot Config");
-  UI::DrawSpotConfig(point_light.GetSpotConfigRef());
 }
 void DrawPointConfig(PointConfig& point_config) {
   float vl = 10.0;
@@ -108,13 +92,55 @@ void DrawPointConfig(PointConfig& point_config) {
   point_config.position.y_ = v[1];
   point_config.position.z_ = v[2];
 }
-void DrawPointLight(PointLight& point_light) {
+
+bool DrawDirectionalLight(DirectionalLight& directional_light) {
+  ImGui::Text("Ambient Config");
+  UI::DrawAmbientConfig(directional_light.GetAmbientConfigRef());
+  ImGui::Text("Diffuse Config");
+  UI::DrawDiffuseConfig(directional_light.GetDiffuseConfigRef());
+  return true;
+}
+bool DrawSpotLight(SpotLight& point_light) {
   ImGui::Text("Ambient Config");
   UI::DrawAmbientConfig(point_light.GetAmbientConfigRef());
   ImGui::Text("Point Config");
   UI::DrawPointConfig(point_light.GetPointConfigRef());
   ImGui::Text("Diffuse Config");
   UI::DrawDiffuseConfig(point_light.GetDiffuseConfigRef());
+  ImGui::Text("Spot Config");
+  UI::DrawSpotConfig(point_light.GetSpotConfigRef());
+  return true;
+}
+bool DrawPointLight(PointLight& point_light) {
+  ImGui::Text("Ambient Config");
+  UI::DrawAmbientConfig(point_light.GetAmbientConfigRef());
+  ImGui::Text("Point Config");
+  UI::DrawPointConfig(point_light.GetPointConfigRef());
+  ImGui::Text("Diffuse Config");
+  UI::DrawDiffuseConfig(point_light.GetDiffuseConfigRef());
+  return true;
+}
+bool DrawModel(Model& model) {
+  ImGui::Text("Draw ");
+  ImGui::SameLine();
+  std::string id =
+      "##should_render_model" + std::to_string(model.GetGlobalId());
+  ImGui::Checkbox(id.c_str(), &model.GetShouldDraw());
+  auto status = model.GetStatus();
+  ImGui::Text("Model Status ");
+  ImGui::SameLine();
+  ImGui::Text("%s", ToString(status).c_str());
+  if (status == Status::Loading) {
+    ImGui::Spinner("spinner", 10, 4, ImGui::GetColorU32(ImGuiCol_Button));
+  } else if (status == Status::Avalible) {
+    ImGui::Separator();
+    DrawModelController(model);
+  }
+  UI::DrawAssetControllerConst(model);
+  if (ImGui::Button("Delete")) {
+    return false;
+  }
+  return true;
 }
 
 void DrawModelController(ModelController& model_controller) {
@@ -158,24 +184,6 @@ void DrawModelController(ModelController& model_controller) {
   ImGui::DragFloat4("##row_4", model_ptr + 12, kGlobalSlide, -FLT_MAX, FLT_MAX);
 }
 
-void DrawModel(Model& model) {
-  ImGui::Text("Draw ");
-  ImGui::SameLine();
-  std::string id =
-      "##should_render_model" + std::to_string(model.GetGlobalId());
-  ImGui::Checkbox(id.c_str(), &model.GetShouldDraw());
-  auto status = model.GetStatus();
-  ImGui::Text("Model Status ");
-  ImGui::SameLine();
-  ImGui::Text("%s", ToString(status).c_str());
-  if (status == Status::Loading) {
-    ImGui::Spinner("spinner", 10, 4, ImGui::GetColorU32(ImGuiCol_Button));
-  } else if (status == Status::Avalible) {
-    ImGui::Separator();
-    DrawModelController(model);
-  }
-  UI::DrawAssetControllerConst(model);
-}
 int DrawShaderComboMenu(std::vector<std::unique_ptr<Shader>>& array,
                         int selected) {
   return DrawComboMenuFromMEP(array, selected, "##shader");

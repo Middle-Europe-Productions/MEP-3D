@@ -4,6 +4,7 @@
 #include <MEP-3D/scene_ui_parser.hpp>
 #include <MEP-3D/template/scene_ui_layer.hpp>
 #include <MEP-3D/template/util_common_draw.hpp>
+#include <MEP-3D/utils.hpp>
 
 #include "model_factory_imgui.hpp"
 #include "point_light_factory_imgui.hpp"
@@ -27,7 +28,7 @@ enum MenuAction {
   MenuActionCount
 };
 
-constexpr char kDefaultSceneConfig[] = R"({
+constexpr char kDefaultSceneRuntimeConfig[] = R"({
    "menu":[
       {
         "name":"New",
@@ -89,65 +90,12 @@ constexpr char kDefaultSceneConfig[] = R"({
 
 class SceneUILayerImGUI : public SceneUILayer {
  public:
-  SceneUILayerImGUI(const std::string& config)
-      : menu_(
-            {{static_cast<int>(MenuAction::None),
-              [this]() { ImGui::Text("Not implemented"); }},
-             {static_cast<int>(MenuAction::AddPointLight),
-              [this]() { this->menu_action_ = MenuAction::AddPointLight; }},
-             {static_cast<int>(MenuAction::AddSpotLight),
-              [this]() { this->menu_action_ = MenuAction::AddSpotLight; }},
-             {static_cast<int>(MenuAction::AddModel),
-              [this]() { this->menu_action_ = MenuAction::AddModel; }},
-             {static_cast<int>(MenuAction::DrawDirectionalLight),
-              [this]() {
-                for (auto& dl_ptr : GetScenePtr()->GetDirectionaLights()) {
-                  if (ImGui::TreeNode(dl_ptr->Identity::GetName().c_str())) {
-                    UI::DrawDirectionalLight(*dl_ptr.get());
-                    ImGui::Separator();
-                    ImGui::TreePop();
-                  }
-                }
-                ImGui::Separator();
-                UI::DrawAssetControllerConst(
-                    *GetScenePtr()->GetSpotLightController());
-              }},
-             {static_cast<int>(MenuAction::DrawPointLight),
-              [this]() {
-                if (GetScenePtr()->GetPointLightController()) {
-                  for (auto& pl_ptr : GetScenePtr()
-                                          ->GetPointLightController()
-                                          ->GetContainer()) {
-                    if (ImGui::TreeNode(pl_ptr->Identity::GetName().c_str())) {
-                      UI::DrawPointLight(*pl_ptr.get());
-                      ImGui::Separator();
-                      ImGui::TreePop();
-                    }
-                  }
-                  ImGui::Separator();
-                  UI::DrawAssetControllerConst(
-                      *GetScenePtr()->GetPointLightController());
-                }
-              }},
-             {static_cast<int>(MenuAction::DrawSpotLight),
-              [this]() {
-                if (GetScenePtr()->GetSpotLightController()) {
-                  for (auto& sl_ptr : GetScenePtr()
-                                          ->GetSpotLightController()
-                                          ->GetContainer()) {
-                    if (ImGui::TreeNode(sl_ptr->Identity::GetName().c_str())) {
-                      UI::DrawSpotLight(*sl_ptr.get());
-                      ImGui::Separator();
-                      ImGui::TreePop();
-                    }
-                  }
-                  ImGui::Separator();
-                  UI::DrawAssetControllerConst(
-                      *GetScenePtr()->GetSpotLightController());
-                }
-              }},
-             {static_cast<int>(MenuAction::DrawModelMenu),
-              std::bind(&SceneUILayerImGUI::DrawModelMenu, this)}}) {
+  SceneUILayerImGUI(
+      const std::string& runtime_configuration,
+      std::unordered_map<int, SceneUIParser::Callback> handlers = {},
+      SceneUIParser::Method handler_attach_method =
+          SceneUIParser::Method::FillAndOverride)
+      : menu_action_(MenuAction::None) {
     factory.emplace_back(std::make_unique<PointLightFactoryImGui>(
         std::bind(&SceneUILayerImGUI::AddPointLight, this,
                   std::placeholders::_1),
@@ -162,7 +110,14 @@ class SceneUILayerImGUI : public SceneUILayer {
         std::bind(&SceneUILayerImGUI::AddModel, this, std::placeholders::_1),
         std::bind(&SceneUILayerImGUI::RemoveModel, this,
                   std::placeholders::_1)));
-    menu_.Parse(config.c_str());
+    if (!utils::Contains(handler_attach_method,
+                         SceneUIParser::Method::DoNotUseDefault)) {
+      InitDefaultHandler();
+      menu_.MergeHandler(handlers, handler_attach_method);
+    } else {
+      menu_.SetHandler(handlers);
+    }
+    menu_.Parse(runtime_configuration.c_str());
     LOG(INFO) << __FUNCTION__;
   }
   void OnAttach() override {}
@@ -174,12 +129,21 @@ class SceneUILayerImGUI : public SceneUILayer {
       ImGui::Text("You do not have any models yet!");
       return;
     }
-    for (auto& model : GetScenePtr()->GetModels()) {
-      if (ImGui::TreeNode(model->Identity::GetName().c_str())) {
-        UI::DrawModel(*model.get());
+    auto& array = GetScenePtr()->GetModels();
+    std::queue<std::vector<std::unique_ptr<Model>>::iterator> to_remove;
+    for (auto it = array.begin(); it != array.end();) {
+      if (ImGui::TreeNode(it->get()->Identity::GetName().c_str())) {
+        if (!UI::DrawModel(*it->get())) {
+          to_remove.push(it);
+        }
         ImGui::Separator();
         ImGui::TreePop();
       }
+      it++;
+    }
+    while (!to_remove.empty()) {
+      array.erase(to_remove.front());
+      to_remove.pop();
     }
   }
 
@@ -201,7 +165,7 @@ class SceneUILayerImGUI : public SceneUILayer {
         menu_action_ = MenuAction::None;
         break;
       default:
-       menu_action_ = MenuAction::None;
+        menu_action_ = MenuAction::None;
     };
     DrawFactory("New Point Light", factory[0].get());
     DrawFactory("New Spot Light", factory[1].get());
@@ -209,6 +173,65 @@ class SceneUILayerImGUI : public SceneUILayer {
     menu_.Draw();
     ImGui::End();
   }
+  void InitDefaultHandler() {
+    menu_.SetHandler(
+        {{static_cast<int>(MenuAction::None),
+          [this]() { ImGui::Text("Not implemented"); }},
+         {static_cast<int>(MenuAction::AddPointLight),
+          [this]() { this->menu_action_ = MenuAction::AddPointLight; }},
+         {static_cast<int>(MenuAction::AddSpotLight),
+          [this]() { this->menu_action_ = MenuAction::AddSpotLight; }},
+         {static_cast<int>(MenuAction::AddModel),
+          [this]() { this->menu_action_ = MenuAction::AddModel; }},
+         {static_cast<int>(MenuAction::DrawDirectionalLight),
+          [this]() {
+            for (auto& dl_ptr : GetScenePtr()->GetDirectionaLights()) {
+              if (ImGui::TreeNode(dl_ptr->Identity::GetName().c_str())) {
+                UI::DrawDirectionalLight(*dl_ptr.get());
+                ImGui::Separator();
+                ImGui::TreePop();
+              }
+            }
+            ImGui::Separator();
+            UI::DrawAssetControllerConst(
+                *GetScenePtr()->GetSpotLightController());
+          }},
+         {static_cast<int>(MenuAction::DrawPointLight),
+          [this]() {
+            if (GetScenePtr()->GetPointLightController()) {
+              for (auto& pl_ptr :
+                   GetScenePtr()->GetPointLightController()->GetContainer()) {
+                if (ImGui::TreeNode(pl_ptr->Identity::GetName().c_str())) {
+                  UI::DrawPointLight(*pl_ptr.get());
+                  ImGui::Separator();
+                  ImGui::TreePop();
+                }
+              }
+              ImGui::Separator();
+              UI::DrawAssetControllerConst(
+                  *GetScenePtr()->GetPointLightController());
+            }
+          }},
+         {static_cast<int>(MenuAction::DrawSpotLight),
+          [this]() {
+            if (GetScenePtr()->GetSpotLightController()) {
+              for (auto& sl_ptr :
+                   GetScenePtr()->GetSpotLightController()->GetContainer()) {
+                if (ImGui::TreeNode(sl_ptr->Identity::GetName().c_str())) {
+                  UI::DrawSpotLight(*sl_ptr.get());
+                  ImGui::Separator();
+                  ImGui::TreePop();
+                }
+              }
+              ImGui::Separator();
+              UI::DrawAssetControllerConst(
+                  *GetScenePtr()->GetSpotLightController());
+            }
+          }},
+         {static_cast<int>(MenuAction::DrawModelMenu),
+          std::bind(&SceneUILayerImGUI::DrawModelMenu, this)}});
+  }
+
   ~SceneUILayerImGUI() { LOG(INFO) << __FUNCTION__; }
 
  private:
@@ -280,10 +303,14 @@ class SceneUILayerImGUI : public SceneUILayer {
   SceneUIParserImGui menu_;
 };
 
-std::unique_ptr<SceneUILayer> SceneUILayer::Create() {
-  return std::make_unique<SceneUILayerImGUI>(kDefaultSceneConfig);
-}
-
-std::unique_ptr<SceneUILayer> SceneUILayer::Create(const std::string& config) {
-  return std::make_unique<SceneUILayerImGUI>(config.c_str());
+std::unique_ptr<SceneUILayer> SceneUILayer::Create(
+    const std::string& runtime_configuration,
+    std::unordered_map<int, SceneUIParser::Callback> handlers,
+    SceneUIParser::Method handler_attach_method) {
+  if (runtime_configuration.empty()) {
+    return std::make_unique<SceneUILayerImGUI>(kDefaultSceneRuntimeConfig,
+                                               handlers, handler_attach_method);
+  }
+  return std::make_unique<SceneUILayerImGUI>(runtime_configuration.c_str(),
+                                             handlers, handler_attach_method);
 }
