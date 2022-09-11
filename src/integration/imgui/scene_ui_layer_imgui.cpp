@@ -6,6 +6,7 @@
 #include <MEP-3D/template/util_common_draw.hpp>
 #include <MEP-3D/utils.hpp>
 
+#include "imgui_addons.hpp"
 #include "model_factory_imgui.hpp"
 #include "point_light_factory_imgui.hpp"
 #include "scene_ui_parser_imgui.hpp"
@@ -120,7 +121,7 @@ class SceneUILayerImGUI : public SceneUILayer {
     menu_.Parse(runtime_configuration.c_str());
     LOG(INFO) << __FUNCTION__;
   }
-  void OnAttach() override {}
+  void OnAttach() override { ImGui::ApplyMepStyle(); }
   void OnDetach() override {}
   void OnUpdate(float time_delta) override {}
 
