@@ -103,12 +103,18 @@ void Engine::Run() {
   }
 }
 
-void Engine::AttachLayer(std::unique_ptr<Layer> obs) {
+void Engine::AttachLayer(std::unique_ptr<Layer> obs, bool on_top) {
   if (!EvaluateLayer(obs))
     return;
-  layers_.emplace_back(std::move(obs));
-  layers_.back()->RegisterEngine(std::move(shared_from_this()));
-  layers_.back()->OnAttach();
+  if (on_top) {
+    layers_.emplace(layers_.begin(), std::move(obs));
+    layers_.front()->RegisterEngine(std::move(shared_from_this()));
+    layers_.front()->OnAttach();
+  } else {
+    layers_.emplace_back(std::move(obs));
+    layers_.back()->RegisterEngine(std::move(shared_from_this()));
+    layers_.back()->OnAttach();
+  }
 }
 
 int Engine::AttachStructure(std::unique_ptr<CustomLayerStructure> str) {
@@ -136,13 +142,21 @@ int Engine::AttachStructure(std::unique_ptr<CustomLayerStructure> str) {
 }
 
 void Engine::AttachLayerToStructure(std::unique_ptr<Layer> layer,
-                                    int custom_layer_index) {
+                                    int custom_layer_index,
+                                    bool on_top) {
   layer->RegisterEngine(shared_from_this());
   if (!EvaluateLayer(layer) || !StructureExists(custom_layer_index)) {
     layer->OnDetach();
     return;
   }
-  custom_layers_[custom_layer_index]->layer_array.push_back(std::move(layer));
+  auto& array = custom_layers_[custom_layer_index]->layer_array;
+  if (on_top) {
+    array.emplace(array.begin(), std::move(layer));
+    array.front()->OnAttach();
+  } else {
+    array.emplace_back(std::move(layer));
+    array.back()->OnAttach();
+  }
 }
 
 std::unique_ptr<Layer> Engine::Detachlayer(const Identity& id) {

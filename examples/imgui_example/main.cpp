@@ -122,7 +122,7 @@ class BenchmarkLayer final : public Scene, private WindowObserver {
     // Add UI
     auto ui_layer = SceneUILayer::Create();
     Scene::AddObserver(ui_layer.get());
-    GetEngine()->AttachLayerToStructure(std::move(ui_layer), 0);
+    GetEngine()->AttachLayerToStructure(std::move(ui_layer), 0, true);
     // Create elements
     for (int i = 0; i < triangles_count_; i++) {
       triangles_.emplace_back(std::make_unique<Pyramid>(

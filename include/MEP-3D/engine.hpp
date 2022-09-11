@@ -47,10 +47,11 @@ class Engine : public std::enable_shared_from_this<Engine>, public Identity {
   const WindowPtr& GetWindow() const;
   WindowPtr& GetWindow();
   void Run();
-  void AttachLayer(std::unique_ptr<Layer> obs);
+  void AttachLayer(std::unique_ptr<Layer> obs, bool on_top = false);
   int AttachStructure(std::unique_ptr<CustomLayerStructure> str);
   void AttachLayerToStructure(std::unique_ptr<Layer> layer,
-                              int custom_layer_index);
+                              int custom_layer_index,
+                              bool on_top = false);
   std::unique_ptr<Layer> Detachlayer(const Identity& id);
   const EngineMonitorData& GetEngineMonitor() const;
   std::unique_ptr<Layer>& operator[](std::size_t layer_index);
