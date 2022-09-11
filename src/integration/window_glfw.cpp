@@ -138,6 +138,7 @@ class GLFWWindowController : public Window {
   void InitCallbacks() {
     glfwSetKeyCallback(main_window_, OnKeyEventHandler);
     glfwSetCursorPosCallback(main_window_, OnMouseEventHandler);
+    glfwSetWindowSizeCallback(main_window_, OnWindowResizeEventHandler);
   }
   static void OnKeyEventHandler(GLFWwindow* window,
                                 int key,
@@ -145,6 +146,9 @@ class GLFWWindowController : public Window {
                                 int action,
                                 int mode);
   static void OnMouseEventHandler(GLFWwindow* window, double xPos, double yPos);
+  static void OnWindowResizeEventHandler(GLFWwindow* window,
+                                         int width,
+                                         int height);
 };
 
 void GLFWWindowController::OnKeyEventHandler(GLFWwindow* window,
@@ -183,6 +187,24 @@ void GLFWWindowController::OnMouseEventHandler(GLFWwindow* window,
   MouseEvent mouse_event{xPos, yPos};
   master_window->ForAllObservers(
       [&mouse_event](WindowObserver* obs) { obs->OnMouseEvent(mouse_event); });
+}
+
+void GLFWWindowController::OnWindowResizeEventHandler(GLFWwindow* window,
+                                                      int width,
+                                                      int height) {
+  GLFWWindowController* master_window =
+      static_cast<GLFWWindowController*>(glfwGetWindowUserPointer(window));
+  glfwGetFramebufferSize(master_window->main_window_,
+                         &master_window->buffer_size.x_,
+                         &master_window->buffer_size.y_);
+  LOG(INFO) << __FUNCTION__
+            << ", buffer size changed [x: " << master_window->buffer_size.x_
+            << ", y: " << master_window->buffer_size.y_ << "]";
+  glViewport(0, 0, master_window->buffer_size.x_,
+             master_window->buffer_size.y_);
+  Vec2i size{width, height};
+  master_window->ForAllObservers(
+      [&size](WindowObserver* obs) { obs->OnWindowResizeEvent(size); });
 }
 
 std::unique_ptr<Window> Window::GetInstance(WindowConfig config) {

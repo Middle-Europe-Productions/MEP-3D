@@ -8,6 +8,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <MEP-3D/directional_light.hpp>
+#include <MEP-3D/engine.hpp>
 #include <MEP-3D/figures.hpp>
 #include <MEP-3D/image.hpp>
 #include <MEP-3D/light_controller.hpp>
@@ -21,7 +22,6 @@
 #include <MEP-3D/vector.hpp>
 #include <MEP-3D/window.hpp>
 #include <MEP-3D/window_observer.hpp>
-#include <MEP-3D/engine.hpp>
 
 const std::unordered_map<LightUniforms, std::string>
     kDirectionalLightUniformMap = {
@@ -274,6 +274,9 @@ class MainLayer : private WindowObserver, public Layer {
   }
   void OnMouseEvent(MouseEvent event) override {
     // LOG(INFO) << "Mouse event, x: " << event.x << ", y: " << event.y;
+  }
+  void OnWindowResizeEvent(Vec2i size) override {
+    LOG(INFO) << "Window resize, x: " << size.x_ << ", y: " << size.y_;
   }
   void OnEventStatusChanged(bool events_blocked) override {}
   ~MainLayer() override {}

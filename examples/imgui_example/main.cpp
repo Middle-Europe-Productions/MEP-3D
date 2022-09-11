@@ -60,7 +60,7 @@ const std::unordered_map<LightUniforms, std::string> kSpotLightUniformMap = {
     {LightUniforms::Direction, "direction"},
     {LightUniforms::Edge, "edge"}};
 
-class BenchmarkLayer final : public Scene {
+class BenchmarkLayer final : public Scene, private WindowObserver {
  public:
   BenchmarkLayer(unsigned int triangles_count)
       : Scene("benchmark_layer_" + std::to_string(triangles_count)),
@@ -86,6 +86,7 @@ class BenchmarkLayer final : public Scene {
     window->AddView(view_.get());
     window->AddCamera(camera_.get());
     window->AddObserver(camera_.get());
+    window->AddObserver(this);
     // Load shader
     shader_->CreateFromFile("shaders/shader.vert", "shaders/shader.frag");
     shader_->SaveUniformToMemory(
@@ -151,6 +152,12 @@ class BenchmarkLayer final : public Scene {
     plane->Draw(render_target);
     GetShader()[0]->Stop();
   }
+  void OnKeyEvent(KeyEvent event) override {}
+  void OnMouseEvent(MouseEvent event) override {}
+  void OnWindowResizeEvent(Vec2i size) override {
+    view_->UpdateAspectRation(GetEngine()->GetWindow()->GetAspectRation());
+  }
+  void OnEventStatusChanged(bool events_blocked) override {}
 
  private:
   std::vector<std::unique_ptr<Pyramid>> triangles_;

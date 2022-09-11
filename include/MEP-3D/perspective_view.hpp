@@ -16,6 +16,7 @@ class PerspectiveView : public ViewBase {
   };
   PerspectiveView(Config config);
   void UpdateConfig(Config config);
+  void UpdateAspectRation(GLfloat aspect_ration);
   const glm::mat4& GetProjection() const override;
 
  private:

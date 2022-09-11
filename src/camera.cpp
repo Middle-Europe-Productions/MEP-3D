@@ -92,6 +92,8 @@ void Camera::OnMouseEvent(MouseEvent event) {
   Changed();
 }
 
+void Camera::OnWindowResizeEvent(Vec2i size) {}
+
 void Camera::OnEventStatusChanged(bool events_blocked) {
   if (events_blocked == true) {
     InitKeyboardMap();

@@ -13,7 +13,6 @@
 #include <MEP-3D/updatable.hpp>
 #include <MEP-3D/window_observer.hpp>
 
-
 #include <glog/logging.h>
 #include <glm/gtx/string_cast.hpp>
 #include <string>
@@ -57,6 +56,7 @@ class Camera : public Updatable,
   glm::vec3 GetNormalizedDirection() const;
   void OnKeyEvent(KeyEvent event) override;
   void OnMouseEvent(MouseEvent event) override;
+  void OnWindowResizeEvent(Vec2i size) override;
   void OnEventStatusChanged(bool events_blocked) override;
   std::string ToString() const;
 
