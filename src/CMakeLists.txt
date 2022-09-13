@@ -15,6 +15,7 @@ set(SOURCE
   ${SRC_ROOT}/mesh.cpp
   ${SRC_ROOT}/perspective_view.cpp
   ${SRC_ROOT}/updatable.cpp
+  ${SRC_ROOT}/utils_engine.cpp
   ${SRC_ROOT}/utils.cpp
   ${SRC_ROOT}/drawable.cpp
   ${SRC_ROOT}/texture.cpp
@@ -40,6 +41,7 @@ set(SOURCE
 )
 
 set(HEADERS
+  ${INC_ROOT}/mep-3d.hpp
   ${INC_ROOT}/mesh_base.hpp
   ${INC_ROOT}/mesh.hpp
   ${INC_ROOT}/common.hpp
@@ -47,6 +49,7 @@ set(HEADERS
   ${INC_ROOT}/figures.hpp
   ${INC_ROOT}/shader.hpp
   ${INC_ROOT}/model_controller.hpp
+  ${INC_ROOT}/utils_engine.hpp
   ${INC_ROOT}/utils.hpp
   ${INC_ROOT}/window.hpp
   ${INC_ROOT}/window_observer.hpp

@@ -16,3 +16,4 @@ const char* kEngine = "engine";
 
 const char* kMenuNodeName = "menu";
 const char* kSceneNodeName = "scene";
+const char* kDefaultImGuiName = "ImGui";

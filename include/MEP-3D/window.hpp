@@ -12,6 +12,7 @@
 struct WindowConfig {
   Vec2u size;
   std::string name;
+  bool use_vsync = true;
 };
 
 class Window : public ObserverList<WindowObserver>, public RenderTarget {
