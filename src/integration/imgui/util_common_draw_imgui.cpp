@@ -131,7 +131,7 @@ bool DrawModel(Model& model) {
   ImGui::SameLine();
   ImGui::Text("%s", ToString(status).c_str());
   if (status == Status::Loading) {
-    ImGui::Spinner("spinner", 10, 4, ImGui::GetColorU32(ImGuiCol_Button));
+    ImGui::Spinner("spinner", 10, 4, ImGui::GetColorU32(ImGuiCol_TabActive));
   } else if (status == Status::Avalible) {
     ImGui::Separator();
     DrawModelController(model);
@@ -139,6 +139,62 @@ bool DrawModel(Model& model) {
   UI::DrawAssetControllerConst(model);
   if (ImGui::Button("Delete")) {
     return false;
+  }
+  return true;
+}
+
+bool DrawShader(Shader& shader) {
+  auto& shader_config = shader.GetShaderStatus();
+  if (shader_config.created_from_file) {
+    ImGui::Text("Shader created from file");
+    ImGui::Separator();
+    ImGui::Text("Vertex path: %s",
+                shader_config.vertex_path.value_or("none").c_str());
+    if (shader_config.fragment_path.has_value())
+      ImGui::Text("Fragment path: %s",
+                  shader_config.fragment_path.value_or("none").c_str());
+    ImGui::Separator();
+  } else {
+    ImGui::Text("Shader created from memory");
+    ImGui::Separator();
+  }
+  if (shader_config.is_vertex_compiled)
+    ImGui::Text("Vertex shader compiled!");
+  if (ImGui::TreeNode("Vertex shader code")) {
+    ImGui::BeginChild("vertex_code",
+                      ImVec2(0, ImGui::GetFrameHeightWithSpacing() * 7 + 30),
+                      true, ImGuiWindowFlags_HorizontalScrollbar);
+    ImGui::Text("%s", shader_config.vertex_code.value_or("Not Found").c_str());
+    ImGui::EndChild();
+    ImGui::TreePop();
+  }
+  ImGui::Separator();
+  if (shader_config.is_fragment_compiled)
+    ImGui::Text("Fragment shader compiled!");
+  if (ImGui::TreeNode("Fragment shader code")) {
+    ImGui::BeginChild("fragment_code",
+                      ImVec2(0, ImGui::GetFrameHeightWithSpacing() * 7 + 30),
+                      true, ImGuiWindowFlags_HorizontalScrollbar);
+    ImGui::Text("%s",
+                shader_config.fragment_code.value_or("Not Found").c_str());
+    ImGui::EndChild();
+    ImGui::TreePop();
+  }
+  ImGui::Separator();
+  ImGui::Text("Cache");
+  if (ImGui::TreeNode("User Defined Uniforms")) {
+    auto& uniforms = shader.GetUserCacheForDebug();
+    for (auto& node : uniforms) {
+      ImGui::Text("ID: %i. Address: %i", node.first, node.second);
+    }
+    ImGui::TreePop();
+  }
+  if (ImGui::TreeNode("Cached Uniforms")) {
+    auto& uniforms = shader.GetAutoCacheForDebug();
+    for (auto& node : uniforms) {
+      ImGui::Text("Uniform: %s. Address: %i", node.first.c_str(), node.second);
+    }
+    ImGui::TreePop();
   }
   return true;
 }

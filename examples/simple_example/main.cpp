@@ -130,14 +130,12 @@ class MainLayer : private WindowObserver, public Layer {
     window->AddObserver(camera_.get());
 
     shader_.CreateFromFile("shaders/shader.vert", "shaders/shader.frag");
-    shader_.SaveUniformToMemory(
-        "projection", static_cast<unsigned int>(CommonUniform::Projection));
-    shader_.SaveUniformToMemory("view",
-                                static_cast<unsigned int>(CommonUniform::View));
-    shader_.SaveUniformToMemory(
-        "model", static_cast<unsigned int>(CommonUniform::Model));
-    shader_.SaveUniformToMemory(
-        "eye_position", static_cast<unsigned int>(CommonUniform::Position));
+    shader_.Cache("projection",
+                  static_cast<unsigned int>(CommonUniform::Projection));
+    shader_.Cache("view", static_cast<unsigned int>(CommonUniform::View));
+    shader_.Cache("model", static_cast<unsigned int>(CommonUniform::Model));
+    shader_.Cache("eye_position",
+                  static_cast<unsigned int>(CommonUniform::Position));
 
     std::unique_ptr<Layer> bench_layer =
         std::make_unique<BenchmarkLayer>(10000, shader_);

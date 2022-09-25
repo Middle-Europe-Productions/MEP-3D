@@ -10,15 +10,23 @@ void DrawModelController(ModelController& model_controller) {}
 bool DrawDirectionalLight(DirectionalLight& directional_light) {
   return true;
 }
+
 bool DrawSpotLight(SpotLight& point_light) {
   return true;
 }
+
 bool DrawPointLight(PointLight& point_light) {
   return true;
 }
+
 bool DrawModel(Model& model) {
   return true;
 }
+
+bool DrawShader(Shader& shader) {
+  return true;
+}
+
 int DrawShaderComboMenu(std::vector<std::unique_ptr<Shader>>& array,
                         int selected) {
   return -1;

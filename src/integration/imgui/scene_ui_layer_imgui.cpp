@@ -26,6 +26,7 @@ enum MenuAction {
   DrawSpotLight = 8,
   DrawPointLight = 9,
   DrawModelMenu = 10,
+  DrawShader = 11,
   MenuActionCount
 };
 
@@ -82,6 +83,10 @@ constexpr char kDefaultSceneRuntimeConfig[] = R"({
         {
           "name":"Voxels",
           "return":-1
+        },
+        {
+          "name":"Shader",
+          "return": 11
         }
       ]
     } 
@@ -247,6 +252,16 @@ class SceneUILayerImGUI : public SceneUILayer {
               ImGui::Separator();
               UI::DrawAssetControllerConst(
                   *GetScenePtr()->GetSpotLightController());
+            }
+          }},
+         {static_cast<int>(MenuAction::DrawShader),
+          [this]() {
+            for (auto& sh_ptr : GetScenePtr()->GetShaders()) {
+              if (ImGui::TreeNode(sh_ptr->Identity::GetName().c_str())) {
+                UI::DrawShader(*sh_ptr.get());
+                ImGui::Separator();
+                ImGui::TreePop();
+              }
             }
           }},
          {static_cast<int>(MenuAction::DrawModelMenu),

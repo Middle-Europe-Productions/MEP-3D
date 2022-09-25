@@ -15,18 +15,16 @@ void Mesh::Draw(RenderTarget& render_target) {
     return;
   }
   Shader* shader = Get<Shader>();
-  shader->SetUniformFromMemory(static_cast<unsigned int>(CommonUniform::Model),
-                               GetModel());
+  shader->SetUniform(static_cast<unsigned int>(CommonUniform::Model),
+                     GetModel());
   if (render_target.GetView())
-    shader->SetUniformFromMemory(
-        static_cast<unsigned int>(CommonUniform::Projection),
-        render_target.GetView()->GetProjection());
+    shader->SetUniform(static_cast<unsigned int>(CommonUniform::Projection),
+                       render_target.GetView()->GetProjection());
   if (render_target.GetCamera()) {
-    shader->SetUniformFromMemory(static_cast<unsigned int>(CommonUniform::View),
-                                 render_target.GetCamera()->GetViewMatrix());
-    shader->SetUniformFromMemory(
-        static_cast<unsigned int>(CommonUniform::Position),
-        render_target.GetCamera()->GetPosition());
+    shader->SetUniform(static_cast<unsigned int>(CommonUniform::View),
+                       render_target.GetCamera()->GetViewMatrix());
+    shader->SetUniform(static_cast<unsigned int>(CommonUniform::Position),
+                       render_target.GetCamera()->GetPosition());
   }
 
   Texture* texture = nullptr;

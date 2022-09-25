@@ -149,8 +149,8 @@ void Model::Draw(RenderTarget& render_target) {
     return;
   }
   Shader* shader = Get<Shader>();
-  shader->SetUniformFromMemory(static_cast<unsigned int>(CommonUniform::Model),
-                               GetModel());
+  shader->SetUniform(static_cast<unsigned int>(CommonUniform::Model),
+                     GetModel());
   Texture* texture = nullptr;
   if ((texture = Get<Texture>()))
     texture->Use();

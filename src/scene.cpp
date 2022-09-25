@@ -47,7 +47,7 @@ std::size_t Scene::AttachShader(std::unique_ptr<Shader> shader) {
   return shaders_.size() - 1;
 }
 
-std::vector<std::unique_ptr<Shader>>& Scene::GetShader() {
+std::vector<std::unique_ptr<Shader>>& Scene::GetShaders() {
   return shaders_;
 }
 

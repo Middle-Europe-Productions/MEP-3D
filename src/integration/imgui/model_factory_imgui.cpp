@@ -29,7 +29,7 @@ void ModelFactoryImGui::ImGUIDraw(Scene& scene) {
                            ImGuiInputTextFlags_CharsNoBlank);
   ImGui::Text("Shader");
   selected_shader_ =
-      UI::DrawShaderComboMenu(scene.GetShader(), selected_shader_);
+      UI::DrawShaderComboMenu(scene.GetShaders(), selected_shader_);
   ImGui::Text("Texture");
   selected_texture_ =
       UI::DrawTextureComboMenu(scene.GetTexture(), selected_texture_);
@@ -47,7 +47,7 @@ void ModelFactoryImGui::ImGUIDraw(Scene& scene) {
     New(std::make_unique<Model>(buffer_name));
     Get()->Load(buffer_path);
     if (selected_shader_ != -1) {
-      Get()->Bind(scene.GetShader()[selected_shader_].get());
+      Get()->Bind(scene.GetShaders()[selected_shader_].get());
     }
     if (selected_texture_ != -1) {
       Get()->Bind(scene.GetTexture()[selected_texture_].get());

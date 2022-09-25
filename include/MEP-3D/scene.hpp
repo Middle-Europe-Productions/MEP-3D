@@ -46,7 +46,7 @@ class Scene : public Layer, public ObserverList<SceneObserver> {
   std::size_t AttachModel(std::unique_ptr<Model> model);
   std::vector<std::unique_ptr<Model>>& GetModels();
   std::size_t AttachShader(std::unique_ptr<Shader> shader);
-  std::vector<std::unique_ptr<Shader>>& GetShader();
+  std::vector<std::unique_ptr<Shader>>& GetShaders();
   std::size_t AttachMaterial(std::unique_ptr<Material> material);
   std::vector<std::unique_ptr<Material>>& GetMaterial();
   std::size_t AttachTexture(std::unique_ptr<Texture> texture);

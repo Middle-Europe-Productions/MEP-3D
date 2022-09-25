@@ -65,14 +65,12 @@ class BenchmarkLayer final : public Scene, private WindowObserver {
     window->AddObserver(this);
     // Load shader
     shader_->CreateFromFile("shaders/shader.vert", "shaders/shader.frag");
-    shader_->SaveUniformToMemory(
-        "projection", static_cast<unsigned int>(CommonUniform::Projection));
-    shader_->SaveUniformToMemory(
-        "view", static_cast<unsigned int>(CommonUniform::View));
-    shader_->SaveUniformToMemory(
-        "model", static_cast<unsigned int>(CommonUniform::Model));
-    shader_->SaveUniformToMemory(
-        "eye_position", static_cast<unsigned int>(CommonUniform::Position));
+    shader_->Cache("projection",
+                   static_cast<unsigned int>(CommonUniform::Projection));
+    shader_->Cache("view", static_cast<unsigned int>(CommonUniform::View));
+    shader_->Cache("model", static_cast<unsigned int>(CommonUniform::Model));
+    shader_->Cache("eye_position",
+                   static_cast<unsigned int>(CommonUniform::Position));
     // Directional light
     light = std::make_unique<DirectionalLight>(
         AmbientConfig{Color(255, 255, 255), 0.1f},
@@ -117,16 +115,16 @@ class BenchmarkLayer final : public Scene, private WindowObserver {
   void OnDetach() override {}
   void OnUpdate(float time_delta) override { camera_->Update(); }
   void OnDraw(RenderTarget& render_target) override {
-    GetShader()[0]->Use();
+    GetShaders()[0]->Use();
     UseAllLights();
     DrawAllModels(render_target);
     GetTexture()[0]->Use();
-    GetShader()[0]->SetUniform("use_texture", 1);
+    GetShaders()[0]->SetUniform("use_texture", 1);
     for (auto& tr : triangles_) {
       tr->Draw(render_target);
     }
     plane->Draw(render_target);
-    GetShader()[0]->Stop();
+    GetShaders()[0]->Stop();
   }
   void OnKeyEvent(KeyEvent event) override {}
   void OnMouseEvent(MouseEvent event) override {}

@@ -19,6 +19,7 @@ bool DrawDirectionalLight(DirectionalLight& directional_light);
 bool DrawSpotLight(SpotLight& point_light);
 bool DrawPointLight(PointLight& point_light);
 bool DrawModel(Model& model);
+bool DrawShader(Shader& shader);
 // Combo menus
 int DrawShaderComboMenu(std::vector<std::unique_ptr<Shader>>& array,
                         int selected);
