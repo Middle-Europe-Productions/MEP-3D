@@ -2,8 +2,15 @@
 
 ## MEP-3D
 
+#### CMake
+Goto project directory.
+```sh
+cmake -S . -B build/
+```
+
 #### Building scripts
 * Using MSVC build script
+Open the visual studio developer console or set environment variables.
 ```sh
 cd <build>/examples
 run_mep_msvc.bat <target> <mode=Debug>
