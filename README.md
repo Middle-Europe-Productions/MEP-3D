@@ -2,6 +2,13 @@
 
 ## MEP-3D
 
+#### Building scripts
+* Using MSVC build script
+```sh
+cd <build>/examples
+run_mep_msvc.bat <target> <mode=Debug>
+```
+
 #### Available tools
 * Window creation using GLFW
 * Projection view
