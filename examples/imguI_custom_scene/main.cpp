@@ -42,7 +42,7 @@ const auto kMyHandler = []() {
 };
 
 int main(int argc, char* argv[]) {
-  utils::InitMepLogging(argv[0]);
+  utils::InitLogging(argc, argv);
   auto window = Window::GetInstance({{1280, 720}, "Custom Scene"});
   window->Init();
   auto engine = utils::CreateEngineWithSceneUI(

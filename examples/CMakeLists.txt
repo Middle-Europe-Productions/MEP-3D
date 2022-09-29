@@ -9,6 +9,13 @@ file(
   DESTINATION
   ${CMAKE_CURRENT_BINARY_DIR}/
 )
+elseif(UNIX)
+file(
+  COPY
+  ${PROJECT_SOURCE_DIR}/scripts/run_mep_unix.sh
+  DESTINATION
+  ${CMAKE_CURRENT_BINARY_DIR}/
+)
 else()
     message(STATUS "Could not find build script for the compiler")
 endif()

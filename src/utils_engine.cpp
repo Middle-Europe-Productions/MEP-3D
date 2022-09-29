@@ -6,10 +6,6 @@
 #include <MEP-3D/utils_engine.hpp>
 
 namespace utils {
-void InitMepLogging(const char* program_name) {
-  FLAGS_logtostderr = 1;
-  google::InitGoogleLogging(program_name);
-}
 std::shared_ptr<Engine> CreateEngineWithSceneUI(
     std::unique_ptr<Scene> scene,
     std::unique_ptr<SceneUILayer> ui_layer) {

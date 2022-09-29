@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 
 namespace utils {
+void InitLogging(int argc, char* argv[]);
 glm::vec3 AxisToGlm(Axis axis);
 float DegToRadians(float degress);
 float RadiansToDeg(float radians);

@@ -9,12 +9,27 @@ cmake -S . -B build/
 ```
 
 #### Building scripts
+* Using Unix build script
+```sh
+./build/examples/run_mep_unix.sh <target> <flags>
+```
+or from the appropriate directory
+```sh
+run_mep_unix.sh <target> <flags>
+```
+
 * Using MSVC build script
 Open the visual studio developer console or set environment variables.
 ```sh
 cd <build>/examples
 run_mep_msvc.bat <target> <mode=Debug>
 ```
+##### Flags
+Mep engine allows default chromium flags, for example:
+```sh
+-v=2
+```
+For more info please check this link [link](https://github.com/google/glog).
 
 #### Available tools
 * Window creation using GLFW

@@ -147,9 +147,7 @@ class BenchmarkLayer final : public Scene, private WindowObserver {
 };
 
 int main(int argc, char* argv[]) {
-  FLAGS_logtostderr = 1;
-  google::InitGoogleLogging(argv[0]);
-
+  utils::InitLogging(argc, argv);
   auto window = Window::GetInstance({{1280, 720}, "ImGui Example", false});
   window->Init();
   auto main_engine = std::make_shared<Engine>();

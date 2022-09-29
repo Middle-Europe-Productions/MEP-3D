@@ -85,11 +85,11 @@ class BenchmarkLayer final : public Layer {
     }
   }
   void OnDraw(RenderTarget& render_target) {
-    shader_.StartUsing();
+    shader_.Use();
     for (auto& tr : triangles_) {
       tr->Draw(render_target);
     }
-    shader_.StopUsing();
+    shader_.Stop();
   }
 
  private:
@@ -152,25 +152,21 @@ class MainLayer : private WindowObserver, public Layer {
     point_light_fact->MakeAndBind(
         std::make_unique<PointLight>(
             AmbientConfig{Color(255, 0, 0), 0.5f},
-            PointConfig{Vec3f{1.0f, 1.0f, 1.0f}, 1, 1, 0.001}, 0.5f),
-        shader_);
+            PointConfig{Vec3f{1.0f, 1.0f, 1.0f}, 1, 1, 0.001}, 0.5f));
     point_light_fact->MakeAndBind(
         std::make_unique<PointLight>(
             AmbientConfig{Color(0, 0, 255), 0.5f},
-            PointConfig{Vec3f{-1.0f, 1.0f, -1.0f}, 1, 1, 0}, 0.8f),
-        shader_);
+            PointConfig{Vec3f{-1.0f, 1.0f, -1.0f}, 1, 1, 0}, 0.8f));
     point_light_fact->MakeAndBind(
         std::make_unique<PointLight>(
             AmbientConfig{Color(0, 255, 0), 0.5f},
-            PointConfig{Vec3f{1.0f, 1.0f, -1.0f}, 1, 1, 0}, 0.8f),
-        shader_);
+            PointConfig{Vec3f{1.0f, 1.0f, -1.0f}, 1, 1, 0}, 0.8f));
 
     spot_light_fact->MakeAndBind(
         std::make_unique<SpotLight>(
             AmbientConfig{Color(255, 0, 0), 0.5f},
             PointConfig{Vec3f{1.0f, 1.0f, -1.0f}, 1, 1, 0}, 5.0f,
-            SpotConfig{{0.0, -1.0, 0.0}, 15}),
-        shader_);
+            SpotConfig{{0.0, -1.0, 0.0}, 15}));
 
     light = std::make_unique<DirectionalLight>(
         AmbientConfig{Color(255, 255, 255), 0.1f},
@@ -228,7 +224,7 @@ class MainLayer : private WindowObserver, public Layer {
   }
 
   virtual void OnDraw(RenderTarget& render_target) {
-    shader_.StartUsing();
+    shader_.Use();
     light->Use();
     material->Use();
 
@@ -244,7 +240,7 @@ class MainLayer : private WindowObserver, public Layer {
     model[0].Draw(render_target);
     model[1].Draw(render_target);
     model[2].Draw(render_target);
-    shader_.StopUsing();
+    shader_.Stop();
   }
   void OnKeyEvent(KeyEvent event) override {
     // LOG(INFO) << event.code << ", action: " << (event.action ==
