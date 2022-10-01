@@ -10,7 +10,7 @@ PointLight::PointLight(const AmbientConfig& ambient_config,
             DiffuseConfig{std::nullopt, diffuse_intensity},
             kPointLight),
       point_config_(point_config) {
-  LOG(INFO) << __FUNCTION__ << ", " << ToString();
+  VLOG(1) << __FUNCTION__ << ", " << ToString();
 }
 
 PointLight::PointLight(const AmbientConfig& ambient_config,
@@ -21,7 +21,7 @@ PointLight::PointLight(const AmbientConfig& ambient_config,
             DiffuseConfig{std::nullopt, diffuse_intensity},
             super_class_name),
       point_config_(point_config) {
-  LOG(INFO) << __FUNCTION__ << ", " << ToString();
+  VLOG(1) << __FUNCTION__ << ", " << ToString();
 }
 
 void PointLight::Use() {

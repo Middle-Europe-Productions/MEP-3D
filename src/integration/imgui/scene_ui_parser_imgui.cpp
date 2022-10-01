@@ -32,7 +32,7 @@ void SceneUIParserImGui::Parse(const std::string& json) {
             << "Element was not properly cleared something is not right!";
       }
     }
-    LOG(INFO) << "Parsing: " << key << ", value: " << static_cast<int>(ele);
+    VLOG(2) << "Parsing: " << key << ", value: " << static_cast<int>(ele);
     if (ele == Element::Menu) {
       if (value.is_array()) {
         it->second = new SceneUIParserNode();
@@ -77,20 +77,20 @@ SceneUIParser::SceneUIParserNode* SceneUIParserImGui::ParseMenuItem(
     }
   }
   if (node->next.size() > 0) {
-    LOG(INFO) << "Parsing BeginMenu with name " << node->node_name;
+    VLOG(3) << "Parsing BeginMenu with name " << node->node_name;
     node->start_callback =
         std::bind(static_cast<bool (&)(const char*, bool)>(ImGui::BeginMenu),
                   node->node_name.c_str(), true);
     node->finish_callback = std::bind(&ImGui::EndMenu);
   } else {
-    LOG(INFO) << "Parsing MenuItem with name " << node->node_name
-              << ", return code " << node->return_code;
+    VLOG(3) << "Parsing MenuItem with name " << node->node_name
+            << ", return code " << node->return_code;
     node->start_callback =
         std::bind(static_cast<bool (&)(const char*, const char*, bool, bool)>(
                       ImGui::MenuItem),
                   node->node_name.c_str(), (const char*)0, false, true);
   }
-  LOG(INFO) << "Elements parsed " << node->next.size();
+  VLOG(3) << "Elements parsed " << node->next.size();
   return node;
 }
 

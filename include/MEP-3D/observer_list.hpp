@@ -27,11 +27,11 @@ template <typename ObserverType>
 void ObserverList<ObserverType>::RemoveObserver(ObserverType* obs) {
   if (!obs)
     return;
-  LOG(INFO) << __FUNCTION__ << ", observer_id: " << obs->GetObserverId();
+  VLOG(3) << __FUNCTION__ << ", observer_id: " << obs->GetObserverId();
   for (auto it = observer_list_.begin(); it != observer_list_.end(); ++it) {
     if ((*it)->IsEqual(obs)) {
       if (it != observer_list_.end()) {
-        LOG(INFO) << __FUNCTION__ << ", " << __LINE__ << ", "
+        VLOG(3) << __FUNCTION__ << ", " << __LINE__ << ", "
                   << (*it)->GetObserverId();
         observer_list_.erase(it);
       }

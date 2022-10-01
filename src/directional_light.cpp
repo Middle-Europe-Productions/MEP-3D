@@ -3,7 +3,9 @@
 
 DirectionalLight::DirectionalLight(const AmbientConfig& ambient_config,
                                    const DiffuseConfig& diffuse_config)
-    : Light(ambient_config, diffuse_config, kDirectionalLight) {}
+    : Light(ambient_config, diffuse_config, kDirectionalLight) {
+  VLOG(1) << __FUNCTION__ << ", " << ToString();
+}
 
 AmbientConfig& DirectionalLight::GetAmbientConfigRef() {
   assert(ambient_config_.has_value());

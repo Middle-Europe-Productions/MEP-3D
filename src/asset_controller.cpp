@@ -29,7 +29,7 @@ void AssetController::Bind(Material* object) {
 }
 
 void AssetController::OnDelete(Identity& caller_identity) {
-  LOG(INFO) << __FUNCTION__ << ", caller_id: " << caller_identity.ToString();
+  VLOG(3) << __FUNCTION__ << ", caller_id: " << caller_identity.ToString();
   if (texture_ && texture_->GetGlobalId() == caller_identity.GetGlobalId()) {
     texture_ = nullptr;
   } else if (shader_ &&
@@ -39,14 +39,14 @@ void AssetController::OnDelete(Identity& caller_identity) {
 }
 
 void AssetController::RemoveAssets() {
-  LOG(INFO) << __FUNCTION__ << ", observer_id: " << GetObserverId();
+  VLOG(3) << __FUNCTION__ << ", observer_id: " << GetObserverId();
   if (texture_) {
-    LOG(INFO) << texture_->ToString();
+    VLOG(3) << texture_->ToString();
     texture_->RemoveObserver(this);
     texture_ = nullptr;
   }
   if (shader_) {
-    LOG(INFO) << shader_->ToString();
+    VLOG(3) << shader_->ToString();
     shader_->RemoveObserver(this);
     shader_ = nullptr;
   }

@@ -7,6 +7,7 @@ SpotLight::SpotLight(const AmbientConfig& ambient_config,
                      const SpotConfig& spot_config)
     : PointLight(ambient_config, point_config, diffuse_intensity, kSpotLight),
       spot_config_(spot_config) {
+  VLOG(1) << __FUNCTION__ << ", " << ToString();
   CalcuateEdge();
 }
 
