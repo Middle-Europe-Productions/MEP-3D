@@ -9,7 +9,7 @@
 namespace {
 constexpr char kSeparator = '=';
 constexpr char kPrefix = '-';
-int RepeatingPrefixIndex(const std::string &name, const char prefix) {
+int RepeatingPrefixIndex(const std::string& name, const char prefix) {
   for (int i = 0; i < name.size(); ++i) {
     if (name[i] != prefix) {
       return i;
@@ -17,8 +17,12 @@ int RepeatingPrefixIndex(const std::string &name, const char prefix) {
   }
   return 0;
 }
-void InitDefaultGlogLogging() { FLAGS_logtostderr = 1; }
-bool InitGlogFlag(const std::string &l_val, const std::string &r_val) {
+
+void InitDefaultGlogLogging() {
+  FLAGS_logtostderr = 1;
+}
+
+bool InitGlogFlag(const std::string& l_val, const std::string& r_val) {
   if (l_val == "logtostderr") {
     int val = atoi(r_val.c_str());
     if (val != 0 && val != 1) {
@@ -58,25 +62,21 @@ bool InitGlogFlag(const std::string &l_val, const std::string &r_val) {
   }
   return false;
 }
-} // namespace
+}  // namespace
 
-void utils::InitLogging(int argc, char *argv[]) {
+void utils::InitLogging(int argc, char* argv[]) {
   InitDefaultGlogLogging();
   google::InitGoogleLogging(argv[0]);
   for (int i = 1; i < argc; i++) {
     std::string temp(argv[i]);
-    LOG(INFO) << temp;
     auto prefix = RepeatingPrefixIndex(temp, kPrefix);
     if (prefix == 0) {
-      LOG(WARNING) << "Input should start from '-'" << temp;
       continue;
     }
     temp = temp.substr(prefix, temp.size());
     auto separator_index = temp.find(kSeparator);
-    if (!InitGlogFlag(temp.substr(0, separator_index),
-                      temp.substr(separator_index + 1, temp.size() - 1))) {
-      LOG(ERROR) << "Could not parse " << temp;
-    }
+    InitGlogFlag(temp.substr(0, separator_index),
+                 temp.substr(separator_index + 1, temp.size() - 1));
   }
 }
 

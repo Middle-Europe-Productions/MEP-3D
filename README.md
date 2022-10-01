@@ -22,7 +22,7 @@ run_mep_unix.sh <target> <flags>
 Open the visual studio developer console or set environment variables.
 ```sh
 cd <build>/examples
-run_mep_msvc.bat <target> <mode=Debug>
+run_mep_msvc.bat -t/--target <target> -m/--mode <mode=Debug> <flags>
 ```
 ##### Flags
 Mep engine allows default chromium flags, for example:
