@@ -11,7 +11,7 @@ cmake -S . -B build/
 #### Building scripts
 * Using Unix build script
 ```sh
-./build/examples/run_mep_unix.sh <target> <flags>
+./build/examples/run_mep_unix.sh -t/--target <target> <flags>
 ```
 or from the appropriate directory
 ```sh
