@@ -4,6 +4,8 @@
 #include <MEP-3D/common.hpp>
 #include <glm/glm.hpp>
 
+#define NOTREACHED() assert(false);
+
 namespace utils {
 void InitLogging(int argc, char* argv[]);
 glm::vec3 AxisToGlm(Axis axis);

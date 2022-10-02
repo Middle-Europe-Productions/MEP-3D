@@ -7,6 +7,7 @@
 class ViewBase {
  public:
   virtual const glm::mat4& GetProjection() const = 0;
+  virtual void UpdateAspectRation(GLfloat aspect_ration) = 0;
 };
 
 #endif

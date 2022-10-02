@@ -35,6 +35,7 @@ set(SOURCE
   ${SRC_ROOT}/layer.cpp
   ${SRC_ROOT}/scene.cpp
   ${SRC_ROOT}/template/scene_ui_layer.cpp
+  ${SRC_ROOT}/template/shaders_preset.cpp
   ${SRC_ROOT}/common_names.cpp
   ${SRC_ROOT}/config_create_impl.cpp
   ${SRC_ROOT}/scene_ui_parser.cpp
@@ -94,6 +95,7 @@ set(HEADERS
   ${INC_ROOT}/template/engine_data_ui_layer.hpp
   ${INC_ROOT}/template/scene_ui_layer.hpp
   ${INC_ROOT}/template/util_common_draw.hpp
+  ${INC_ROOT}/template/shaders_preset.hpp
   ${INC_ROOT}/common_names.hpp
   ${INC_ROOT}/scene_ui_parser.hpp
 )
@@ -126,7 +128,7 @@ message(STATUS "Library for image processing is not included linking default imp
 endif(MEP_USE_STB)
 
 if (MEP_USE_ASSIMP)
-  message(STATUS "MEP_STANDALONE_APP=true, including assimp library for model loading")
+  message(STATUS "MEP_USE_ASSIMP=true, including assimp library for model loading")
   list(APPEND SOURCE
     ${SRC_ROOT}/integration/model_assimp.cpp
   )

@@ -202,6 +202,12 @@ void GLFWWindowController::OnWindowResizeEventHandler(GLFWwindow* window,
             << ", y: " << master_window->buffer_size.y_ << "]";
   glViewport(0, 0, master_window->buffer_size.x_,
              master_window->buffer_size.y_);
+  if (!master_window->GetView()) {
+    LOG(ERROR) << "You did not bind view to window";
+  } else {
+    master_window->GetView()->UpdateAspectRation(
+        master_window->GetAspectRation());
+  }
   Vec2i size{width, height};
   master_window->ForAllObservers(
       [&size](WindowObserver* obs) { obs->OnWindowResizeEvent(size); });

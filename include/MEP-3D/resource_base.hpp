@@ -5,6 +5,8 @@
 #include <string>
 
 enum class Status {
+  // When the resource handler is not implemented
+  NotImplemented = -1,
   // Not passed to the thread pool
   Unknown = 0,
   // Waiting for the avalible thread

@@ -1,6 +1,7 @@
 add_subdirectory(imgui_example)
 add_subdirectory(simple_example/)
 add_subdirectory(imgui_custom_scene/)
+add_subdirectory(camera_example/)
 
 if (MSVC)
 file(

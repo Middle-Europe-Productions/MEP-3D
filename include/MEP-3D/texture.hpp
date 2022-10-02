@@ -12,6 +12,7 @@
 class Texture : public Asset {
  public:
   Texture();
+  void Create(Color color);
   void Create(Image& image);
   void Use();
   void Stop();

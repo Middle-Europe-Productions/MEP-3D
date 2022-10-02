@@ -121,22 +121,26 @@ bool DrawPointLight(PointLight& point_light) {
   return true;
 }
 bool DrawModel(Model& model) {
-  ImGui::Text("Draw ");
-  ImGui::SameLine();
-  std::string id =
-      "##should_render_model" + std::to_string(model.GetGlobalId());
-  ImGui::Checkbox(id.c_str(), &model.GetShouldDraw());
   auto status = model.GetStatus();
-  ImGui::Text("Model Status ");
-  ImGui::SameLine();
-  ImGui::Text("%s", ToString(status).c_str());
-  if (status == Status::Loading) {
-    ImGui::Spinner("spinner", 10, 4, ImGui::GetColorU32(ImGuiCol_TabActive));
-  } else if (status == Status::Avalible) {
-    ImGui::Separator();
-    DrawModelController(model);
+  if (status == Status::NotImplemented) {
+    ImGui::Text("Model module is not implemented!");
+  } else {
+    ImGui::Text("Draw ");
+    ImGui::SameLine();
+    std::string id =
+        "##should_render_model" + std::to_string(model.GetGlobalId());
+    ImGui::Checkbox(id.c_str(), &model.GetShouldDraw());
+    ImGui::Text("Model Status ");
+    ImGui::SameLine();
+    ImGui::Text("%s", ToString(status).c_str());
+    if (status == Status::Loading) {
+      ImGui::Spinner("spinner", 10, 4, ImGui::GetColorU32(ImGuiCol_TabActive));
+    } else if (status == Status::Avalible) {
+      ImGui::Separator();
+      DrawModelController(model);
+    }
+    UI::DrawAssetControllerConst(model);
   }
-  UI::DrawAssetControllerConst(model);
   if (ImGui::Button("Delete")) {
     return false;
   }

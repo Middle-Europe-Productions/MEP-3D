@@ -7,6 +7,22 @@
 
 class SceneUILayer : public Layer, public SceneObserver {
  public:
+  enum MenuAction {
+    None = -1,
+    AddPointLight = 0,
+    AddSpotLight = 1,
+    AddModel = 2,
+    AddShader = 3,
+    AddImage = 4,
+    AddTexture = 5,
+    AddMaterial = 6,
+    DrawDirectionalLight = 7,
+    DrawSpotLight = 8,
+    DrawPointLight = 9,
+    DrawModelMenu = 10,
+    DrawShader = 11,
+    MenuActionCount
+  };
   void OnAttach(Scene* scene);
   void OnDetach();
   Scene* GetScenePtr();

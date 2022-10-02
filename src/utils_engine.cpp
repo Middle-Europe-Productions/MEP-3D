@@ -7,12 +7,14 @@
 
 namespace utils {
 std::shared_ptr<Engine> CreateEngineWithSceneUI(
+    std::unique_ptr<Window> window,
     std::unique_ptr<Scene> scene,
     std::unique_ptr<SceneUILayer> ui_layer) {
   DCHECK(scene);
   DCHECK(ui_layer);
   auto main_engine = std::make_shared<Engine>();
 
+  main_engine->AttachWindow(std::move(window));
   auto engine_data = EngineDataUILayer::Create();
   std::unique_ptr<Engine::CustomLayerStructure> custom_structure =
       std::make_unique<Engine::CustomLayerStructure>();

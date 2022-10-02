@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
   auto window = Window::GetInstance({{1280, 720}, "Custom Scene"});
   window->Init();
   auto engine = utils::CreateEngineWithSceneUI(
-      std::make_unique<DefaultScene>(),
+      std::move(window), std::make_unique<DefaultScene>(),
       SceneUILayer::Create(kMyRuntimeConfig, {{1, kMyHandler}},
                            SceneUIParser::Method::DoNotUseDefault));
   engine->AttachWindow(std::move(window));

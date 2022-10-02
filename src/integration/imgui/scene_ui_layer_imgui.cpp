@@ -13,22 +13,6 @@
 #include "spot_light_factory_imgui.hpp"
 
 namespace {
-enum MenuAction {
-  None = -1,
-  AddPointLight = 0,
-  AddSpotLight = 1,
-  AddModel = 2,
-  AddShader = 3,
-  AddImage = 4,
-  AddTexture = 5,
-  AddMaterial = 6,
-  DrawDirectionalLight = 7,
-  DrawSpotLight = 8,
-  DrawPointLight = 9,
-  DrawModelMenu = 10,
-  DrawShader = 11,
-  MenuActionCount
-};
 
 constexpr char kDefaultSceneRuntimeConfig[] = R"({
    "menu":[

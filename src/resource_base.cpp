@@ -1,7 +1,10 @@
 #include <MEP-3D/resource_base.hpp>
+#include <MEP-3D/utils.hpp>
 
 std::string ToString(Status status) {
   switch (status) {
+    case Status::NotImplemented:
+      return "NotImplemented";
     case Status::Unknown:
       return "Unknown";
     case Status::Waiting:
@@ -15,6 +18,7 @@ std::string ToString(Status status) {
     case Status::Avalible:
       return "Avalible";
   }
+  NOTREACHED();
   return "";
 }
 
