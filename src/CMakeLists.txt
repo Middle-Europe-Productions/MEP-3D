@@ -3,7 +3,7 @@ set(SRC_ROOT ${PROJECT_SOURCE_DIR}/src)
 set(MEP_LIBRARY_NAME mep-3d)
 
 set(SOURCE
-  ${SRC_ROOT}/camera.cpp
+  ${SRC_ROOT}/perspective_camera.cpp
   ${SRC_ROOT}/common.cpp
   ${SRC_ROOT}/integration/time_delta_glfw.cpp
   ${SRC_ROOT}/integration/window_glfw.cpp
@@ -57,7 +57,8 @@ set(HEADERS
   ${INC_ROOT}/observer_list.hpp
   ${INC_ROOT}/key_event.hpp
   ${INC_ROOT}/mouse_event.hpp
-  ${INC_ROOT}/camera.hpp
+  ${INC_ROOT}/perspective_camera.hpp
+  ${INC_ROOT}/camera_base.hpp
   ${INC_ROOT}/render_target.hpp
   ${INC_ROOT}/perspective_view.hpp
   ${INC_ROOT}/time_delta.hpp

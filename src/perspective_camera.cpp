@@ -1,4 +1,4 @@
-#include <MEP-3D/camera.hpp>
+#include <MEP-3D/perspective_camera.hpp>
 
 std::string ToString(const CameraVariables& camera_variable) {
   switch (camera_variable) {
@@ -10,7 +10,8 @@ std::string ToString(const CameraVariables& camera_variable) {
   return "Unknown";
 }
 
-Camera::Camera(const CameraConfig& config, const CameraControls& controls)
+PerspectiveCamera::PerspectiveCamera(const CameraConfig& config,
+                                     const PerspectiveCameraControls& controls)
     : controls_(controls), camera_time_delta_(TimeDelta::GetInstance()) {
   Set(CameraVariables::Position, config.start_position);
   Set(CameraVariables::Direction, glm::vec3(0.0f, 0.0f, -1.0f));
@@ -27,7 +28,7 @@ Camera::Camera(const CameraConfig& config, const CameraControls& controls)
   Update();
 }
 
-void Camera::Update() {
+void PerspectiveCamera::Update() {
   ValidateKeyboardInput();
   UpdateInt([this]() {
     Set(CameraVariables::Direction,
@@ -42,21 +43,21 @@ void Camera::Update() {
   });
 }
 
-glm::mat4 Camera::GetViewMatrix() const {
+glm::mat4 PerspectiveCamera::GetViewMatrix() const {
   return glm::lookAt(
       Get(CameraVariables::Position),
       Get(CameraVariables::Position) + Get(CameraVariables::Direction), up_);
 }
 
-glm::vec3 Camera::GetPosition() const {
+glm::vec3 PerspectiveCamera::GetPosition() const {
   return Get(CameraVariables::Position);
 }
 
-glm::vec3 Camera::GetNormalizedDirection() const {
+glm::vec3 PerspectiveCamera::GetNormalizedDirection() const {
   return Get(CameraVariables::Direction);
 }
 
-void Camera::OnKeyEvent(KeyEvent event) {
+void PerspectiveCamera::OnKeyEvent(KeyEvent event) {
   if (event.action == Action::Pressed || event.action == Action::Released) {
     if (event.code == controls_.up || event.code == controls_.down ||
         event.code == controls_.left || event.code == controls_.right) {
@@ -65,7 +66,7 @@ void Camera::OnKeyEvent(KeyEvent event) {
   }
 }
 
-void Camera::OnMouseEvent(MouseEvent event) {
+void PerspectiveCamera::OnMouseEvent(MouseEvent event) {
   if (initial_move_) {
     last_mouse_x_ = event.x;
     last_mouse_y_ = event.y;
@@ -92,16 +93,16 @@ void Camera::OnMouseEvent(MouseEvent event) {
   Changed();
 }
 
-void Camera::OnWindowResizeEvent(Vec2i size) {}
+void PerspectiveCamera::OnWindowResizeEvent(Vec2i size) {}
 
-void Camera::OnEventStatusChanged(bool events_blocked) {
+void PerspectiveCamera::OnEventStatusChanged(bool events_blocked) {
   if (events_blocked == true) {
     InitKeyboardMap();
   }
   initial_move_ = true;
 }
 
-std::string Camera::ToString() const {
+std::string PerspectiveCamera::ToString() const {
   return std::string(
       "\"camera\": { \n\"Position\": " +
       glm::to_string(Get(CameraVariables::Position)) + ", \n" +
@@ -112,14 +113,14 @@ std::string Camera::ToString() const {
       ", \n" + "\"Pitch\": " + std::to_string(pitch_) + "\n}");
 }
 
-void Camera::InitKeyboardMap() {
+void PerspectiveCamera::InitKeyboardMap() {
   key_status_[controls_.up] = false;
   key_status_[controls_.down] = false;
   key_status_[controls_.left] = false;
   key_status_[controls_.right] = false;
 }
 
-void Camera::ValidateKeyboardInput() {
+void PerspectiveCamera::ValidateKeyboardInput() {
   bool pressed = false;
   double velocity = move_speed_ * camera_time_delta_->GetTimeDelta();
   if (key_status_[controls_.up]) {

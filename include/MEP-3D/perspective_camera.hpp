@@ -1,5 +1,5 @@
-#ifndef CAMERA_HPP
-#define CAMERA_HPP
+#ifndef PERSPECTIVE_CAMERA_HPP
+#define PERSPECTIVE_CAMERA_HPP
 
 #include <GL/glew.h>
 #include <glm/glm.hpp>
@@ -7,6 +7,7 @@
 #include <memory>
 #include <unordered_map>
 
+#include <MEP-3D/camera_base.hpp>
 #include <MEP-3D/key_event.hpp>
 #include <MEP-3D/observable_map.hpp>
 #include <MEP-3D/time_delta.hpp>
@@ -17,8 +18,8 @@
 #include <glm/gtx/string_cast.hpp>
 #include <string>
 
-struct CameraControls {
-  CameraControls()
+struct PerspectiveCameraControls {
+  PerspectiveCameraControls()
       : up(Keyboard::W),
         down(Keyboard::S),
         left(Keyboard::A),
@@ -38,22 +39,15 @@ struct CameraConfig {
   GLfloat start_turn_speed;
 };
 
-enum class CameraVariables { Position, Direction };
-
-std::string ToString(const CameraVariables& camera_variable);
-
-using CameraObserver = MapObserver<glm::vec3, CameraVariables>;
-
-class Camera : public Updatable,
-               public WindowObserver,
-               public ObservableMap<glm::vec3, CameraVariables> {
+class PerspectiveCamera : public CameraBase {
  public:
-  Camera(const CameraConfig& config,
-         const CameraControls& controls = CameraControls());
+  PerspectiveCamera(
+      const CameraConfig& config,
+      const PerspectiveCameraControls& controls = PerspectiveCameraControls());
   void Update() override;
-  glm::mat4 GetViewMatrix() const;
-  glm::vec3 GetPosition() const;
-  glm::vec3 GetNormalizedDirection() const;
+  glm::mat4 GetViewMatrix() const override;
+  glm::vec3 GetPosition() const override;
+  glm::vec3 GetNormalizedDirection() const override;
   void OnKeyEvent(KeyEvent event) override;
   void OnMouseEvent(MouseEvent event) override;
   void OnWindowResizeEvent(Vec2i size) override;
@@ -65,7 +59,7 @@ class Camera : public Updatable,
   void ValidateKeyboardInput();
 
   std::unordered_map<Keyboard, bool> key_status_;
-  CameraControls controls_;
+  PerspectiveCameraControls controls_;
   TimeDeltaPtr camera_time_delta_;
   glm::vec3 front_;
   glm::vec3 up_;

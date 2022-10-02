@@ -112,7 +112,7 @@ class MainLayer : private WindowObserver, public Layer {
                            180.0f,
                            5.0f,
                            0.5f};
-    camera_ = std::make_unique<Camera>(config);
+    camera_ = std::make_unique<PerspectiveCamera>(config);
 
     image.LoadFromFile("dirt.png");
     tex = std::make_unique<Texture>();
@@ -149,24 +149,20 @@ class MainLayer : private WindowObserver, public Layer {
         16, "spot_light", shader_.GetUniform("spot_light_count"),
         kSpotLightUniformMap);
 
-    point_light_fact->MakeAndBind(
-        std::make_unique<PointLight>(
-            AmbientConfig{Color(255, 0, 0), 0.5f},
-            PointConfig{Vec3f{1.0f, 1.0f, 1.0f}, 1, 1, 0.001}, 0.5f));
-    point_light_fact->MakeAndBind(
-        std::make_unique<PointLight>(
-            AmbientConfig{Color(0, 0, 255), 0.5f},
-            PointConfig{Vec3f{-1.0f, 1.0f, -1.0f}, 1, 1, 0}, 0.8f));
-    point_light_fact->MakeAndBind(
-        std::make_unique<PointLight>(
-            AmbientConfig{Color(0, 255, 0), 0.5f},
-            PointConfig{Vec3f{1.0f, 1.0f, -1.0f}, 1, 1, 0}, 0.8f));
+    point_light_fact->MakeAndBind(std::make_unique<PointLight>(
+        AmbientConfig{Color(255, 0, 0), 0.5f},
+        PointConfig{Vec3f{1.0f, 1.0f, 1.0f}, 1, 1, 0.001}, 0.5f));
+    point_light_fact->MakeAndBind(std::make_unique<PointLight>(
+        AmbientConfig{Color(0, 0, 255), 0.5f},
+        PointConfig{Vec3f{-1.0f, 1.0f, -1.0f}, 1, 1, 0}, 0.8f));
+    point_light_fact->MakeAndBind(std::make_unique<PointLight>(
+        AmbientConfig{Color(0, 255, 0), 0.5f},
+        PointConfig{Vec3f{1.0f, 1.0f, -1.0f}, 1, 1, 0}, 0.8f));
 
-    spot_light_fact->MakeAndBind(
-        std::make_unique<SpotLight>(
-            AmbientConfig{Color(255, 0, 0), 0.5f},
-            PointConfig{Vec3f{1.0f, 1.0f, -1.0f}, 1, 1, 0}, 5.0f,
-            SpotConfig{{0.0, -1.0, 0.0}, 15}));
+    spot_light_fact->MakeAndBind(std::make_unique<SpotLight>(
+        AmbientConfig{Color(255, 0, 0), 0.5f},
+        PointConfig{Vec3f{1.0f, 1.0f, -1.0f}, 1, 1, 0}, 5.0f,
+        SpotConfig{{0.0, -1.0, 0.0}, 15}));
 
     light = std::make_unique<DirectionalLight>(
         AmbientConfig{Color(255, 255, 255), 0.1f},
@@ -283,7 +279,7 @@ class MainLayer : private WindowObserver, public Layer {
   bool use_stop_light = true;
   WindowPtr window_;
   std::unique_ptr<PerspectiveView> view_;
-  std::unique_ptr<Camera> camera_;
+  std::unique_ptr<PerspectiveCamera> camera_;
   std::unique_ptr<Texture> tex;
   std::unique_ptr<Texture> plain_tex;
   CameraLogger camera_logger;

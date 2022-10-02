@@ -3,16 +3,16 @@
 
 #include <memory>
 
-#include <MEP-3D/camera.hpp>
+#include <MEP-3D/perspective_camera.hpp>
 #include <MEP-3D/view_base.hpp>
 
 class RenderTarget {
  public:
   RenderTarget();
-  void AddCamera(Camera* camera);
+  void AddCamera(CameraBase* camera);
   void RemoveCamera();
-  Camera* GetCamera();
-  const Camera* GetCamera() const;
+  CameraBase* GetCamera();
+  const CameraBase* GetCamera() const;
   void AddView(ViewBase* view);
   void RemoveView();
   ViewBase* GetView();
@@ -21,7 +21,7 @@ class RenderTarget {
 
  private:
   ViewBase* view_;
-  Camera* camera_;
+  CameraBase* camera_;
 };
 
 #endif

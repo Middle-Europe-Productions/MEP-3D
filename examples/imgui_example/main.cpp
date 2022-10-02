@@ -53,7 +53,7 @@ class BenchmarkLayer final : public Scene, private WindowObserver {
                            180.0f,
                            5.0f,
                            0.5f};
-    camera_ = std::make_unique<Camera>(config);
+    camera_ = std::make_unique<PerspectiveCamera>(config);
     // Load texture
     image.LoadFromFile("plain.png");
     plain_tex = std::make_unique<Texture>();
@@ -138,7 +138,7 @@ class BenchmarkLayer final : public Scene, private WindowObserver {
   Image image;
   std::unique_ptr<Plane> plane;
   std::unique_ptr<Texture> plain_tex;
-  std::unique_ptr<Camera> camera_;
+  std::unique_ptr<PerspectiveCamera> camera_;
   std::unique_ptr<PerspectiveView> view_;
   std::unique_ptr<DirectionalLight> light;
   std::unique_ptr<PointLightController> point_light_con;
@@ -160,7 +160,7 @@ int main(int argc, char* argv[]) {
 
   main_engine->AttachWindow(std::move(window));
   main_engine->AttachStructure(std::move(custom_structure));
-  std::unique_ptr<Layer> master_layer = std::make_unique<BenchmarkLayer>(100);
+  std::unique_ptr<Layer> master_layer = std::make_unique<BenchmarkLayer>(1000);
   main_engine->AttachLayer(std::move(master_layer));
 
   main_engine->Run();

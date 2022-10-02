@@ -7,6 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <MEP-3D/camera_base.hpp>
 #include <MEP-3D/directional_light.hpp>
 #include <MEP-3D/engine.hpp>
 #include <MEP-3D/figures.hpp>
@@ -27,5 +28,6 @@
 #include <MEP-3D/vector.hpp>
 #include <MEP-3D/window.hpp>
 #include <MEP-3D/window_observer.hpp>
+
 
 #endif

@@ -21,7 +21,7 @@ class CameraScene final : public Scene {
                            180.0f,
                            5.0f,
                            0.5f};
-    camera_ = std::make_unique<Camera>(config);
+    camera_ = std::make_unique<PerspectiveCamera>(config);
     // Init window
     window->AddView(view_.get());
     window->AddCamera(camera_.get());
@@ -44,7 +44,7 @@ class CameraScene final : public Scene {
   }
 
  public:
-  std::unique_ptr<Camera> camera_;
+  std::unique_ptr<PerspectiveCamera> camera_;
   std::unique_ptr<PerspectiveView> view_;
   std::unique_ptr<Shader> shader_;
   std::unique_ptr<Pyramid> triangle_;
