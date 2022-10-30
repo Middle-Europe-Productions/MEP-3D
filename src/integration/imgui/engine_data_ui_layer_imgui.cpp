@@ -35,10 +35,10 @@ class EngineDataUILayerImGUI : public EngineDataUILayer {
         buffer = GetEngine()->GetEngineMonitor();
         buffer_applied = true;
       }
-      UI::DrawEngineMonitorDataConst(buffer);
+      UI::Drawer::DrawEngineMonitorDataConst(buffer);
     } else {
       const auto& engine_data = GetEngine()->GetEngineMonitor();
-      UI::DrawEngineMonitorDataConst(engine_data);
+      UI::Drawer::DrawEngineMonitorDataConst(engine_data);
       buffer_applied = false;
     }
     ImGui::End();

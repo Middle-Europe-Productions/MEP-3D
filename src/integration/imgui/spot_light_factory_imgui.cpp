@@ -18,7 +18,7 @@ void SpotLightFactoryImGui::ImGUIDraw(Scene& scene) {
       return;
     }
   }
-  UI::DrawSpotLight(*Get());
+  UI::Drawer::DrawSpotLight(*Get());
   if (ImGui::Button("Add")) {
     Update(nullptr);
     ImGui::CloseCurrentPopup();

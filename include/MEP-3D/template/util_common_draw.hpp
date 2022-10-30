@@ -8,28 +8,39 @@
 #include <MEP-3D/shader.hpp>
 
 namespace UI {
-// Editable elements
-void DrawAmbientConfig(AmbientConfig& config);
-void DrawDiffuseConfig(DiffuseConfig& config);
-void DrawSpotConfig(SpotConfig& point_config);
-void DrawPointConfig(PointConfig& point_config);
-void DrawModelController(ModelController& model_controller);
-// Deletable elements (return false if object should be deleted)
-bool DrawDirectionalLight(DirectionalLight& directional_light);
-bool DrawSpotLight(SpotLight& point_light);
-bool DrawPointLight(PointLight& point_light);
-bool DrawModel(Model& model);
-bool DrawShader(Shader& shader);
-// Combo menus
-int DrawShaderComboMenu(std::vector<std::unique_ptr<Shader>>& array,
-                        int selected);
-int DrawMaterialComboMenu(std::vector<std::unique_ptr<Material>>& array,
-                          int selected);
-int DrawTextureComboMenu(std::vector<std::unique_ptr<Texture>>& array,
-                         int selected);
-// Constant elements
-void DrawEngineMonitorDataConst(const EngineMonitorData& engine_monitor_data);
-void DrawAssetControllerConst(const AssetController& scene);
+class Drawer {
+ public:
+  // Editable elements
+  static void DrawAmbientConfig(AmbientConfig& config);
+  static void DrawDiffuseConfig(DiffuseConfig& config);
+  static void DrawSpotConfig(SpotConfig& point_config);
+  static void DrawPointConfig(PointConfig& point_config);
+  static void DrawModelController(ModelController& model_controller);
+  static void DrawPerspectiveCamera(PerspectiveCamera& perspective_camera);
+  // Deletable elements (return false if object should be deleted)
+  static bool DrawDirectionalLight(DirectionalLight& directional_light);
+  static bool DrawSpotLight(SpotLight& point_light);
+  static bool DrawPointLight(PointLight& point_light);
+  static bool DrawModel(Model& model);
+  static bool DrawShader(Shader& shader);
+  // Combo menus
+  static int DrawShaderComboMenu(std::vector<std::unique_ptr<Shader>>& array,
+                                 int selected);
+  static int DrawMaterialComboMenu(
+      std::vector<std::unique_ptr<Material>>& array,
+      int selected);
+  static int DrawTextureComboMenu(std::vector<std::unique_ptr<Texture>>& array,
+                                  int selected);
+  // Constant elements
+  static void DrawEngineMonitorDataConst(
+      const EngineMonitorData& engine_monitor_data);
+  static void DrawAssetControllerConst(const AssetController& scene);
+
+ private:
+  Drawer() = delete;
+  Drawer(const Drawer&) = delete;
+  Drawer(Drawer&&) = delete;
+};
 
 }  // namespace UI
 

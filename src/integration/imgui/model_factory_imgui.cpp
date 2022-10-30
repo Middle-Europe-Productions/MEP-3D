@@ -29,13 +29,13 @@ void ModelFactoryImGui::ImGUIDraw(Scene& scene) {
                            ImGuiInputTextFlags_CharsNoBlank);
   ImGui::Text("Shader");
   selected_shader_ =
-      UI::DrawShaderComboMenu(scene.GetShaders(), selected_shader_);
+      UI::Drawer::DrawShaderComboMenu(scene.GetShaders(), selected_shader_);
   ImGui::Text("Texture");
   selected_texture_ =
-      UI::DrawTextureComboMenu(scene.GetTexture(), selected_texture_);
+      UI::Drawer::DrawTextureComboMenu(scene.GetTexture(), selected_texture_);
   ImGui::Text("Material");
-  selected_material_ =
-      UI::DrawMaterialComboMenu(scene.GetMaterial(), selected_material_);
+  selected_material_ = UI::Drawer::DrawMaterialComboMenu(scene.GetMaterial(),
+                                                         selected_material_);
   if (ImGui::Button("Open File")) {
     LOG(INFO) << "Open file";
   }

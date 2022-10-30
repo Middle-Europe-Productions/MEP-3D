@@ -1,45 +1,47 @@
 #include <MEP-3D/template/util_common_draw.hpp>
 
 namespace UI {
-void DrawAmbientConfig(AmbientConfig& config) {}
-void DrawDiffuseConfig(DiffuseConfig& config) {}
-void DrawSpotConfig(SpotConfig& point_config) {}
-void DrawPointConfig(PointConfig& point_config) {}
-void DrawModelController(ModelController& model_controller) {}
+void Drawer::DrawAmbientConfig(AmbientConfig& config) {}
+void Drawer::DrawDiffuseConfig(DiffuseConfig& config) {}
+void Drawer::DrawSpotConfig(SpotConfig& point_config) {}
+void Drawer::DrawPointConfig(PointConfig& point_config) {}
+void Drawer::DrawModelController(ModelController& model_controller) {}
+void Drawer::DrawPerspectiveCamera(PerspectiveCamera& perspective_camera) {}
 
-bool DrawDirectionalLight(DirectionalLight& directional_light) {
+bool Drawer::DrawDirectionalLight(DirectionalLight& directional_light) {
   return true;
 }
 
-bool DrawSpotLight(SpotLight& point_light) {
+bool Drawer::DrawSpotLight(SpotLight& point_light) {
   return true;
 }
 
-bool DrawPointLight(PointLight& point_light) {
+bool Drawer::DrawPointLight(PointLight& point_light) {
   return true;
 }
 
-bool DrawModel(Model& model) {
+bool Drawer::DrawModel(Model& model) {
   return true;
 }
 
-bool DrawShader(Shader& shader) {
+bool Drawer::DrawShader(Shader& shader) {
   return true;
 }
 
-int DrawShaderComboMenu(std::vector<std::unique_ptr<Shader>>& array,
-                        int selected) {
+int Drawer::DrawShaderComboMenu(std::vector<std::unique_ptr<Shader>>& array,
+                                int selected) {
   return -1;
 }
-int DrawMaterialComboMenu(std::vector<std::unique_ptr<Material>>& array,
-                          int selected) {
+int Drawer::DrawMaterialComboMenu(std::vector<std::unique_ptr<Material>>& array,
+                                  int selected) {
   return -1;
 }
-int DrawTextureComboMenu(std::vector<std::unique_ptr<Texture>>& array,
-                         int selected) {
+int Drawer::DrawTextureComboMenu(std::vector<std::unique_ptr<Texture>>& array,
+                                 int selected) {
   return -1;
 }
 
-void DrawEngineMonitorDataConst(const EngineMonitorData& engine_monitor_data) {}
-void DrawAssetControllerConst(const AssetController& scene) {}
+void Drawer::DrawEngineMonitorDataConst(
+    const EngineMonitorData& engine_monitor_data) {}
+void Drawer::DrawAssetControllerConst(const AssetController& scene) {}
 }  // namespace UI

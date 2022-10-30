@@ -74,8 +74,16 @@ void PerspectiveCamera::OnMouseEvent(MouseEvent event) {
   } else if (last_mouse_x_ == event.x && last_mouse_y_ == event.y) {
     return;
   }
-  mouse_x_change = event.x - last_mouse_x_;
-  mouse_y_change = event.y - last_mouse_y_;
+  if (reversed_x_axis_) {
+    mouse_x_change = last_mouse_x_ - event.x;
+  } else {
+    mouse_x_change = event.x - last_mouse_x_;
+  }
+  if (reversed_y_axis_) {
+    mouse_y_change = event.y - last_mouse_y_;
+  } else {
+    mouse_y_change = last_mouse_y_ - event.y;
+  }
 
   last_mouse_x_ = event.x;
   last_mouse_y_ = event.y;
@@ -84,10 +92,13 @@ void PerspectiveCamera::OnMouseEvent(MouseEvent event) {
   mouse_y_change *= turn_speed_;
   yaw_ += mouse_x_change;
   pitch_ += mouse_y_change;
+  LOG(INFO) << pitch_ << " " << yaw_;
   if (pitch_ > 89.9f) {
+    LOG(INFO) << __LINE__;
     pitch_ = 89.9f;
   }
-  if (pitch_ > -89.9f) {
+  if (pitch_ < -89.9f) {
+    LOG(INFO) << __LINE__;
     pitch_ = -89.9f;
   }
   Changed();

@@ -1,4 +1,5 @@
 #include <MEP-3D/light.hpp>
+#include <MEP-3D/perspective_camera.hpp>
 #include <MEP-3D/point_light.hpp>
 #include <MEP-3D/spot_light.hpp>
 
@@ -27,4 +28,13 @@ std::unique_ptr<SpotLight> SpotLight::Create() {
   return std::make_unique<SpotLight>(AmbientConfig::Create(),
                                      PointConfig::Create(), 1.0,
                                      SpotConfig::Create());
+}
+
+CameraConfig CameraConfig::Create() {
+  return {glm::vec3(10.0f, 10.0f, -5.0f),
+          glm::vec3(0.0f, 1.0f, 0.0f),
+          145.0f,
+          -45,
+          5.0f,
+          0.5f};
 }

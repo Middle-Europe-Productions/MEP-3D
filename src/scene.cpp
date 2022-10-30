@@ -10,11 +10,13 @@ std::vector<std::unique_ptr<DirectionalLight>>& Scene::GetDirectionaLights() {
   return directional_lights_;
 }
 std::size_t Scene::Attach(std::unique_ptr<DirectionalLight> directional_light) {
+  DCHECK(directional_light);
   directional_lights_.emplace_back(std::move(directional_light));
   return directional_lights_.size() - 1;
 }
 
 void Scene::Attach(std::unique_ptr<SpotLightController> spot_light_controller) {
+  DCHECK(spot_light_controller);
   spot_light_controller_ = std::move(spot_light_controller);
 }
 
@@ -24,6 +26,7 @@ std::unique_ptr<SpotLightController>& Scene::GetSpotLightController() {
 
 void Scene::Attach(
     std::unique_ptr<PointLightController> point_light_controller) {
+  DCHECK(point_light_controller);
   point_light_controller_ = std::move(point_light_controller);
 }
 
@@ -32,6 +35,7 @@ std::unique_ptr<PointLightController>& Scene::GetPointLightController() {
 }
 
 std::size_t Scene::Attach(std::unique_ptr<Model> model) {
+  DCHECK(model);
   models_.emplace_back(std::move(model));
   ForAllObservers([model = models_.back().get()](auto* obs) {
     obs->OnModelAttached(model);
@@ -44,6 +48,7 @@ std::vector<std::unique_ptr<Model>>& Scene::GetModels() {
 }
 
 std::size_t Scene::Attach(std::unique_ptr<Shader> shader) {
+  DCHECK(shader);
   shaders_.emplace_back(std::move(shader));
   ForAllObservers([shader = shaders_.back().get()](auto* obs) {
     obs->OnShaderAttached(shader);
@@ -56,6 +61,7 @@ std::vector<std::unique_ptr<Shader>>& Scene::GetShaders() {
 }
 
 std::size_t Scene::Attach(std::unique_ptr<Material> material) {
+  DCHECK(material);
   materials_.emplace_back(std::move(material));
   ForAllObservers([material = materials_.back().get()](auto* obs) {
     obs->OnMaterialAttached(material);
@@ -67,6 +73,7 @@ std::vector<std::unique_ptr<Material>>& Scene::GetMaterial() {
 }
 
 std::size_t Scene::Attach(std::unique_ptr<Texture> texture) {
+  DCHECK(texture);
   textures_.emplace_back(std::move(texture));
   ForAllObservers([texture = textures_.back().get()](auto* obs) {
     obs->OnTextureAttached(texture);
@@ -76,6 +83,25 @@ std::size_t Scene::Attach(std::unique_ptr<Texture> texture) {
 
 std::vector<std::unique_ptr<Texture>>& Scene::GetTexture() {
   return textures_;
+}
+
+std::size_t Scene::Attach(
+    std::unique_ptr<PerspectiveCamera> perspective_camera) {
+  DCHECK(perspective_camera);
+  if (!master_camera_) {
+    LOG(INFO) << "Updating master camera to " << perspective_camera->ToString();
+    master_camera_ = perspective_camera.get();
+  }
+  perspective_camera_.emplace_back(std::move(perspective_camera));
+  ForAllObservers(
+      [perspective_camera = perspective_camera_.back().get()](auto* obs) {
+        obs->OnPerspectiveCameraAttached(perspective_camera);
+      });
+  return perspective_camera_.size() - 1;
+}
+
+std::vector<std::unique_ptr<PerspectiveCamera>>& Scene::GetPerspectiveCamera() {
+  return perspective_camera_;
 }
 
 void Scene::UseAllDirectionalLights() {
@@ -124,6 +150,29 @@ std::size_t Scene::DrawAll(RenderTarget& render_target,
     draw_calls += DrawAllModels(render_target);
   }
   return draw_calls;
+}
+
+std::size_t Scene::UpdatePerspectiveCamera(float time_delta) {
+  std::size_t update_counter = 0;
+  for (auto& it : perspective_camera_) {
+    it->Update();
+    ++update_counter;
+  }
+  return update_counter;
+}
+
+std::size_t Scene::UpdateAll(float time_delta,
+                             UpdatableElements updatable_elements) {
+  std::size_t update_counter = 0;
+  if (updatable_elements == UpdatableElements::Camera ||
+      updatable_elements == UpdatableElements::All) {
+    update_counter += UpdatePerspectiveCamera(time_delta);
+  }
+  return update_counter;
+}
+
+CameraBase* Scene::GetMasterCamera() {
+  return master_camera_;
 }
 
 Scene::~Scene() {

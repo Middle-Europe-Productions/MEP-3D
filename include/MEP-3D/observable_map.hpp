@@ -19,6 +19,10 @@ class ObservableMap : public ObserverList<MapObserver<Type, Identity>> {
     assert(variable_map_.find(identity) != variable_map_.end());
     return variable_map_.at(identity);
   }
+  Type& Get(const Identity& identity) {
+    assert(variable_map_.find(identity) != variable_map_.end());
+    return variable_map_.at(identity);
+  }
   void Set(const Identity& identity, const Type& new_type_) {
     if (variable_map_.find(identity) != variable_map_.end() &&
         variable_map_[identity] == new_type_)

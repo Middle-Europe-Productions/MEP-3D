@@ -17,7 +17,7 @@ void PointLightFactoryImGui::ImGUIDraw(Scene& scene) {
     if (!New(PointLight::Create()))
       return;
   }
-  UI::DrawPointLight(*Get());
+  UI::Drawer::DrawPointLight(*Get());
   if (ImGui::Button("Add")) {
     Update(nullptr);
     ImGui::CloseCurrentPopup();

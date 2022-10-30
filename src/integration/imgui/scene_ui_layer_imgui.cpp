@@ -71,6 +71,10 @@ constexpr char kDefaultSceneRuntimeConfig[] = R"({
         {
           "name":"Shader",
           "return": 11
+        },
+        {
+          "name":"Perspective Camera",
+          "return": 12
         }
       ]
     } 
@@ -123,7 +127,7 @@ class SceneUILayerImGUI : public SceneUILayer {
     std::queue<std::vector<std::unique_ptr<Model>>::iterator> to_remove;
     for (auto it = array.begin(); it != array.end();) {
       if (ImGui::TreeNode(it->get()->Identity::GetName().c_str())) {
-        if (!UI::DrawModel(*it->get())) {
+        if (!UI::Drawer::DrawModel(*it->get())) {
           to_remove.push(it);
         }
         ImGui::Separator();
@@ -134,6 +138,23 @@ class SceneUILayerImGUI : public SceneUILayer {
     while (!to_remove.empty()) {
       array.erase(to_remove.front());
       to_remove.pop();
+    }
+  }
+
+  void DrawPerspectiveCamera() {
+    if (GetScenePtr()->GetPerspectiveCamera().empty()) {
+      ImGui::Text("You do not have any perspective cameras yet!");
+      return;
+    }
+    for (auto& pc : GetScenePtr()->GetPerspectiveCamera()) {
+      if (ImGui::TreeNode(pc->Identity::GetName().c_str())) {
+        UI::Drawer::DrawPerspectiveCamera(*pc.get());
+        if (pc.get() == GetScenePtr()->GetMasterCamera()) {
+          ImGui::Text("This is a master camera");
+        }
+        ImGui::Separator();
+        ImGui::TreePop();
+      }
     }
   }
 
@@ -197,14 +218,11 @@ class SceneUILayerImGUI : public SceneUILayer {
           [this]() {
             for (auto& dl_ptr : GetScenePtr()->GetDirectionaLights()) {
               if (ImGui::TreeNode(dl_ptr->Identity::GetName().c_str())) {
-                UI::DrawDirectionalLight(*dl_ptr.get());
+                UI::Drawer::DrawDirectionalLight(*dl_ptr.get());
                 ImGui::Separator();
                 ImGui::TreePop();
               }
             }
-            ImGui::Separator();
-            UI::DrawAssetControllerConst(
-                *GetScenePtr()->GetSpotLightController());
           }},
          {static_cast<int>(MenuAction::DrawPointLight),
           [this]() {
@@ -212,13 +230,13 @@ class SceneUILayerImGUI : public SceneUILayer {
               for (auto& pl_ptr :
                    GetScenePtr()->GetPointLightController()->GetContainer()) {
                 if (ImGui::TreeNode(pl_ptr->Identity::GetName().c_str())) {
-                  UI::DrawPointLight(*pl_ptr.get());
+                  UI::Drawer::DrawPointLight(*pl_ptr.get());
                   ImGui::Separator();
                   ImGui::TreePop();
                 }
               }
               ImGui::Separator();
-              UI::DrawAssetControllerConst(
+              UI::Drawer::DrawAssetControllerConst(
                   *GetScenePtr()->GetPointLightController());
             }
           }},
@@ -228,13 +246,13 @@ class SceneUILayerImGUI : public SceneUILayer {
               for (auto& sl_ptr :
                    GetScenePtr()->GetSpotLightController()->GetContainer()) {
                 if (ImGui::TreeNode(sl_ptr->Identity::GetName().c_str())) {
-                  UI::DrawSpotLight(*sl_ptr.get());
+                  UI::Drawer::DrawSpotLight(*sl_ptr.get());
                   ImGui::Separator();
                   ImGui::TreePop();
                 }
               }
               ImGui::Separator();
-              UI::DrawAssetControllerConst(
+              UI::Drawer::DrawAssetControllerConst(
                   *GetScenePtr()->GetSpotLightController());
             }
           }},
@@ -242,14 +260,16 @@ class SceneUILayerImGUI : public SceneUILayer {
           [this]() {
             for (auto& sh_ptr : GetScenePtr()->GetShaders()) {
               if (ImGui::TreeNode(sh_ptr->Identity::GetName().c_str())) {
-                UI::DrawShader(*sh_ptr.get());
+                UI::Drawer::DrawShader(*sh_ptr.get());
                 ImGui::Separator();
                 ImGui::TreePop();
               }
             }
           }},
          {static_cast<int>(MenuAction::DrawModelMenu),
-          std::bind(&SceneUILayerImGUI::DrawModelMenu, this)}});
+          std::bind(&SceneUILayerImGUI::DrawModelMenu, this)},
+         {static_cast<int>(MenuAction::DrawPerspectiveCamera),
+          std::bind(&SceneUILayerImGUI::DrawPerspectiveCamera, this)}});
   }
 
   ~SceneUILayerImGUI() { LOG(INFO) << __FUNCTION__; }

@@ -47,13 +47,7 @@ class BenchmarkLayer final : public Scene, private WindowObserver {
     // Camera config
     view_ = std::make_unique<PerspectiveView>(PerspectiveView::Config(
         {glm::radians(45.0f), window->GetAspectRation(), 0.1f, 10000.0f}));
-    CameraConfig config = {glm::vec3(0.0f, 0.0f, 0.0f),
-                           glm::vec3(0.0f, 1.0f, 0.0f),
-                           -90.0f,
-                           180.0f,
-                           5.0f,
-                           0.5f};
-    camera_ = std::make_unique<PerspectiveCamera>(config);
+    camera_ = std::make_unique<PerspectiveCamera>(CameraConfig::Create());
     // Load texture
     image.LoadFromFile("plain.png");
     plain_tex = std::make_unique<Texture>();
@@ -109,10 +103,10 @@ class BenchmarkLayer final : public Scene, private WindowObserver {
     plane = std::make_unique<Plane>(100.0f);
     plane->Bind(plain_tex.get());
     plane->Bind(shader_.get());
-    Attach(std::move(shader_), std::move(plain_tex));
+    Attach(std::move(shader_), std::move(plain_tex), std::move(camera_));
   }
   void OnDetach() override {}
-  void OnUpdate(float time_delta) override { camera_->Update(); }
+  void OnUpdate(float time_delta) override { UpdateAll(time_delta); }
   void OnDraw(RenderTarget& render_target) override {
     GetShaders()[0]->Use();
     UseAllLights();

@@ -6,6 +6,7 @@ extern const char* kSceneUILayer;
 extern const char* kEngineDataUILayer;
 extern const char* kTexture;
 extern const char* kShader;
+extern const char* kCamera;
 extern const char* kMaterial;
 extern const char* kLight;
 extern const char* kModel;

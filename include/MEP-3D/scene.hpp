@@ -24,6 +24,10 @@ class SceneObserver : public Observer {
   virtual void OnShaderAttached(Shader* shader) { DCHECK(shader); };
   virtual void OnMaterialAttached(Material* material) { DCHECK(material); };
   virtual void OnTextureAttached(Texture* texture) { DCHECK(texture); };
+  virtual void OnPerspectiveCameraAttached(
+      PerspectiveCamera* perspective_camera) {
+    DCHECK(perspective_camera);
+  };
   virtual ~SceneObserver() = default;
 };
 
@@ -35,7 +39,7 @@ class Scene : public Layer, public ObserverList<SceneObserver> {
     SpotLights = 3,
     All
   };
-  enum UpdatableElements { Camera = 1, All };
+  enum class UpdatableElements : int { Camera = 1, All };
   enum class DrawableElements : int { Models = 1, All };
   Scene() = default;
   Scene(const std::string& name) : Layer(name) {}
@@ -55,6 +59,8 @@ class Scene : public Layer, public ObserverList<SceneObserver> {
   std::vector<std::unique_ptr<Material>>& GetMaterial();
   std::size_t Attach(std::unique_ptr<Texture> texture);
   std::vector<std::unique_ptr<Texture>>& GetTexture();
+  std::size_t Attach(std::unique_ptr<PerspectiveCamera> perspective_camera);
+  std::vector<std::unique_ptr<PerspectiveCamera>>& GetPerspectiveCamera();
   template <typename First, typename... Args>
   void Attach(First&& first, Args&&... args);
   // Usable
@@ -67,6 +73,13 @@ class Scene : public Layer, public ObserverList<SceneObserver> {
   std::size_t DrawAll(
       RenderTarget& render_target,
       DrawableElements drawable_elements = DrawableElements::All);
+  // Updatable
+  std::size_t UpdatePerspectiveCamera(float time_delta);
+  std::size_t UpdateAll(
+      float time_delta,
+      UpdatableElements updatable_elements = UpdatableElements::All);
+  // Helpers
+  CameraBase* GetMasterCamera();
   virtual ~Scene();
 
  private:
@@ -78,6 +91,8 @@ class Scene : public Layer, public ObserverList<SceneObserver> {
   std::vector<std::unique_ptr<PerspectiveCamera>> perspective_camera_;
   std::unique_ptr<SpotLightController> spot_light_controller_;
   std::unique_ptr<PointLightController> point_light_controller_;
+  // This might not work
+  CameraBase* master_camera_ = nullptr;
 };
 
 template <typename First, typename... Args>

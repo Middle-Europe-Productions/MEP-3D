@@ -37,6 +37,11 @@ struct CameraConfig {
   GLfloat start_pitch;
   GLfloat start_move_speed;
   GLfloat start_turn_speed;
+  static CameraConfig Create();
+};
+
+namespace UI {
+class Drawer;
 };
 
 class PerspectiveCamera : public CameraBase {
@@ -55,6 +60,8 @@ class PerspectiveCamera : public CameraBase {
   std::string ToString() const;
 
  private:
+  friend class UI::Drawer;
+
   void InitKeyboardMap();
   void ValidateKeyboardInput();
 
@@ -77,6 +84,9 @@ class PerspectiveCamera : public CameraBase {
   GLfloat mouse_x_change;
   GLfloat mouse_y_change;
   bool initial_move_;
+
+  bool reversed_x_axis_ = false;
+  bool reversed_y_axis_ = false;
 };
 
 #endif

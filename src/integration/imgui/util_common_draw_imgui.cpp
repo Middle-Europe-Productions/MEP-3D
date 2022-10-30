@@ -45,7 +45,7 @@ constexpr float kGlobalSlide = 0.05;
 }  // namespace
 
 namespace UI {
-void DrawAmbientConfig(AmbientConfig& config) {
+void Drawer::DrawAmbientConfig(AmbientConfig& config) {
   ImVec4 im_color = FromMepColor(config.color);
   ImGui::ColorEdit4("Light Color##2", (float*)&im_color,
                     ImGuiColorEditFlags_DisplayRGB);
@@ -53,7 +53,7 @@ void DrawAmbientConfig(AmbientConfig& config) {
   ImGui::SliderFloat("Ambient Intensity", &config.intensity, 0.0f, 1.0f, "%.3f",
                      ImGuiSliderFlags_None);
 }
-void DrawDiffuseConfig(DiffuseConfig& config) {
+void Drawer::DrawDiffuseConfig(DiffuseConfig& config) {
   if (config.direction.has_value()) {
     float v[3] = {config.direction.value().x_, config.direction.value().y_,
                   config.direction.value().z_};
@@ -65,10 +65,10 @@ void DrawDiffuseConfig(DiffuseConfig& config) {
   ImGui::SliderFloat("Diffuse Intensity", &config.intensity, 0.0f, 1.0f, "%.3f",
                      ImGuiSliderFlags_None);
 }
-void DrawSpotConfig(SpotConfig& point_config) {
+void Drawer::DrawSpotConfig(SpotConfig& point_config) {
   int deg = static_cast<int>(point_config.edge_deg);
   ImGui::DragScalar("Degree", ImGuiDataType_S32, &deg, 1.0, &kDegMin, &kDegMax,
-                    "%i deg");
+                    "%i°");
   point_config.edge_deg = static_cast<float>(deg);
   float v[3] = {point_config.direction.x_, point_config.direction.y_,
                 point_config.direction.z_};
@@ -77,7 +77,7 @@ void DrawSpotConfig(SpotConfig& point_config) {
   point_config.direction.y_ = v[1];
   point_config.direction.z_ = v[2];
 }
-void DrawPointConfig(PointConfig& point_config) {
+void Drawer::DrawPointConfig(PointConfig& point_config) {
   float vl = 10.0;
   ImGui::DragFloat("Quadratic", &point_config.quadratic, 0.01f, 0.0f, FLT_MAX,
                    "%.3f", ImGuiSliderFlags_None);
@@ -93,34 +93,60 @@ void DrawPointConfig(PointConfig& point_config) {
   point_config.position.z_ = v[2];
 }
 
-bool DrawDirectionalLight(DirectionalLight& directional_light) {
+void Drawer::DrawPerspectiveCamera(PerspectiveCamera& perspective_camera) {
+  ImGui::Text("Perspective Camera");
+  ImGui::Separator();
+  auto& position = perspective_camera.Get(CameraVariables::Position);
+  ImGui::DragFloat3("Position", static_cast<float*>(&position.x), kGlobalSlide,
+                    -FLT_MAX, FLT_MAX);
+  auto& direction = perspective_camera.Get(CameraVariables::Direction);
+  ImGui::DragFloat3("Direction", static_cast<float*>(&direction.x),
+                    kGlobalSlide, -1.0, 1.0);
+  if (ImGui::DragFloat("Yaw: ", &perspective_camera.yaw_, 0.01f, 0.0f, FLT_MAX,
+                       "%.3f", ImGuiSliderFlags_None)) {
+    perspective_camera.Changed();
+  }
+  if (ImGui::DragFloat("Pitch: ", &perspective_camera.pitch_, 0.01f, -90.0f,
+                       90.0, "%.3f", ImGuiSliderFlags_None)) {
+    perspective_camera.Changed();
+  }
+  perspective_camera.Update();
+  ImGui::DragFloat("Move speed: ", &perspective_camera.move_speed_, 0.01f, 0.0f,
+                   FLT_MAX, "%.3f", ImGuiSliderFlags_None);
+  ImGui::DragFloat("Turn speed: ", &perspective_camera.turn_speed_, 0.01f, 0.0f,
+                   FLT_MAX, "%.3f", ImGuiSliderFlags_None);
+  ImGui::Checkbox("Reverse X: ", &perspective_camera.reversed_x_axis_);
+  ImGui::Checkbox("Reverse Y: ", &perspective_camera.reversed_y_axis_);
+}
+
+bool Drawer::DrawDirectionalLight(DirectionalLight& directional_light) {
   ImGui::Text("Ambient Config");
-  UI::DrawAmbientConfig(directional_light.GetAmbientConfigRef());
+  UI::Drawer::DrawAmbientConfig(directional_light.GetAmbientConfigRef());
   ImGui::Text("Diffuse Config");
-  UI::DrawDiffuseConfig(directional_light.GetDiffuseConfigRef());
+  UI::Drawer::DrawDiffuseConfig(directional_light.GetDiffuseConfigRef());
   return true;
 }
-bool DrawSpotLight(SpotLight& point_light) {
+bool Drawer::DrawSpotLight(SpotLight& point_light) {
   ImGui::Text("Ambient Config");
-  UI::DrawAmbientConfig(point_light.GetAmbientConfigRef());
+  UI::Drawer::DrawAmbientConfig(point_light.GetAmbientConfigRef());
   ImGui::Text("Point Config");
-  UI::DrawPointConfig(point_light.GetPointConfigRef());
+  UI::Drawer::DrawPointConfig(point_light.GetPointConfigRef());
   ImGui::Text("Diffuse Config");
-  UI::DrawDiffuseConfig(point_light.GetDiffuseConfigRef());
+  UI::Drawer::DrawDiffuseConfig(point_light.GetDiffuseConfigRef());
   ImGui::Text("Spot Config");
-  UI::DrawSpotConfig(point_light.GetSpotConfigRef());
+  UI::Drawer::DrawSpotConfig(point_light.GetSpotConfigRef());
   return true;
 }
-bool DrawPointLight(PointLight& point_light) {
+bool Drawer::DrawPointLight(PointLight& point_light) {
   ImGui::Text("Ambient Config");
-  UI::DrawAmbientConfig(point_light.GetAmbientConfigRef());
+  UI::Drawer::DrawAmbientConfig(point_light.GetAmbientConfigRef());
   ImGui::Text("Point Config");
-  UI::DrawPointConfig(point_light.GetPointConfigRef());
+  UI::Drawer::DrawPointConfig(point_light.GetPointConfigRef());
   ImGui::Text("Diffuse Config");
-  UI::DrawDiffuseConfig(point_light.GetDiffuseConfigRef());
+  UI::Drawer::DrawDiffuseConfig(point_light.GetDiffuseConfigRef());
   return true;
 }
-bool DrawModel(Model& model) {
+bool Drawer::DrawModel(Model& model) {
   auto status = model.GetStatus();
   if (status == Status::NotImplemented) {
     ImGui::Text("Model module is not implemented!");
@@ -137,9 +163,9 @@ bool DrawModel(Model& model) {
       ImGui::Spinner("spinner", 10, 4, ImGui::GetColorU32(ImGuiCol_TabActive));
     } else if (status == Status::Avalible) {
       ImGui::Separator();
-      DrawModelController(model);
+      Drawer::DrawModelController(model);
     }
-    UI::DrawAssetControllerConst(model);
+    UI::Drawer::DrawAssetControllerConst(model);
   }
   if (ImGui::Button("Delete")) {
     return false;
@@ -147,7 +173,7 @@ bool DrawModel(Model& model) {
   return true;
 }
 
-bool DrawShader(Shader& shader) {
+bool Drawer::DrawShader(Shader& shader) {
   auto& shader_config = shader.GetShaderStatus();
   if (shader_config.created_from_file) {
     ImGui::Text("Shader created from file");
@@ -203,7 +229,7 @@ bool DrawShader(Shader& shader) {
   return true;
 }
 
-void DrawModelController(ModelController& model_controller) {
+void Drawer::DrawModelController(ModelController& model_controller) {
   float* model_ptr = (float*)glm::value_ptr(model_controller.GetModel());
   ImGui::Text("Position");
   ImGui::DragFloat("x", model_ptr + 12, kGlobalSlide, -FLT_MAX, FLT_MAX);
@@ -214,19 +240,19 @@ void DrawModelController(ModelController& model_controller) {
   const auto& rotation = model_controller.GetRotationTracker();
   float x_rotation = rotation[0];
   ImGui::DragFloat("Along x", &x_rotation, kGlobalSlide, -FLT_MAX, FLT_MAX,
-                   "%.2f deg");
+                   "%.2f°");
   if (x_rotation != rotation[0]) {
     model_controller.Rotate(x_rotation - rotation[0], Axis::X);
   }
   float y_rotation = rotation[1];
   ImGui::DragFloat("Along y", &y_rotation, kGlobalSlide, -FLT_MAX, FLT_MAX,
-                   "%.2f deg");
+                   "%.2f°");
   if (y_rotation != rotation[1]) {
     model_controller.Rotate(y_rotation - rotation[1], Axis::Y);
   }
   float z_rotation = rotation[2];
   ImGui::DragFloat("Along z", &z_rotation, kGlobalSlide, -FLT_MAX, FLT_MAX,
-                   "%.2f deg");
+                   "%.2f°");
   if (z_rotation != rotation[2]) {
     model_controller.Rotate(z_rotation - rotation[2], Axis::Z);
   }
@@ -244,22 +270,23 @@ void DrawModelController(ModelController& model_controller) {
   ImGui::DragFloat4("##row_4", model_ptr + 12, kGlobalSlide, -FLT_MAX, FLT_MAX);
 }
 
-int DrawShaderComboMenu(std::vector<std::unique_ptr<Shader>>& array,
-                        int selected) {
+int Drawer::DrawShaderComboMenu(std::vector<std::unique_ptr<Shader>>& array,
+                                int selected) {
   return DrawComboMenuFromMEP(array, selected, "##shader");
 }
 
-int DrawMaterialComboMenu(std::vector<std::unique_ptr<Material>>& array,
-                          int selected) {
+int Drawer::DrawMaterialComboMenu(std::vector<std::unique_ptr<Material>>& array,
+                                  int selected) {
   return DrawComboMenuFromMEP(array, selected, "##material");
 }
 
-int DrawTextureComboMenu(std::vector<std::unique_ptr<Texture>>& array,
-                         int selected) {
+int Drawer::DrawTextureComboMenu(std::vector<std::unique_ptr<Texture>>& array,
+                                 int selected) {
   return DrawComboMenuFromMEP(array, selected, "##texture");
 }
 
-void DrawEngineMonitorDataConst(const EngineMonitorData& engine_monitor_data) {
+void Drawer::DrawEngineMonitorDataConst(
+    const EngineMonitorData& engine_monitor_data) {
   ImGui::Text("Frame rate: %.1f", ImGui::GetIO().Framerate);
   ImGui::Text("Total frame time: %.1f",
               engine_monitor_data.frame_data.frame_time);
@@ -289,7 +316,7 @@ void DrawEngineMonitorDataConst(const EngineMonitorData& engine_monitor_data) {
     }
   }
 }
-void DrawAssetControllerConst(const AssetController& scene) {
+void Drawer::DrawAssetControllerConst(const AssetController& scene) {
   if (auto* texture = scene.Get<Texture>()) {
     ImGui::Text("Texture: ");
     ImGui::SameLine();
