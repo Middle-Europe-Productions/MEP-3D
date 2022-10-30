@@ -9,14 +9,12 @@ void Scene::AddObserver(SceneObserver* obs) {
 std::vector<std::unique_ptr<DirectionalLight>>& Scene::GetDirectionaLights() {
   return directional_lights_;
 }
-std::size_t Scene::AttachDirectionaLight(
-    std::unique_ptr<DirectionalLight> directional_light) {
+std::size_t Scene::Attach(std::unique_ptr<DirectionalLight> directional_light) {
   directional_lights_.emplace_back(std::move(directional_light));
   return directional_lights_.size() - 1;
 }
 
-void Scene::AttachSpotLightController(
-    std::unique_ptr<SpotLightController> spot_light_controller) {
+void Scene::Attach(std::unique_ptr<SpotLightController> spot_light_controller) {
   spot_light_controller_ = std::move(spot_light_controller);
 }
 
@@ -24,7 +22,7 @@ std::unique_ptr<SpotLightController>& Scene::GetSpotLightController() {
   return spot_light_controller_;
 }
 
-void Scene::AttachPointLightController(
+void Scene::Attach(
     std::unique_ptr<PointLightController> point_light_controller) {
   point_light_controller_ = std::move(point_light_controller);
 }
@@ -33,8 +31,11 @@ std::unique_ptr<PointLightController>& Scene::GetPointLightController() {
   return point_light_controller_;
 }
 
-std::size_t Scene::AttachModel(std::unique_ptr<Model> model) {
+std::size_t Scene::Attach(std::unique_ptr<Model> model) {
   models_.emplace_back(std::move(model));
+  ForAllObservers([model = models_.back().get()](auto* obs) {
+    obs->OnModelAttached(model);
+  });
   return models_.size() - 1;
 }
 
@@ -42,8 +43,11 @@ std::vector<std::unique_ptr<Model>>& Scene::GetModels() {
   return models_;
 }
 
-std::size_t Scene::AttachShader(std::unique_ptr<Shader> shader) {
+std::size_t Scene::Attach(std::unique_ptr<Shader> shader) {
   shaders_.emplace_back(std::move(shader));
+  ForAllObservers([shader = shaders_.back().get()](auto* obs) {
+    obs->OnShaderAttached(shader);
+  });
   return shaders_.size() - 1;
 }
 
@@ -51,16 +55,22 @@ std::vector<std::unique_ptr<Shader>>& Scene::GetShaders() {
   return shaders_;
 }
 
-std::size_t Scene::AttachMaterial(std::unique_ptr<Material> material) {
+std::size_t Scene::Attach(std::unique_ptr<Material> material) {
   materials_.emplace_back(std::move(material));
+  ForAllObservers([material = materials_.back().get()](auto* obs) {
+    obs->OnMaterialAttached(material);
+  });
   return materials_.size() - 1;
 }
 std::vector<std::unique_ptr<Material>>& Scene::GetMaterial() {
   return materials_;
 }
 
-std::size_t Scene::AttachTexture(std::unique_ptr<Texture> texture) {
+std::size_t Scene::Attach(std::unique_ptr<Texture> texture) {
   textures_.emplace_back(std::move(texture));
+  ForAllObservers([texture = textures_.back().get()](auto* obs) {
+    obs->OnTextureAttached(texture);
+  });
   return textures_.size() - 1;
 }
 
@@ -83,11 +93,14 @@ void Scene::UseAllPointLights() {
 }
 
 void Scene::UseAllLights(UsableElements usable_elements) {
-  if (usable_elements & UsableElements::DirectionalLights)
+  if (usable_elements == UsableElements::DirectionalLights ||
+      usable_elements == UsableElements::All)
     UseAllDirectionalLights();
-  if (usable_elements & UsableElements::SpotLights)
+  if (usable_elements == UsableElements::SpotLights ||
+      usable_elements == UsableElements::All)
     UseAllSpotLights();
-  if (usable_elements & UsableElements::PointLights)
+  if (usable_elements == UsableElements::PointLights ||
+      usable_elements == UsableElements::All)
     UseAllPointLights();
 }
 
@@ -106,7 +119,8 @@ std::size_t Scene::DrawAll(RenderTarget& render_target,
                            // TODO: Fix
                            DrawableElements drawable_elements) {
   std::size_t draw_calls = 0;
-  if (drawable_elements & DrawableElements::Models) {
+  if (drawable_elements == DrawableElements::Models ||
+      drawable_elements == DrawableElements::All) {
     draw_calls += DrawAllModels(render_target);
   }
   return draw_calls;

@@ -85,14 +85,14 @@ class BenchmarkLayer final : public Scene, private WindowObserver {
         AmbientConfig{Color(0, 247, 255), 0.5f},
         PointConfig{Vec3f{1.0f, 1.0f, 1.0f}, 1, 1, 0.001}, 0.5f));
 
-    AttachDirectionaLight(std::move(light));
-    AttachPointLightController(std::move(point_light_con));
+    Attach(std::move(light));
+    Attach(std::move(point_light_con));
 
     auto spot_light_con = std::make_unique<SpotLightController>(
         16, "spot_light", shader_->GetUniform("spot_light_count"),
         kSpotLightUniformMap);
     spot_light_con->Bind(shader_.get());
-    AttachSpotLightController(std::move(spot_light_con));
+    Attach(std::move(spot_light_con));
     // Add UI
     auto ui_layer = SceneUILayer::Create();
     Scene::AddObserver(ui_layer.get());
@@ -109,8 +109,7 @@ class BenchmarkLayer final : public Scene, private WindowObserver {
     plane = std::make_unique<Plane>(100.0f);
     plane->Bind(plain_tex.get());
     plane->Bind(shader_.get());
-    AttachShader(std::move(shader_));
-    AttachTexture(std::move(plain_tex));
+    Attach(std::move(shader_), std::move(plain_tex));
   }
   void OnDetach() override {}
   void OnUpdate(float time_delta) override { camera_->Update(); }
