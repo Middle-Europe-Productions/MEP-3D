@@ -7,6 +7,7 @@ Engine::Engine() : Identity(kEngine), window_(nullptr) {
 
 void Engine::AttachWindow(WindowPtr window) {
   LOG(INFO) << "Window attached to engine, id: " << ToString();
+  DCHECK(window);
   window_ = std::move(window);
 }
 
@@ -19,6 +20,9 @@ WindowPtr& Engine::GetWindow() {
 }
 
 void Engine::Run() {
+  if (!window_) {
+    LOG(WARNING) << "Window is not attached on " << __func__;
+  }
   LOG(INFO) << "Engine initialized, id: " << ToString();
   auto time = TimeDelta::GetInstance();
   double time_controller = 0.0;

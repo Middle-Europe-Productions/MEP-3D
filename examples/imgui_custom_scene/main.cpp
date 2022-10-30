@@ -49,6 +49,5 @@ int main(int argc, char* argv[]) {
       std::move(window), std::make_unique<DefaultScene>(),
       SceneUILayer::Create(kMyRuntimeConfig, {{1, kMyHandler}},
                            SceneUIParser::Method::DoNotUseDefault));
-  engine->AttachWindow(std::move(window));
   engine->Run();
 }

@@ -10,6 +10,7 @@ std::shared_ptr<Engine> CreateEngineWithSceneUI(
     std::unique_ptr<Window> window,
     std::unique_ptr<Scene> scene,
     std::unique_ptr<SceneUILayer> ui_layer) {
+  DCHECK(window);
   DCHECK(scene);
   DCHECK(ui_layer);
   auto main_engine = std::make_shared<Engine>();
@@ -29,7 +30,7 @@ std::shared_ptr<Engine> CreateEngineWithSceneUI(
   main_engine->AttachLayer(std::move(scene));
   main_engine->AttachLayerToStructure(std::move(ui_layer), 0, true);
 
-  return std::move(main_engine);
+  return main_engine;
 }
 
 };  // namespace utils
