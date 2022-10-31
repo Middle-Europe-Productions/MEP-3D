@@ -1,7 +1,9 @@
 #ifndef KEY_EVENT_HPP
 #define KEY_EVENT_HPP
 
-enum Keyboard {
+#include <string>
+
+enum class Keyboard {
   A = 0,
   B = 1,
   C = 2,
@@ -28,8 +30,71 @@ enum Keyboard {
   X,
   Y,
   Z,
+  Space,
+  Apostrophe,
+  Comma,
+  Minus,
+  Period,
+  Slash,
+  Key0,
+  Key1,
+  Key2,
+  Key3,
+  Key4,
+  Key5,
+  Key6,
+  Key7,
+  Key8,
+  Key9,
+  Semicolon,
+  Equal,
+  LeftBracket,
+  Backslash,
+  RightBracket,
+  Accent,
+  Escape,
+  Enter,
+  Tab,
+  Backspace,
+  Insert,
+  Delete,
+  RightArrow,
+  LeftArrow,
+  DownArrow,
+  UpArrow,
+  CapsLock,
+  F1,
+  F2,
+  F3,
+  F4,
+  F5,
+  F6,
+  F7,
+  F8,
+  F9,
+  F10,
+  F11,
+  F12,
+  F13,
+  F14,
+  F15,
+  F16,
+  F17,
+  F18,
+  F19,
+  F20,
+  LeftShift,
+  LeftControl,
+  LeftAlt,
+  LeftSuper,
+  RightShift,
+  RightControl,
+  RightAlt,
+  RightSuper,
   UnknownKey
 };
+
+std::string KeyboardToString(Keyboard keyboard);
 
 enum Action { Pressed = 0, Released, UnknownAction };
 struct KeyEvent {

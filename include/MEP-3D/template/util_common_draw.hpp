@@ -16,6 +16,7 @@ class Drawer {
   static void DrawSpotConfig(SpotConfig& point_config);
   static void DrawPointConfig(PointConfig& point_config);
   static void DrawModelController(ModelController& model_controller);
+  static void DrawCameraBase(CameraBase& camera_base);
   static void DrawPerspectiveCamera(PerspectiveCamera& perspective_camera);
   // Deletable elements (return false if object should be deleted)
   static bool DrawDirectionalLight(DirectionalLight& directional_light);

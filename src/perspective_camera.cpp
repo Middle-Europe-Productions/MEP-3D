@@ -1,13 +1,24 @@
 #include <MEP-3D/perspective_camera.hpp>
+#include <MEP-3D/utils.hpp>
 
-std::string ToString(const CameraVariables& camera_variable) {
-  switch (camera_variable) {
-    case CameraVariables::Position:
-      return "Position";
-    case CameraVariables::Direction:
-      return "Directin";
+std::string ToString(PerspectiveCameraActions pca) {
+  switch (pca) {
+    case PerspectiveCameraActions::Front:
+      return "Front";
+    case PerspectiveCameraActions::Back:
+      return "Back";
+    case PerspectiveCameraActions::Left:
+      return "Left";
+    case PerspectiveCameraActions::Right:
+      return "Right";
+    case PerspectiveCameraActions::Up:
+      return "Up";
+    case PerspectiveCameraActions::Down:
+      return "Down";
+    case PerspectiveCameraActions::Count:
+    default:
+      return "Count";
   }
-  return "Unknown";
 }
 
 PerspectiveCamera::PerspectiveCamera(const CameraConfig& config,
@@ -59,8 +70,7 @@ glm::vec3 PerspectiveCamera::GetNormalizedDirection() const {
 
 void PerspectiveCamera::OnKeyEvent(KeyEvent event) {
   if (event.action == Action::Pressed || event.action == Action::Released) {
-    if (event.code == controls_.up || event.code == controls_.down ||
-        event.code == controls_.left || event.code == controls_.right) {
+    if (ContainsKey(event.code)) {
       key_status_[event.code] = event.action == Action::Pressed;
     }
   }
@@ -92,13 +102,10 @@ void PerspectiveCamera::OnMouseEvent(MouseEvent event) {
   mouse_y_change *= turn_speed_;
   yaw_ += mouse_x_change;
   pitch_ += mouse_y_change;
-  LOG(INFO) << pitch_ << " " << yaw_;
   if (pitch_ > 89.9f) {
-    LOG(INFO) << __LINE__;
     pitch_ = 89.9f;
   }
   if (pitch_ < -89.9f) {
-    LOG(INFO) << __LINE__;
     pitch_ = -89.9f;
   }
   Changed();
@@ -124,32 +131,47 @@ std::string PerspectiveCamera::ToString() const {
       ", \n" + "\"Pitch\": " + std::to_string(pitch_) + "\n}");
 }
 
+bool PerspectiveCamera::IsActive(PerspectiveCameraActions pca) {
+  return key_status_[controls_.keys[static_cast<int>(pca)]];
+}
+bool PerspectiveCamera::ContainsKey(Keyboard key) {
+  return key_status_.find(key) != key_status_.end();
+}
+
 void PerspectiveCamera::InitKeyboardMap() {
-  key_status_[controls_.up] = false;
-  key_status_[controls_.down] = false;
-  key_status_[controls_.left] = false;
-  key_status_[controls_.right] = false;
+  for (PerspectiveCameraActions it = PerspectiveCameraActions::Front;
+       it != PerspectiveCameraActions::Count; it = utils::IncEnum(it)) {
+    key_status_[controls_.keys[static_cast<int>(it)]] = false;
+  }
 }
 
 void PerspectiveCamera::ValidateKeyboardInput() {
   bool pressed = false;
   double velocity = move_speed_ * camera_time_delta_->GetTimeDelta();
-  if (key_status_[controls_.up]) {
+  if (IsActive(PerspectiveCameraActions::Front)) {
     Increment(CameraVariables::Position,
               Get(CameraVariables::Direction) * (GLfloat)velocity);
     pressed = true;
   }
-  if (key_status_[controls_.down]) {
+  if (IsActive(PerspectiveCameraActions::Back)) {
     Decrement(CameraVariables::Position,
               Get(CameraVariables::Direction) * (GLfloat)velocity);
     pressed = true;
   }
-  if (key_status_[controls_.left]) {
+  if (IsActive(PerspectiveCameraActions::Left)) {
     Decrement(CameraVariables::Position, right_ * (GLfloat)velocity);
     pressed = true;
   }
-  if (key_status_[controls_.right]) {
+  if (IsActive(PerspectiveCameraActions::Right)) {
     Increment(CameraVariables::Position, right_ * (GLfloat)velocity);
+    pressed = true;
+  }
+  if (IsActive(PerspectiveCameraActions::Up)) {
+    Get(CameraVariables::Position)[1] += (GLfloat)velocity;
+    pressed = true;
+  }
+  if (IsActive(PerspectiveCameraActions::Down)) {
+    Get(CameraVariables::Position)[1] -= (GLfloat)velocity;
     pressed = true;
   }
   if (pressed)

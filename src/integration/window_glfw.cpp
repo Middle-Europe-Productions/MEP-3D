@@ -9,6 +9,191 @@
 #include <imgui.h>
 #endif
 
+namespace {
+Keyboard ToMepKey(int value) {
+  switch (value) {
+    case GLFW_KEY_SPACE:
+      return Keyboard::Space;
+    case GLFW_KEY_APOSTROPHE:
+      return Keyboard::Apostrophe;
+    case GLFW_KEY_COMMA:
+      return Keyboard::Comma;
+    case GLFW_KEY_MINUS:
+      return Keyboard::Minus;
+    case GLFW_KEY_PERIOD:
+      return Keyboard::Period;
+    case GLFW_KEY_SLASH:
+      return Keyboard::Slash;
+    case GLFW_KEY_0:
+      return Keyboard::Key0;
+    case GLFW_KEY_1:
+      return Keyboard::Key1;
+    case GLFW_KEY_2:
+      return Keyboard::Key2;
+    case GLFW_KEY_3:
+      return Keyboard::Key3;
+    case GLFW_KEY_4:
+      return Keyboard::Key4;
+    case GLFW_KEY_5:
+      return Keyboard::Key5;
+    case GLFW_KEY_6:
+      return Keyboard::Key6;
+    case GLFW_KEY_7:
+      return Keyboard::Key7;
+    case GLFW_KEY_8:
+      return Keyboard::Key8;
+    case GLFW_KEY_9:
+      return Keyboard::Key9;
+    case GLFW_KEY_SEMICOLON:
+      return Keyboard::Semicolon;
+    case GLFW_KEY_EQUAL:
+      return Keyboard::Equal;
+    case GLFW_KEY_A:
+      return Keyboard::A;
+    case GLFW_KEY_B:
+      return Keyboard::B;
+    case GLFW_KEY_C:
+      return Keyboard::C;
+    case GLFW_KEY_D:
+      return Keyboard::D;
+    case GLFW_KEY_E:
+      return Keyboard::E;
+    case GLFW_KEY_F:
+      return Keyboard::F;
+    case GLFW_KEY_G:
+      return Keyboard::G;
+    case GLFW_KEY_H:
+      return Keyboard::H;
+    case GLFW_KEY_I:
+      return Keyboard::I;
+    case GLFW_KEY_J:
+      return Keyboard::J;
+    case GLFW_KEY_K:
+      return Keyboard::K;
+    case GLFW_KEY_L:
+      return Keyboard::L;
+    case GLFW_KEY_M:
+      return Keyboard::M;
+    case GLFW_KEY_N:
+      return Keyboard::N;
+    case GLFW_KEY_O:
+      return Keyboard::O;
+    case GLFW_KEY_P:
+      return Keyboard::P;
+    case GLFW_KEY_Q:
+      return Keyboard::Q;
+    case GLFW_KEY_R:
+      return Keyboard::R;
+    case GLFW_KEY_S:
+      return Keyboard::S;
+    case GLFW_KEY_T:
+      return Keyboard::T;
+    case GLFW_KEY_U:
+      return Keyboard::U;
+    case GLFW_KEY_V:
+      return Keyboard::V;
+    case GLFW_KEY_W:
+      return Keyboard::W;
+    case GLFW_KEY_X:
+      return Keyboard::X;
+    case GLFW_KEY_Y:
+      return Keyboard::Y;
+    case GLFW_KEY_Z:
+      return Keyboard::Z;
+    case GLFW_KEY_LEFT_BRACKET:
+      return Keyboard::LeftBracket;
+    case GLFW_KEY_BACKSLASH:
+      return Keyboard::Backslash;
+    case GLFW_KEY_RIGHT_BRACKET:
+      return Keyboard::RightBracket;
+    case GLFW_KEY_GRAVE_ACCENT:
+      return Keyboard::Accent;
+    case GLFW_KEY_ESCAPE:
+      return Keyboard::Escape;
+    case GLFW_KEY_ENTER:
+      return Keyboard::Enter;
+    case GLFW_KEY_TAB:
+      return Keyboard::Tab;
+    case GLFW_KEY_BACKSPACE:
+      return Keyboard::Backspace;
+    case GLFW_KEY_INSERT:
+      return Keyboard::Insert;
+    case GLFW_KEY_DELETE:
+      return Keyboard::Delete;
+    case GLFW_KEY_RIGHT:
+      return Keyboard::RightArrow;
+    case GLFW_KEY_LEFT:
+      return Keyboard::LeftArrow;
+    case GLFW_KEY_DOWN:
+      return Keyboard::DownArrow;
+    case GLFW_KEY_UP:
+      return Keyboard::UpArrow;
+    case GLFW_KEY_CAPS_LOCK:
+      return Keyboard::CapsLock;
+    case GLFW_KEY_F1:
+      return Keyboard::F1;
+    case GLFW_KEY_F2:
+      return Keyboard::F2;
+    case GLFW_KEY_F3:
+      return Keyboard::F3;
+    case GLFW_KEY_F4:
+      return Keyboard::F4;
+    case GLFW_KEY_F5:
+      return Keyboard::F5;
+    case GLFW_KEY_F6:
+      return Keyboard::F6;
+    case GLFW_KEY_F7:
+      return Keyboard::F7;
+    case GLFW_KEY_F8:
+      return Keyboard::F8;
+    case GLFW_KEY_F9:
+      return Keyboard::F9;
+    case GLFW_KEY_F10:
+      return Keyboard::F10;
+    case GLFW_KEY_F11:
+      return Keyboard::F11;
+    case GLFW_KEY_F12:
+      return Keyboard::F12;
+    case GLFW_KEY_F13:
+      return Keyboard::F13;
+    case GLFW_KEY_F14:
+      return Keyboard::F14;
+    case GLFW_KEY_F15:
+      return Keyboard::F15;
+    case GLFW_KEY_F16:
+      return Keyboard::F16;
+    case GLFW_KEY_F17:
+      return Keyboard::F17;
+    case GLFW_KEY_F18:
+      return Keyboard::F18;
+    case GLFW_KEY_F19:
+      return Keyboard::F19;
+    case GLFW_KEY_F20:
+      return Keyboard::F20;
+    case GLFW_KEY_LEFT_SHIFT:
+      return Keyboard::LeftShift;
+    case GLFW_KEY_LEFT_CONTROL:
+      return Keyboard::LeftControl;
+    case GLFW_KEY_LEFT_ALT:
+      return Keyboard::LeftAlt;
+    case GLFW_KEY_LEFT_SUPER:
+      return Keyboard::LeftSuper;
+    case GLFW_KEY_RIGHT_SHIFT:
+      return Keyboard::RightShift;
+    case GLFW_KEY_RIGHT_CONTROL:
+      return Keyboard::RightControl;
+    case GLFW_KEY_RIGHT_ALT:
+      return Keyboard::RightAlt;
+    case GLFW_KEY_RIGHT_SUPER:
+      return Keyboard::RightSuper;
+    default:
+    case GLFW_KEY_UNKNOWN:
+      VLOG(1) << "Detected umapped key " << value;
+      return Keyboard::UnknownKey;
+  }
+}
+};  // namespace
+
 class GLFWWindowController : public Window {
  public:
   GLFWWindowController(WindowConfig config)
@@ -159,22 +344,20 @@ void GLFWWindowController::OnKeyEventHandler(GLFWwindow* window,
   GLFWWindowController* master_window =
       static_cast<GLFWWindowController*>(glfwGetWindowUserPointer(window));
 
-  if (key >= (int)'A' && key <= (int)'Z') {
-    KeyEvent key_event;
-    key_event.code = static_cast<Keyboard>(key - 'A');
-    if (action != GLFW_RELEASE && master_window->ShouldBlockEvent() &&
-        key_event.code != master_window->exception_) {
-      return;
-    }
-
-    if (action == GLFW_PRESS) {
-      key_event.action = Action::Pressed;
-    } else if (action == GLFW_RELEASE) {
-      key_event.action = Action::Released;
-    }
-    master_window->ForAllObservers(
-        [&key_event](WindowObserver* obs) { obs->OnKeyEvent(key_event); });
+  KeyEvent key_event;
+  key_event.code = ToMepKey(key);
+  if (action != GLFW_RELEASE && master_window->ShouldBlockEvent() &&
+      key_event.code != master_window->exception_) {
+    return;
   }
+
+  if (action == GLFW_PRESS) {
+    key_event.action = Action::Pressed;
+  } else if (action == GLFW_RELEASE) {
+    key_event.action = Action::Released;
+  }
+  master_window->ForAllObservers(
+      [&key_event](WindowObserver* obs) { obs->OnKeyEvent(key_event); });
 }
 
 void GLFWWindowController::OnMouseEventHandler(GLFWwindow* window,

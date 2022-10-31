@@ -149,8 +149,8 @@ class SceneUILayerImGUI : public SceneUILayer {
     for (auto& pc : GetScenePtr()->GetPerspectiveCamera()) {
       if (ImGui::TreeNode(pc->Identity::GetName().c_str())) {
         UI::Drawer::DrawPerspectiveCamera(*pc.get());
-        if (pc.get() == GetScenePtr()->GetMasterCamera()) {
-          ImGui::Text("This is a master camera");
+        if (pc.get() == GetEngine()->GetWindow()->GetCamera()) {
+          ImGui::Text("This camera is currently used");
         }
         ImGui::Separator();
         ImGui::TreePop();

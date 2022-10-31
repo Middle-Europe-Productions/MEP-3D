@@ -39,6 +39,8 @@ set(SOURCE
   ${SRC_ROOT}/common_names.cpp
   ${SRC_ROOT}/config_create_impl.cpp
   ${SRC_ROOT}/scene_ui_parser.cpp
+  ${SRC_ROOT}/key_event.cpp
+  ${SRC_ROOT}/camera_base.cpp
 )
 
 set(HEADERS

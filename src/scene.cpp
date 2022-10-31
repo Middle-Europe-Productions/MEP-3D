@@ -88,10 +88,6 @@ std::vector<std::unique_ptr<Texture>>& Scene::GetTexture() {
 std::size_t Scene::Attach(
     std::unique_ptr<PerspectiveCamera> perspective_camera) {
   DCHECK(perspective_camera);
-  if (!master_camera_) {
-    LOG(INFO) << "Updating master camera to " << perspective_camera->ToString();
-    master_camera_ = perspective_camera.get();
-  }
   perspective_camera_.emplace_back(std::move(perspective_camera));
   ForAllObservers(
       [perspective_camera = perspective_camera_.back().get()](auto* obs) {
@@ -169,10 +165,6 @@ std::size_t Scene::UpdateAll(float time_delta,
     update_counter += UpdatePerspectiveCamera(time_delta);
   }
   return update_counter;
-}
-
-CameraBase* Scene::GetMasterCamera() {
-  return master_camera_;
 }
 
 Scene::~Scene() {

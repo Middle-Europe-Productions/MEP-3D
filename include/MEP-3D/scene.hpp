@@ -78,8 +78,6 @@ class Scene : public Layer, public ObserverList<SceneObserver> {
   std::size_t UpdateAll(
       float time_delta,
       UpdatableElements updatable_elements = UpdatableElements::All);
-  // Helpers
-  CameraBase* GetMasterCamera();
   virtual ~Scene();
 
  private:
@@ -91,8 +89,6 @@ class Scene : public Layer, public ObserverList<SceneObserver> {
   std::vector<std::unique_ptr<PerspectiveCamera>> perspective_camera_;
   std::unique_ptr<SpotLightController> spot_light_controller_;
   std::unique_ptr<PointLightController> point_light_controller_;
-  // This might not work
-  CameraBase* master_camera_ = nullptr;
 };
 
 template <typename First, typename... Args>

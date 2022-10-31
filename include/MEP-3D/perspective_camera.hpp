@@ -15,19 +15,27 @@
 #include <MEP-3D/window_observer.hpp>
 
 #include <glog/logging.h>
+#include <array>
 #include <glm/gtx/string_cast.hpp>
 #include <string>
 
+enum class PerspectiveCameraActions : int {
+  Front = 0,
+  Back = 1,
+  Left = 2,
+  Right,
+  Up,
+  Down,
+  Count
+};
+
+std::string ToString(PerspectiveCameraActions pca);
+
 struct PerspectiveCameraControls {
   PerspectiveCameraControls()
-      : up(Keyboard::W),
-        down(Keyboard::S),
-        left(Keyboard::A),
-        right(Keyboard::D) {}
-  Keyboard up;
-  Keyboard down;
-  Keyboard left;
-  Keyboard right;
+      : keys{Keyboard::W, Keyboard::S,     Keyboard::A,
+             Keyboard::D, Keyboard::Space, Keyboard::LeftControl} {}
+  std::array<Keyboard, static_cast<int>(PerspectiveCameraActions::Count)> keys;
 };
 
 struct CameraConfig {
@@ -62,6 +70,8 @@ class PerspectiveCamera : public CameraBase {
  private:
   friend class UI::Drawer;
 
+  bool IsActive(PerspectiveCameraActions pca);
+  bool ContainsKey(Keyboard key);
   void InitKeyboardMap();
   void ValidateKeyboardInput();
 

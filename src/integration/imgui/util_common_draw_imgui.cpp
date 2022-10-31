@@ -1,4 +1,6 @@
 #include <MEP-3D/template/util_common_draw.hpp>
+#include <MEP-3D/utils.hpp>
+
 #include <glm/gtc/type_ptr.hpp>
 
 #include <imgui.h>
@@ -93,15 +95,21 @@ void Drawer::DrawPointConfig(PointConfig& point_config) {
   point_config.position.z_ = v[2];
 }
 
-void Drawer::DrawPerspectiveCamera(PerspectiveCamera& perspective_camera) {
-  ImGui::Text("Perspective Camera");
+void Drawer::DrawCameraBase(CameraBase& camera_base) {
+  ImGui::Text("Camera Base");
   ImGui::Separator();
-  auto& position = perspective_camera.Get(CameraVariables::Position);
+  auto& position = camera_base.Get(CameraVariables::Position);
   ImGui::DragFloat3("Position", static_cast<float*>(&position.x), kGlobalSlide,
                     -FLT_MAX, FLT_MAX);
-  auto& direction = perspective_camera.Get(CameraVariables::Direction);
-  ImGui::DragFloat3("Direction", static_cast<float*>(&direction.x),
-                    kGlobalSlide, -1.0, 1.0);
+  auto norm_direction = camera_base.GetNormalizedDirection();
+  ImGui::Text("Direciton: [%f, %f, %f]", norm_direction.x, norm_direction.y,
+              norm_direction.z);
+}
+
+void Drawer::DrawPerspectiveCamera(PerspectiveCamera& perspective_camera) {
+  DrawCameraBase(perspective_camera);
+  ImGui::Text("Perspective Camera");
+  ImGui::Separator();
   if (ImGui::DragFloat("Yaw: ", &perspective_camera.yaw_, 0.01f, 0.0f, FLT_MAX,
                        "%.3f", ImGuiSliderFlags_None)) {
     perspective_camera.Changed();
@@ -117,6 +125,16 @@ void Drawer::DrawPerspectiveCamera(PerspectiveCamera& perspective_camera) {
                    FLT_MAX, "%.3f", ImGuiSliderFlags_None);
   ImGui::Checkbox("Reverse X: ", &perspective_camera.reversed_x_axis_);
   ImGui::Checkbox("Reverse Y: ", &perspective_camera.reversed_y_axis_);
+  ImGui::Text("Keymap: ");
+  for (PerspectiveCameraActions it = PerspectiveCameraActions::Front;
+       it != PerspectiveCameraActions::Count; it = utils::IncEnum(it)) {
+    ImGui::Text("%s:", ToString(it).c_str());
+    ImGui::SameLine();
+    ImGui::Text("%s",
+                KeyboardToString(
+                    perspective_camera.controls_.keys[static_cast<int>(it)])
+                    .c_str());
+  }
 }
 
 bool Drawer::DrawDirectionalLight(DirectionalLight& directional_light) {
