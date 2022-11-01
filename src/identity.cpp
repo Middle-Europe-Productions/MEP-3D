@@ -1,16 +1,17 @@
+#include <glog/logging.h>
 #include <MEP-3D/identity.hpp>
 
-std::unordered_map<std::string, int> Identity::identity_ =
-    std::unordered_map<std::string, int>();
+std::unordered_map<std::string_view, int> Identity::identity_ =
+    std::unordered_map<std::string_view, int>();
 unsigned int Identity::global_id_provider_ = 0;
 
 Identity::Identity() : class_name_(), name_(), id_(-1), global_id_(-1) {}
 
-Identity::Identity(const char* class_name) : Identity(class_name, "") {
-  name_ = class_name_ + '_' + std::to_string(GetId());
+Identity::Identity(std::string_view class_name) : Identity(class_name, "") {
+  name_ = std::string(class_name_) + '_' + std::to_string(GetId());
 }
 
-Identity::Identity(const char* class_name, const char* name)
+Identity::Identity(std::string_view class_name, std::string_view name)
     : class_name_(class_name), name_(name), global_id_(global_id_provider_++) {
   auto temp = identity_.find(class_name);
   if (temp == identity_.end()) {
@@ -19,6 +20,8 @@ Identity::Identity(const char* class_name, const char* name)
   } else {
     id_ = ++identity_[class_name];
   }
+  VLOG(3) << "Creating identity, class_name: " << class_name_
+          << ", name: " << name_;
 }
 
 Identity::Identity(const Identity& id)
@@ -60,7 +63,7 @@ bool Identity::operator==(const Identity& x) const {
   return this->GetId() == x.GetId() && this->GetGlobalId() == x.GetId();
 }
 
-const std::unordered_map<std::string, int>& Identity::GetIdentityMap() {
+const std::unordered_map<std::string_view, int>& Identity::GetIdentityMap() {
   return identity_;
 }
 

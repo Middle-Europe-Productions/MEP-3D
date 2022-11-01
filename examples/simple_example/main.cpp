@@ -106,7 +106,8 @@ class MainLayer : private WindowObserver, public Layer {
     LOG(INFO) << GetEngine()->GetWindow()->GetAspectRation();
     view_ = std::make_unique<PerspectiveView>(PerspectiveView::Config(
         {glm::radians(45.0f), window->GetAspectRation(), 0.1f, 100.0f}));
-    camera_ = std::make_unique<PerspectiveCamera>(CameraConfig::Create());
+    camera_ =
+        std::make_unique<PerspectiveCamera>(PerspectiveCameraConfig::Create());
 
     image.LoadFromFile("dirt.png");
     tex = std::make_unique<Texture>();

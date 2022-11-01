@@ -10,7 +10,15 @@ std::string ToString(CameraVariables camera_variable) {
   return "Unknown";
 }
 
-CameraBase::CameraBase() : Identity(kCamera) {}
+CameraBase::CameraBase(std::string_view identity) : Identity(identity) {}
 
-CameraBase::CameraBase(const std::string& name)
-    : Identity(kCamera, name.c_str()) {}
+CameraBase::CameraBase(std::string_view identity, std::string_view name)
+    : Identity(identity, name) {}
+
+glm::vec3 CameraBase::GetPosition() const {
+  return Get(CameraVariables::Position);
+}
+
+glm::vec3 CameraBase::GetNormalizedDirection() const {
+  return Get(CameraVariables::Direction);
+}

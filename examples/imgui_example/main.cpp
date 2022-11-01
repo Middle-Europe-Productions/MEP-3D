@@ -47,7 +47,8 @@ class BenchmarkLayer final : public Scene, private WindowObserver {
     // Camera config
     view_ = std::make_unique<PerspectiveView>(PerspectiveView::Config(
         {glm::radians(45.0f), window->GetAspectRation(), 0.1f, 10000.0f}));
-    camera_ = std::make_unique<PerspectiveCamera>(CameraConfig::Create());
+    camera_ =
+        std::make_unique<PerspectiveCamera>(PerspectiveCameraConfig::Create());
     // Load texture
     image.LoadFromFile("plain.png");
     plain_tex = std::make_unique<Texture>();

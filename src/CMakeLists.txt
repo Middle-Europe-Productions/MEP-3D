@@ -60,6 +60,7 @@ set(HEADERS
   ${INC_ROOT}/key_event.hpp
   ${INC_ROOT}/mouse_event.hpp
   ${INC_ROOT}/perspective_camera.hpp
+  ${INC_ROOT}/arcball_camera.hpp
   ${INC_ROOT}/camera_base.hpp
   ${INC_ROOT}/render_target.hpp
   ${INC_ROOT}/perspective_view.hpp

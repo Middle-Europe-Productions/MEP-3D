@@ -30,7 +30,7 @@ std::unique_ptr<SpotLight> SpotLight::Create() {
                                      SpotConfig::Create());
 }
 
-CameraConfig CameraConfig::Create() {
+PerspectiveCameraConfig PerspectiveCameraConfig::Create() {
   return {glm::vec3(10.0f, 10.0f, -5.0f),
           glm::vec3(0.0f, 1.0f, 0.0f),
           145.0f,

@@ -1,3 +1,4 @@
+#include <MEP-3D/common_names.hpp>
 #include <MEP-3D/perspective_camera.hpp>
 #include <MEP-3D/utils.hpp>
 
@@ -21,9 +22,12 @@ std::string ToString(PerspectiveCameraActions pca) {
   }
 }
 
-PerspectiveCamera::PerspectiveCamera(const CameraConfig& config,
-                                     const PerspectiveCameraControls& controls)
-    : controls_(controls), camera_time_delta_(TimeDelta::GetInstance()) {
+PerspectiveCamera::PerspectiveCamera(
+    const PerspectiveCameraConfig& config,
+    const PerspectiveCameraControlsMap& controls)
+    : CameraBase(kPerspectiveCamera),
+      controls_(controls),
+      camera_time_delta_(TimeDelta::GetInstance()) {
   Set(CameraVariables::Position, config.start_position);
   Set(CameraVariables::Direction, glm::vec3(0.0f, 0.0f, -1.0f));
   world_up_ = config.start_up;
@@ -58,14 +62,6 @@ glm::mat4 PerspectiveCamera::GetViewMatrix() const {
   return glm::lookAt(
       Get(CameraVariables::Position),
       Get(CameraVariables::Position) + Get(CameraVariables::Direction), up_);
-}
-
-glm::vec3 PerspectiveCamera::GetPosition() const {
-  return Get(CameraVariables::Position);
-}
-
-glm::vec3 PerspectiveCamera::GetNormalizedDirection() const {
-  return Get(CameraVariables::Direction);
 }
 
 void PerspectiveCamera::OnKeyEvent(KeyEvent event) {
@@ -132,7 +128,7 @@ std::string PerspectiveCamera::ToString() const {
 }
 
 bool PerspectiveCamera::IsActive(PerspectiveCameraActions pca) {
-  return key_status_[controls_.keys[static_cast<int>(pca)]];
+  return key_status_[controls_[static_cast<int>(pca)]];
 }
 bool PerspectiveCamera::ContainsKey(Keyboard key) {
   return key_status_.find(key) != key_status_.end();
@@ -141,7 +137,7 @@ bool PerspectiveCamera::ContainsKey(Keyboard key) {
 void PerspectiveCamera::InitKeyboardMap() {
   for (PerspectiveCameraActions it = PerspectiveCameraActions::Front;
        it != PerspectiveCameraActions::Count; it = utils::IncEnum(it)) {
-    key_status_[controls_.keys[static_cast<int>(it)]] = false;
+    key_status_[controls_[static_cast<int>(it)]] = false;
   }
 }
 

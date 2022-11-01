@@ -15,7 +15,8 @@ class CameraScene final : public Scene {
     // Camera config
     view_ = std::make_unique<PerspectiveView>(PerspectiveView::Config(
         {glm::radians(45.0f), window->GetAspectRation(), 0.1f, 10000.0f}));
-    auto camera = std::make_unique<PerspectiveCamera>(CameraConfig::Create());
+    auto camera =
+        std::make_unique<PerspectiveCamera>(PerspectiveCameraConfig::Create());
     // Init window
     window->AddView(view_.get());
     window->AddCamera(camera.get());

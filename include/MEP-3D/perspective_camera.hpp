@@ -31,21 +31,17 @@ enum class PerspectiveCameraActions : int {
 
 std::string ToString(PerspectiveCameraActions pca);
 
-struct PerspectiveCameraControls {
-  PerspectiveCameraControls()
-      : keys{Keyboard::W, Keyboard::S,     Keyboard::A,
-             Keyboard::D, Keyboard::Space, Keyboard::LeftControl} {}
-  std::array<Keyboard, static_cast<int>(PerspectiveCameraActions::Count)> keys;
-};
+using PerspectiveCameraControlsMap =
+    std::array<Keyboard, static_cast<int>(PerspectiveCameraActions::Count)>;
 
-struct CameraConfig {
+struct PerspectiveCameraConfig {
   glm::vec3 start_position;
   glm::vec3 start_up;
   GLfloat start_yaw;
   GLfloat start_pitch;
   GLfloat start_move_speed;
   GLfloat start_turn_speed;
-  static CameraConfig Create();
+  static PerspectiveCameraConfig Create();
 };
 
 namespace UI {
@@ -54,13 +50,12 @@ class Drawer;
 
 class PerspectiveCamera : public CameraBase {
  public:
-  PerspectiveCamera(
-      const CameraConfig& config,
-      const PerspectiveCameraControls& controls = PerspectiveCameraControls());
+  PerspectiveCamera(const PerspectiveCameraConfig& config,
+                    const PerspectiveCameraControlsMap& controls = {
+                        Keyboard::W, Keyboard::S, Keyboard::A, Keyboard::D,
+                        Keyboard::Space, Keyboard::LeftControl});
   void Update() override;
   glm::mat4 GetViewMatrix() const override;
-  glm::vec3 GetPosition() const override;
-  glm::vec3 GetNormalizedDirection() const override;
   void OnKeyEvent(KeyEvent event) override;
   void OnMouseEvent(MouseEvent event) override;
   void OnWindowResizeEvent(Vec2i size) override;
@@ -76,7 +71,7 @@ class PerspectiveCamera : public CameraBase {
   void ValidateKeyboardInput();
 
   std::unordered_map<Keyboard, bool> key_status_;
-  PerspectiveCameraControls controls_;
+  PerspectiveCameraControlsMap controls_;
   TimeDeltaPtr camera_time_delta_;
   glm::vec3 front_;
   glm::vec3 up_;

@@ -130,10 +130,9 @@ void Drawer::DrawPerspectiveCamera(PerspectiveCamera& perspective_camera) {
        it != PerspectiveCameraActions::Count; it = utils::IncEnum(it)) {
     ImGui::Text("%s:", ToString(it).c_str());
     ImGui::SameLine();
-    ImGui::Text("%s",
-                KeyboardToString(
-                    perspective_camera.controls_.keys[static_cast<int>(it)])
-                    .c_str());
+    ImGui::Text("%s", KeyboardToString(
+                          perspective_camera.controls_[static_cast<int>(it)])
+                          .c_str());
   }
 }
 

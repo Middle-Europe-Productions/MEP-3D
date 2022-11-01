@@ -20,11 +20,11 @@ class CameraBase : public Identity,
                    public WindowObserver,
                    public ObservableMap<glm::vec3, CameraVariables> {
  public:
-  CameraBase();
-  CameraBase(const std::string& name);
+  CameraBase(std::string_view identity);
+  CameraBase(std::string_view identity, std::string_view name);
   virtual glm::mat4 GetViewMatrix() const = 0;
-  virtual glm::vec3 GetPosition() const = 0;
-  virtual glm::vec3 GetNormalizedDirection() const = 0;
+  virtual glm::vec3 GetPosition() const;
+  virtual glm::vec3 GetNormalizedDirection() const;
 };
 
 #endif
