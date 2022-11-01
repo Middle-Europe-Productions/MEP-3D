@@ -1,6 +1,7 @@
 #include <MEP-3D/template/util_common_draw.hpp>
 
 namespace UI {
+void Drawer::DrawWindowInterface(Window& window, Scene& scene) {}
 void Drawer::DrawAmbientConfig(AmbientConfig& config) {}
 void Drawer::DrawDiffuseConfig(DiffuseConfig& config) {}
 void Drawer::DrawSpotConfig(SpotConfig& point_config) {}
@@ -8,6 +9,8 @@ void Drawer::DrawPointConfig(PointConfig& point_config) {}
 void Drawer::DrawModelController(ModelController& model_controller) {}
 void Drawer::DrawCameraBase(CameraBase& camera_base) {}
 void Drawer::DrawPerspectiveCamera(PerspectiveCamera& perspective_camera) {}
+
+void Drawer::DrawCamera(CameraBase* camera_base) {}
 
 bool Drawer::DrawDirectionalLight(DirectionalLight& directional_light) {
   return true;

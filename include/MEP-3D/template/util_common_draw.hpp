@@ -5,11 +5,14 @@
 #include <MEP-3D/engine.hpp>
 #include <MEP-3D/light_controller.hpp>
 #include <MEP-3D/model.hpp>
+#include <MEP-3D/scene.hpp>
 #include <MEP-3D/shader.hpp>
 
 namespace UI {
 class Drawer {
  public:
+  // Interface elements
+  static void DrawWindowInterface(Window& window, Scene& scene);
   // Editable elements
   static void DrawAmbientConfig(AmbientConfig& config);
   static void DrawDiffuseConfig(DiffuseConfig& config);
@@ -18,6 +21,8 @@ class Drawer {
   static void DrawModelController(ModelController& model_controller);
   static void DrawCameraBase(CameraBase& camera_base);
   static void DrawPerspectiveCamera(PerspectiveCamera& perspective_camera);
+  // Castable elements
+  static void DrawCamera(CameraBase* camera_base);
   // Deletable elements (return false if object should be deleted)
   static bool DrawDirectionalLight(DirectionalLight& directional_light);
   static bool DrawSpotLight(SpotLight& point_light);

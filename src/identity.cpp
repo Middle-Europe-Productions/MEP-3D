@@ -43,6 +43,10 @@ const std::string& Identity::GetName() const {
   return name_;
 }
 
+std::string_view Identity::GetClass() const {
+  return class_name_;
+}
+
 std::string Identity::ToString() const {
   return "\"Identity\": { name: " + std::string(class_name_) +
          ", \"id\": " + std::to_string(id_) +

@@ -22,9 +22,15 @@ class CameraBase : public Identity,
  public:
   CameraBase(std::string_view identity);
   CameraBase(std::string_view identity, std::string_view name);
+  void DisableEvents();
+  void EnableEvents();
+  bool IsDisabled() const;
   virtual glm::mat4 GetViewMatrix() const = 0;
   virtual glm::vec3 GetPosition() const;
   virtual glm::vec3 GetNormalizedDirection() const;
+
+ private:
+  bool disabled_ = true;
 };
 
 #endif

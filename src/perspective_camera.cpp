@@ -40,11 +40,10 @@ PerspectiveCamera::PerspectiveCamera(
   mouse_x_change = 0.f;
   mouse_y_change = 0.f;
   initial_move_ = true;
-  Update();
 }
 
-void PerspectiveCamera::Update() {
-  ValidateKeyboardInput();
+void PerspectiveCamera::Update(float time_delta) {
+  ValidateKeyboardInput(time_delta);
   UpdateInt([this]() {
     Set(CameraVariables::Direction,
         glm::normalize(
@@ -65,6 +64,9 @@ glm::mat4 PerspectiveCamera::GetViewMatrix() const {
 }
 
 void PerspectiveCamera::OnKeyEvent(KeyEvent event) {
+  if (IsDisabled()) {
+    return;
+  }
   if (event.action == Action::Pressed || event.action == Action::Released) {
     if (ContainsKey(event.code)) {
       key_status_[event.code] = event.action == Action::Pressed;
@@ -73,6 +75,9 @@ void PerspectiveCamera::OnKeyEvent(KeyEvent event) {
 }
 
 void PerspectiveCamera::OnMouseEvent(MouseEvent event) {
+  if (IsDisabled()) {
+    return;
+  }
   if (initial_move_) {
     last_mouse_x_ = event.x;
     last_mouse_y_ = event.y;
@@ -141,9 +146,9 @@ void PerspectiveCamera::InitKeyboardMap() {
   }
 }
 
-void PerspectiveCamera::ValidateKeyboardInput() {
+void PerspectiveCamera::ValidateKeyboardInput(float time_delta) {
   bool pressed = false;
-  double velocity = move_speed_ * camera_time_delta_->GetTimeDelta();
+  double velocity = move_speed_ * time_delta;
   if (IsActive(PerspectiveCameraActions::Front)) {
     Increment(CameraVariables::Position,
               Get(CameraVariables::Direction) * (GLfloat)velocity);

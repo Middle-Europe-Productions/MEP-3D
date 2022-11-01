@@ -17,31 +17,35 @@ class CameraScene final : public Scene {
         {glm::radians(45.0f), window->GetAspectRation(), 0.1f, 10000.0f}));
     auto camera =
         std::make_unique<PerspectiveCamera>(PerspectiveCameraConfig::Create());
+    auto config = PerspectiveCameraConfig::Create();
+    config.start_position.x += 10;
+    auto camera_2 = std::make_unique<PerspectiveCamera>(config);
     // Init window
     window->AddView(view_.get());
     window->AddCamera(camera.get());
     window->AddObserver(camera.get());
+    window->AddObserver(camera_2.get());
     // Load shader
-    shader_ = std::make_unique<Shader>();
-    shader_->CreateFromString(shaders::kBasicVertexShader,
-                              shaders::kBasicFragmentShader);
-    shaders::CacheDefaultUnifroms(*shader_);
+    auto shader = std::make_unique<Shader>();
+    shader->CreateFromString(shaders::kBasicVertexShader,
+                             shaders::kBasicFragmentShader);
+    shaders::CacheDefaultUnifroms(*shader);
 
     triangle_ = std::make_unique<Pyramid>();
-    triangle_->Bind(shader_.get());
-    Attach(std::move(camera));
+    triangle_->Bind(shader.get());
+    Attach(std::move(camera), std::move(camera_2), /*std::move(view),*/
+           std::move(shader));
   }
   void OnDetach() override {}
   void OnUpdate(float time_delta) override { UpdateAll(time_delta); }
   void OnDraw(RenderTarget& render_target) override {
-    shader_->Use();
+    GetShaders()[0]->Use();
     triangle_->Draw(render_target);
-    shader_->Stop();
+    GetShaders()[0]->Stop();
   }
 
  public:
   std::unique_ptr<PerspectiveView> view_;
-  std::unique_ptr<Shader> shader_;
   std::unique_ptr<Pyramid> triangle_;
 };
 

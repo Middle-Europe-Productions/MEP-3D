@@ -203,7 +203,7 @@ class MainLayer : private WindowObserver, public Layer {
     if (curAngle_ >= 360) {
       curAngle_ -= 360;
     }
-    camera_->Update();
+    camera_->Update(time_delta);
     pyramids[0]->Rotate(0.1f, Axis::Y);
     (*spot_light_fact)[0]->GetPointConfigRef().position =
         Vec3f{camera_->GetPosition().x, camera_->GetPosition().y,

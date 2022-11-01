@@ -21,7 +21,8 @@ class SceneUILayer : public Layer, public SceneObserver {
     DrawPointLight = 9,
     DrawModelMenu = 10,
     DrawShader = 11,
-    DrawPerspectiveCamera,
+    DrawCamera,
+    DrawWindow,
     MenuActionCount
   };
   void OnAttach(Scene* scene);

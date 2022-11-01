@@ -14,6 +14,7 @@ class Identity {
   unsigned int GetId() const;
   unsigned int GetGlobalId() const;
   const std::string& GetName() const;
+  std::string_view GetClass() const;
   virtual std::string ToString() const;
   Identity& operator=(const Identity& id);
   bool operator==(const Identity& x) const;

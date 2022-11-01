@@ -15,6 +15,18 @@ CameraBase::CameraBase(std::string_view identity) : Identity(identity) {}
 CameraBase::CameraBase(std::string_view identity, std::string_view name)
     : Identity(identity, name) {}
 
+void CameraBase::DisableEvents() {
+  disabled_ = true;
+}
+
+void CameraBase::EnableEvents() {
+  disabled_ = false;
+}
+
+bool CameraBase::IsDisabled() const {
+  return disabled_;
+}
+
 glm::vec3 CameraBase::GetPosition() const {
   return Get(CameraVariables::Position);
 }

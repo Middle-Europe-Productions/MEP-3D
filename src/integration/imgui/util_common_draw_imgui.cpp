@@ -8,6 +8,18 @@
 
 #include "imgui_addons.hpp"
 namespace {
+constexpr int kGlobalPlotBufferSize = 100;
+// Framerate
+static std::vector<float> framerate_cache = std::vector<float>();
+static float framerate_average = 0.0f;
+static float framerate_offset = 10.0f;
+static int frame = 0;
+// Deg
+constexpr int kDegMin = 1;
+constexpr int kDegMax = 180;
+// Jump value
+constexpr float kGlobalSlide = 0.05;
+
 Color ToMepColor(ImVec4& im_color) {
   return Color(255 * im_color.x, 255 * im_color.y, 255 * im_color.z,
                255 * im_color.w);
@@ -33,20 +45,45 @@ int DrawComboMenuFromMEP(std::vector<std::unique_ptr<Element>>& array,
   return index - 1;
 }
 
-constexpr int kGlobalPlotBufferSize = 100;
-// Framerate
-static std::vector<float> framerate_cache = std::vector<float>();
-static float framerate_average = 0.0f;
-static float framerate_offset = 10.0f;
-static int frame = 0;
-// Deg
-constexpr int kDegMin = 1;
-constexpr int kDegMax = 180;
-// Jump value
-constexpr float kGlobalSlide = 0.05;
+template <typename Element>
+Element* DrawComboMenuFromMEP(std::vector<std::unique_ptr<Element>>& array,
+                              Element* selected,
+                              const char* type) {
+  if (array.empty()) {
+    return nullptr;
+  }
+  std::vector<const char*> ele;
+  int selected_index = -1;
+  for (int i = 0; i < array.size(); i++) {
+    if (selected == array[i].get()) {
+      selected_index = i;
+    }
+    ele.push_back(array[i]->GetName().c_str());
+  }
+  if (selected_index == -1) {
+    LOG(INFO) << "Could not find selected element";
+  }
+  ImGui::Combo(type, &selected_index, ele.data(), ele.size());
+  return array[selected_index].get();
+}
 }  // namespace
 
 namespace UI {
+void Drawer::DrawWindowInterface(Window& window, Scene& scene) {
+  ImGui::Text("Window resolution x: %i, y: %i", window.GetSize().x_,
+              window.GetSize().y_);
+  ImGui::Text("Buffer size x: %i, y: %i", window.GetBufferSize().x_,
+              window.GetBufferSize().y_);
+  ImGui::Text("Aspect ratio: %.3f", window.GetAspectRation());
+  ImGui::Separator();
+  ImGui::Text("Render Target");
+  auto* selected_camera =
+      DrawComboMenuFromMEP(scene.GetCamera(), window.GetCamera(), "Cameras");
+  if (selected_camera) {
+    window.AddCamera(selected_camera);
+  }
+}
+
 void Drawer::DrawAmbientConfig(AmbientConfig& config) {
   ImVec4 im_color = FromMepColor(config.color);
   ImGui::ColorEdit4("Light Color##2", (float*)&im_color,
@@ -55,6 +92,7 @@ void Drawer::DrawAmbientConfig(AmbientConfig& config) {
   ImGui::SliderFloat("Ambient Intensity", &config.intensity, 0.0f, 1.0f, "%.3f",
                      ImGuiSliderFlags_None);
 }
+
 void Drawer::DrawDiffuseConfig(DiffuseConfig& config) {
   if (config.direction.has_value()) {
     float v[3] = {config.direction.value().x_, config.direction.value().y_,
@@ -67,6 +105,7 @@ void Drawer::DrawDiffuseConfig(DiffuseConfig& config) {
   ImGui::SliderFloat("Diffuse Intensity", &config.intensity, 0.0f, 1.0f, "%.3f",
                      ImGuiSliderFlags_None);
 }
+
 void Drawer::DrawSpotConfig(SpotConfig& point_config) {
   int deg = static_cast<int>(point_config.edge_deg);
   ImGui::DragScalar("Degree", ImGuiDataType_S32, &deg, 1.0, &kDegMin, &kDegMax,
@@ -79,6 +118,7 @@ void Drawer::DrawSpotConfig(SpotConfig& point_config) {
   point_config.direction.y_ = v[1];
   point_config.direction.z_ = v[2];
 }
+
 void Drawer::DrawPointConfig(PointConfig& point_config) {
   float vl = 10.0;
   ImGui::DragFloat("Quadratic", &point_config.quadratic, 0.01f, 0.0f, FLT_MAX,
@@ -118,7 +158,6 @@ void Drawer::DrawPerspectiveCamera(PerspectiveCamera& perspective_camera) {
                        90.0, "%.3f", ImGuiSliderFlags_None)) {
     perspective_camera.Changed();
   }
-  perspective_camera.Update();
   ImGui::DragFloat("Move speed: ", &perspective_camera.move_speed_, 0.01f, 0.0f,
                    FLT_MAX, "%.3f", ImGuiSliderFlags_None);
   ImGui::DragFloat("Turn speed: ", &perspective_camera.turn_speed_, 0.01f, 0.0f,
@@ -136,6 +175,12 @@ void Drawer::DrawPerspectiveCamera(PerspectiveCamera& perspective_camera) {
   }
 }
 
+void Drawer::DrawCamera(CameraBase* camera_base) {
+  if (camera_base->GetClass() == kPerspectiveCamera) {
+    DrawPerspectiveCamera(*dynamic_cast<PerspectiveCamera*>(camera_base));
+  }
+}
+
 bool Drawer::DrawDirectionalLight(DirectionalLight& directional_light) {
   ImGui::Text("Ambient Config");
   UI::Drawer::DrawAmbientConfig(directional_light.GetAmbientConfigRef());
@@ -143,6 +188,7 @@ bool Drawer::DrawDirectionalLight(DirectionalLight& directional_light) {
   UI::Drawer::DrawDiffuseConfig(directional_light.GetDiffuseConfigRef());
   return true;
 }
+
 bool Drawer::DrawSpotLight(SpotLight& point_light) {
   ImGui::Text("Ambient Config");
   UI::Drawer::DrawAmbientConfig(point_light.GetAmbientConfigRef());
@@ -154,6 +200,7 @@ bool Drawer::DrawSpotLight(SpotLight& point_light) {
   UI::Drawer::DrawSpotConfig(point_light.GetSpotConfigRef());
   return true;
 }
+
 bool Drawer::DrawPointLight(PointLight& point_light) {
   ImGui::Text("Ambient Config");
   UI::Drawer::DrawAmbientConfig(point_light.GetAmbientConfigRef());
@@ -163,6 +210,7 @@ bool Drawer::DrawPointLight(PointLight& point_light) {
   UI::Drawer::DrawDiffuseConfig(point_light.GetDiffuseConfigRef());
   return true;
 }
+
 bool Drawer::DrawModel(Model& model) {
   auto status = model.GetStatus();
   if (status == Status::NotImplemented) {

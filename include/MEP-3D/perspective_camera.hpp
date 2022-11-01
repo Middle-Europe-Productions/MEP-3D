@@ -54,7 +54,7 @@ class PerspectiveCamera : public CameraBase {
                     const PerspectiveCameraControlsMap& controls = {
                         Keyboard::W, Keyboard::S, Keyboard::A, Keyboard::D,
                         Keyboard::Space, Keyboard::LeftControl});
-  void Update() override;
+  void Update(float time_delta) override;
   glm::mat4 GetViewMatrix() const override;
   void OnKeyEvent(KeyEvent event) override;
   void OnMouseEvent(MouseEvent event) override;
@@ -68,7 +68,7 @@ class PerspectiveCamera : public CameraBase {
   bool IsActive(PerspectiveCameraActions pca);
   bool ContainsKey(Keyboard key);
   void InitKeyboardMap();
-  void ValidateKeyboardInput();
+  void ValidateKeyboardInput(float time_delta);
 
   std::unordered_map<Keyboard, bool> key_status_;
   PerspectiveCameraControlsMap controls_;
@@ -89,6 +89,7 @@ class PerspectiveCamera : public CameraBase {
   GLfloat mouse_x_change;
   GLfloat mouse_y_change;
   bool initial_move_;
+  bool disabled_ = true;
 
   bool reversed_x_axis_ = false;
   bool reversed_y_axis_ = false;

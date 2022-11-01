@@ -73,8 +73,12 @@ constexpr char kDefaultSceneRuntimeConfig[] = R"({
           "return": 11
         },
         {
-          "name":"Perspective Camera",
+          "name":"Cameras",
           "return": 12
+        },
+        {
+          "name":"Window",
+          "return":13
         }
       ]
     } 
@@ -141,14 +145,14 @@ class SceneUILayerImGUI : public SceneUILayer {
     }
   }
 
-  void DrawPerspectiveCamera() {
-    if (GetScenePtr()->GetPerspectiveCamera().empty()) {
+  void DrawCamera() {
+    if (GetScenePtr()->GetCamera().empty()) {
       ImGui::Text("You do not have any perspective cameras yet!");
       return;
     }
-    for (auto& pc : GetScenePtr()->GetPerspectiveCamera()) {
+    for (auto& pc : GetScenePtr()->GetCamera()) {
       if (ImGui::TreeNode(pc->Identity::GetName().c_str())) {
-        UI::Drawer::DrawPerspectiveCamera(*pc.get());
+        UI::Drawer::DrawCamera(pc.get());
         if (pc.get() == GetEngine()->GetWindow()->GetCamera()) {
           ImGui::Text("This camera is currently used");
         }
@@ -268,8 +272,15 @@ class SceneUILayerImGUI : public SceneUILayer {
           }},
          {static_cast<int>(MenuAction::DrawModelMenu),
           std::bind(&SceneUILayerImGUI::DrawModelMenu, this)},
-         {static_cast<int>(MenuAction::DrawPerspectiveCamera),
-          std::bind(&SceneUILayerImGUI::DrawPerspectiveCamera, this)}});
+         {static_cast<int>(MenuAction::DrawCamera),
+          std::bind(&SceneUILayerImGUI::DrawCamera, this)},
+         {static_cast<int>(MenuAction::DrawWindow), [this]() {
+            DCHECK(GetEngine());
+            DCHECK(GetEngine()->GetWindow());
+            DCHECK(GetScenePtr());
+            UI::Drawer::DrawWindowInterface(*GetEngine()->GetWindow(),
+                                            *GetScenePtr());
+          }}});
   }
 
   ~SceneUILayerImGUI() { LOG(INFO) << __FUNCTION__; }

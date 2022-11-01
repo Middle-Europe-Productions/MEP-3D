@@ -7,7 +7,7 @@ class Updatable {
  public:
   using UpdateCallback = std::function<void()>;
   Updatable() : changed_(true) {}
-  virtual void Update() = 0;
+  virtual void Update(float time_delta) = 0;
   virtual void Updated();
   virtual void Changed();
   virtual bool ShouldUpdate() const;

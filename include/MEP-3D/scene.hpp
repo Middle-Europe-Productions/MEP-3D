@@ -24,8 +24,7 @@ class SceneObserver : public Observer {
   virtual void OnShaderAttached(Shader* shader) { DCHECK(shader); };
   virtual void OnMaterialAttached(Material* material) { DCHECK(material); };
   virtual void OnTextureAttached(Texture* texture) { DCHECK(texture); };
-  virtual void OnPerspectiveCameraAttached(
-      PerspectiveCamera* perspective_camera) {
+  virtual void OnCameraAttached(CameraBase* perspective_camera) {
     DCHECK(perspective_camera);
   };
   virtual ~SceneObserver() = default;
@@ -45,22 +44,23 @@ class Scene : public Layer, public ObserverList<SceneObserver> {
   Scene(const std::string& name) : Layer(name) {}
   void AddObserver(SceneObserver* obs);
   // Attachers and getters
-  std::vector<std::unique_ptr<DirectionalLight>>& GetDirectionaLights();
-  std::size_t Attach(std::unique_ptr<DirectionalLight> directional_light);
-  void Attach(std::unique_ptr<SpotLightController> spot_light_controller);
   std::unique_ptr<SpotLightController>& GetSpotLightController();
-  void Attach(std::unique_ptr<PointLightController> point_light_controller);
   std::unique_ptr<PointLightController>& GetPointLightController();
-  std::size_t Attach(std::unique_ptr<Model> model);
+  std::vector<std::unique_ptr<DirectionalLight>>& GetDirectionaLights();
   std::vector<std::unique_ptr<Model>>& GetModels();
-  std::size_t Attach(std::unique_ptr<Shader> shader);
   std::vector<std::unique_ptr<Shader>>& GetShaders();
-  std::size_t Attach(std::unique_ptr<Material> material);
   std::vector<std::unique_ptr<Material>>& GetMaterial();
-  std::size_t Attach(std::unique_ptr<Texture> texture);
   std::vector<std::unique_ptr<Texture>>& GetTexture();
-  std::size_t Attach(std::unique_ptr<PerspectiveCamera> perspective_camera);
-  std::vector<std::unique_ptr<PerspectiveCamera>>& GetPerspectiveCamera();
+  void Attach(std::unique_ptr<DirectionalLight> directional_light);
+  void Attach(std::unique_ptr<SpotLightController> spot_light_controller);
+  void Attach(std::unique_ptr<PointLightController> point_light_controller);
+  void Attach(std::unique_ptr<Model> model);
+  void Attach(std::unique_ptr<Shader> shader);
+  void Attach(std::unique_ptr<Material> material);
+  void Attach(std::unique_ptr<Texture> texture);
+  void Attach(std::unique_ptr<CameraBase> camera_base);
+  void Attach(std::unique_ptr<PerspectiveCamera> camera_base);
+  std::vector<std::unique_ptr<CameraBase>>& GetCamera();
   template <typename First, typename... Args>
   void Attach(First&& first, Args&&... args);
   // Usable
@@ -74,7 +74,7 @@ class Scene : public Layer, public ObserverList<SceneObserver> {
       RenderTarget& render_target,
       DrawableElements drawable_elements = DrawableElements::All);
   // Updatable
-  std::size_t UpdatePerspectiveCamera(float time_delta);
+  std::size_t UpdateCamera(float time_delta);
   std::size_t UpdateAll(
       float time_delta,
       UpdatableElements updatable_elements = UpdatableElements::All);
@@ -86,7 +86,7 @@ class Scene : public Layer, public ObserverList<SceneObserver> {
   std::vector<std::unique_ptr<Shader>> shaders_;
   std::vector<std::unique_ptr<Material>> materials_;
   std::vector<std::unique_ptr<Texture>> textures_;
-  std::vector<std::unique_ptr<PerspectiveCamera>> perspective_camera_;
+  std::vector<std::unique_ptr<CameraBase>> camera_;
   std::unique_ptr<SpotLightController> spot_light_controller_;
   std::unique_ptr<PointLightController> point_light_controller_;
 };

@@ -9,19 +9,42 @@ void Scene::AddObserver(SceneObserver* obs) {
 std::vector<std::unique_ptr<DirectionalLight>>& Scene::GetDirectionaLights() {
   return directional_lights_;
 }
-std::size_t Scene::Attach(std::unique_ptr<DirectionalLight> directional_light) {
+
+std::unique_ptr<SpotLightController>& Scene::GetSpotLightController() {
+  return spot_light_controller_;
+}
+
+std::unique_ptr<PointLightController>& Scene::GetPointLightController() {
+  return point_light_controller_;
+}
+
+std::vector<std::unique_ptr<Model>>& Scene::GetModels() {
+  return models_;
+}
+
+std::vector<std::unique_ptr<Shader>>& Scene::GetShaders() {
+  return shaders_;
+}
+
+std::vector<std::unique_ptr<Material>>& Scene::GetMaterial() {
+  return materials_;
+}
+
+std::vector<std::unique_ptr<Texture>>& Scene::GetTexture() {
+  return textures_;
+}
+std::vector<std::unique_ptr<CameraBase>>& Scene::GetCamera() {
+  return camera_;
+}
+
+void Scene::Attach(std::unique_ptr<DirectionalLight> directional_light) {
   DCHECK(directional_light);
   directional_lights_.emplace_back(std::move(directional_light));
-  return directional_lights_.size() - 1;
 }
 
 void Scene::Attach(std::unique_ptr<SpotLightController> spot_light_controller) {
   DCHECK(spot_light_controller);
   spot_light_controller_ = std::move(spot_light_controller);
-}
-
-std::unique_ptr<SpotLightController>& Scene::GetSpotLightController() {
-  return spot_light_controller_;
 }
 
 void Scene::Attach(
@@ -30,74 +53,47 @@ void Scene::Attach(
   point_light_controller_ = std::move(point_light_controller);
 }
 
-std::unique_ptr<PointLightController>& Scene::GetPointLightController() {
-  return point_light_controller_;
-}
-
-std::size_t Scene::Attach(std::unique_ptr<Model> model) {
+void Scene::Attach(std::unique_ptr<Model> model) {
   DCHECK(model);
   models_.emplace_back(std::move(model));
   ForAllObservers([model = models_.back().get()](auto* obs) {
     obs->OnModelAttached(model);
   });
-  return models_.size() - 1;
 }
 
-std::vector<std::unique_ptr<Model>>& Scene::GetModels() {
-  return models_;
-}
-
-std::size_t Scene::Attach(std::unique_ptr<Shader> shader) {
+void Scene::Attach(std::unique_ptr<Shader> shader) {
   DCHECK(shader);
   shaders_.emplace_back(std::move(shader));
   ForAllObservers([shader = shaders_.back().get()](auto* obs) {
     obs->OnShaderAttached(shader);
   });
-  return shaders_.size() - 1;
 }
 
-std::vector<std::unique_ptr<Shader>>& Scene::GetShaders() {
-  return shaders_;
-}
-
-std::size_t Scene::Attach(std::unique_ptr<Material> material) {
+void Scene::Attach(std::unique_ptr<Material> material) {
   DCHECK(material);
   materials_.emplace_back(std::move(material));
   ForAllObservers([material = materials_.back().get()](auto* obs) {
     obs->OnMaterialAttached(material);
   });
-  return materials_.size() - 1;
 }
-std::vector<std::unique_ptr<Material>>& Scene::GetMaterial() {
-  return materials_;
-}
-
-std::size_t Scene::Attach(std::unique_ptr<Texture> texture) {
+void Scene::Attach(std::unique_ptr<Texture> texture) {
   DCHECK(texture);
   textures_.emplace_back(std::move(texture));
   ForAllObservers([texture = textures_.back().get()](auto* obs) {
     obs->OnTextureAttached(texture);
   });
-  return textures_.size() - 1;
 }
 
-std::vector<std::unique_ptr<Texture>>& Scene::GetTexture() {
-  return textures_;
+void Scene::Attach(std::unique_ptr<CameraBase> camera_base) {
+  DCHECK(camera_base);
+  camera_.emplace_back(std::move(camera_base));
+  ForAllObservers([camera_base = camera_.back().get()](auto* obs) {
+    obs->OnCameraAttached(camera_base);
+  });
 }
 
-std::size_t Scene::Attach(
-    std::unique_ptr<PerspectiveCamera> perspective_camera) {
-  DCHECK(perspective_camera);
-  perspective_camera_.emplace_back(std::move(perspective_camera));
-  ForAllObservers(
-      [perspective_camera = perspective_camera_.back().get()](auto* obs) {
-        obs->OnPerspectiveCameraAttached(perspective_camera);
-      });
-  return perspective_camera_.size() - 1;
-}
-
-std::vector<std::unique_ptr<PerspectiveCamera>>& Scene::GetPerspectiveCamera() {
-  return perspective_camera_;
+void Scene::Attach(std::unique_ptr<PerspectiveCamera> camera_base) {
+  Attach(std::unique_ptr<CameraBase>(std::move(camera_base)));
 }
 
 void Scene::UseAllDirectionalLights() {
@@ -148,10 +144,10 @@ std::size_t Scene::DrawAll(RenderTarget& render_target,
   return draw_calls;
 }
 
-std::size_t Scene::UpdatePerspectiveCamera(float time_delta) {
+std::size_t Scene::UpdateCamera(float time_delta) {
   std::size_t update_counter = 0;
-  for (auto& it : perspective_camera_) {
-    it->Update();
+  for (auto& it : camera_) {
+    it->Update(time_delta);
     ++update_counter;
   }
   return update_counter;
@@ -162,7 +158,7 @@ std::size_t Scene::UpdateAll(float time_delta,
   std::size_t update_counter = 0;
   if (updatable_elements == UpdatableElements::Camera ||
       updatable_elements == UpdatableElements::All) {
-    update_counter += UpdatePerspectiveCamera(time_delta);
+    update_counter += UpdateCamera(time_delta);
   }
   return update_counter;
 }
