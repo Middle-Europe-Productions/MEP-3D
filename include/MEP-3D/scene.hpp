@@ -11,6 +11,7 @@
 #include <MEP-3D/perspective_camera.hpp>
 #include <MEP-3D/shader.hpp>
 #include <MEP-3D/spot_light.hpp>
+#include <MEP-3D/arcball_camera.hpp>
 
 #include <memory>
 #include <vector>
@@ -60,6 +61,7 @@ class Scene : public Layer, public ObserverList<SceneObserver> {
   void Attach(std::unique_ptr<Texture> texture);
   void Attach(std::unique_ptr<CameraBase> camera_base);
   void Attach(std::unique_ptr<PerspectiveCamera> camera_base);
+  void Attach(std::unique_ptr<ArcballCamera> arcball_camera);
   std::vector<std::unique_ptr<CameraBase>>& GetCamera();
   template <typename First, typename... Args>
   void Attach(First&& first, Args&&... args);

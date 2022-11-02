@@ -72,7 +72,6 @@ class PerspectiveCamera : public CameraBase {
 
   std::unordered_map<Keyboard, bool> key_status_;
   PerspectiveCameraControlsMap controls_;
-  TimeDeltaPtr camera_time_delta_;
   glm::vec3 front_;
   glm::vec3 up_;
   glm::vec3 right_;

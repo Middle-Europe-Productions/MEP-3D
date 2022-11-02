@@ -26,8 +26,7 @@ PerspectiveCamera::PerspectiveCamera(
     const PerspectiveCameraConfig& config,
     const PerspectiveCameraControlsMap& controls)
     : CameraBase(kPerspectiveCamera),
-      controls_(controls),
-      camera_time_delta_(TimeDelta::GetInstance()) {
+      controls_(controls) {
   Set(CameraVariables::Position, config.start_position);
   Set(CameraVariables::Direction, glm::vec3(0.0f, 0.0f, -1.0f));
   world_up_ = config.start_up;

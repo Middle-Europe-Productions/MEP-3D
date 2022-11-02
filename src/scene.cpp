@@ -96,6 +96,10 @@ void Scene::Attach(std::unique_ptr<PerspectiveCamera> camera_base) {
   Attach(std::unique_ptr<CameraBase>(std::move(camera_base)));
 }
 
+void Scene::Attach(std::unique_ptr<ArcballCamera> arcball_camera) {
+  Attach(std::unique_ptr<CameraBase>(std::move(arcball_camera)));
+}
+
 void Scene::UseAllDirectionalLights() {
   for (auto& dl : directional_lights_) {
     dl->Use();

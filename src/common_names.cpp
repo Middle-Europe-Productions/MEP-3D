@@ -6,6 +6,7 @@ const char* kTexture = "texture";
 const char* kShader = "shader";
 const char* kCamera = "camera";
 const char* kPerspectiveCamera = "perspective_camera";
+const char* kArcballCamera = "arcball_camera";
 const char* kMaterial = "material";
 const char* kLight = "light";
 const char* kModel = "model";

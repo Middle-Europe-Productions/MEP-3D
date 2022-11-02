@@ -1,13 +1,11 @@
 #include <MEP-3D/mep-3d.hpp>
 #include <MEP-3D/template/shaders_preset.hpp>
 
-#include <imgui.h>
-
 class CameraScene final : public Scene {
  public:
   CameraScene() {}
   void OnAttach() override {
-    auto& window = GetEngine()->GetWindow();
+    auto &window = GetEngine()->GetWindow();
     if (!window) {
       LOG(ERROR) << "Window does not exist";
       return;
@@ -17,6 +15,9 @@ class CameraScene final : public Scene {
         {glm::radians(45.0f), window->GetAspectRation(), 0.1f, 10000.0f}));
     auto camera =
         std::make_unique<PerspectiveCamera>(PerspectiveCameraConfig::Create());
+    auto arcball_camera =
+        std::make_unique<ArcballCamera>(ArcballCameraConfig::Create());
+
     auto config = PerspectiveCameraConfig::Create();
     config.start_position.x += 10;
     auto camera_2 = std::make_unique<PerspectiveCamera>(config);
@@ -34,7 +35,7 @@ class CameraScene final : public Scene {
     triangle_ = std::make_unique<Pyramid>();
     triangle_->Bind(shader.get());
     Attach(std::move(camera), std::move(camera_2), /*std::move(view),*/
-           std::move(shader));
+           std::move(shader), std::move(arcball_camera));
   }
   void OnDetach() override {}
   void OnUpdate(float time_delta) override { UpdateAll(time_delta); }
