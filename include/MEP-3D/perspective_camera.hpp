@@ -60,7 +60,7 @@ class PerspectiveCamera : public CameraBase {
   void OnMouseEvent(MouseEvent event) override;
   void OnWindowResizeEvent(Vec2i size) override;
   void OnEventStatusChanged(bool events_blocked) override;
-  std::string ToString() const;
+  std::string ToString() const override;
 
  private:
   friend class UI::Drawer;

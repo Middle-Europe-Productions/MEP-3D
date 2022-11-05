@@ -2,7 +2,7 @@
 #include <MEP-3D/template/shaders_preset.hpp>
 
 namespace shaders {
-char* kBasicVertexShader = R"(
+const char* kBasicVertexShader = R"(
 #version 330
 layout(location = 0) in vec3 pos;
 layout(location = 1) in vec2 tex;
@@ -25,7 +25,7 @@ void main() {
   fragment_position = (model * vec4(pos, 1.0)).xyz;
 })";
 
-char* kBasicFragmentShader = R"(
+const char* kBasicFragmentShader = R"(
 #version 330
 
 in vec4 local_color;

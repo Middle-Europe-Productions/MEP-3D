@@ -41,6 +41,8 @@ set(SOURCE
   ${SRC_ROOT}/scene_ui_parser.cpp
   ${SRC_ROOT}/key_event.cpp
   ${SRC_ROOT}/camera_base.cpp
+  ${SRC_ROOT}/features.cpp
+  ${SRC_ROOT}/mep_features.cpp
 )
 
 set(HEADERS
@@ -102,6 +104,8 @@ set(HEADERS
   ${INC_ROOT}/template/shaders_preset.hpp
   ${INC_ROOT}/common_names.hpp
   ${INC_ROOT}/scene_ui_parser.hpp
+  ${INC_ROOT}/features.hpp
+  ${INC_ROOT}/mep_features.hpp
 )
 
 set(INCLUDE_DIRECTORIES

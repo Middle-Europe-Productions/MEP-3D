@@ -18,7 +18,7 @@ class MeshBase : public Drawable {
  protected:
   GLuint vertex_buffer_object_;
   GLuint vertex_array_object_;
-  GLuint index_buffer_boject_;
+  GLuint index_buffer_object_;
   unsigned int vertices_count_;
 };
 using MeshBasePtr = std::unique_ptr<MeshBase>;

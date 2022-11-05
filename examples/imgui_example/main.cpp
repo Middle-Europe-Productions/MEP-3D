@@ -140,6 +140,7 @@ class BenchmarkLayer final : public Scene, private WindowObserver {
 
 int main(int argc, char* argv[]) {
   utils::InitLogging(argc, argv);
+  Features::Init(argc, argv);
   auto window = Window::GetInstance({{1280, 720}, "ImGui Example", false});
   window->Init();
   auto main_engine = std::make_shared<Engine>();

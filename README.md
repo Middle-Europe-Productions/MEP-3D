@@ -2,7 +2,25 @@
 
 ## MEP-3D
 
-#### CMake
+### How to start?
+
+Install git
+```sh
+Macos:
+brew install git
+```
+
+Fetch the repository
+```sh
+git clone --recursive -j8 https://github.com/Middle-Europe-Productions/MEP-3D.git
+```
+Install cmake:
+```sh
+Macos:
+brew install cmake
+```
+
+#### Preaparing build
 Goto project directory.
 ```sh
 cmake -S . -B build/
@@ -24,12 +42,21 @@ Open the visual studio developer console or set environment variables.
 cd <build>/examples
 run_mep_msvc.bat -t/--target <target> -m/--mode <mode=Debug> <flags>
 ```
-##### Flags
+### Flags
 Mep engine allows default chromium flags, for example:
 ```sh
 -v=2
+or
+--vmodule=*<file_name>=2*"
 ```
 For more info please check this link [link](https://github.com/google/glog).
+
+### Features
+The engine allows runtime features. They can be toggled by defines in the build system, during the program runtime, or through the command line.
+Example:
+```sh
+--feature:use_engine_data_monitor=true
+```
 
 #### Available tools
 * Window creation using GLFW
@@ -58,3 +85,7 @@ The engine currently supports assimp library as its main object loader.
 
 #### Build in thread pool
 Objects are always loaded in the dedicated resource thread pool.
+
+
+### Known issues
+arm64: problem with building assimp, you can disable it by 

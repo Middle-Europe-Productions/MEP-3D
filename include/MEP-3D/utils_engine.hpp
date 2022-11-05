@@ -6,6 +6,9 @@
 #include <MEP-3D/template/scene_ui_layer.hpp>
 
 namespace utils {
+std::shared_ptr<Engine> CreateEngine(
+    std::unique_ptr<Window> window,
+    std::unique_ptr<Scene> scene);
 std::shared_ptr<Engine> CreateEngineWithSceneUI(
     std::unique_ptr<Window> window,
     std::unique_ptr<Scene> scene,

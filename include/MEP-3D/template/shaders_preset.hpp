@@ -4,8 +4,8 @@
 #include <MEP-3D/shader.hpp>
 
 namespace shaders {
-extern char* kBasicVertexShader;
-extern char* kBasicFragmentShader;
+extern const char* kBasicVertexShader;
+extern const char* kBasicFragmentShader;
 void CacheDefaultUnifroms(Shader& shader);
 
 }  // namespace shaders

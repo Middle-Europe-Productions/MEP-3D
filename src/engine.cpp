@@ -1,7 +1,9 @@
 #include <MEP-3D/common_names.hpp>
 #include <MEP-3D/engine.hpp>
+#include <MEP-3D/features.hpp>
 
-Engine::Engine() : Identity(kEngine), window_(nullptr) {
+Engine::Engine()
+    : Identity(kEngine), window_(nullptr), scene_clear_color_(White) {
   LOG(INFO) << "Engine created: " << ToString();
 }
 
@@ -24,76 +26,10 @@ void Engine::Run() {
     LOG(WARNING) << "Window is not attached on " << __func__;
   }
   LOG(INFO) << "Engine initialized, id: " << ToString();
-  auto time = TimeDelta::GetInstance();
-  double time_controller = 0.0;
-  unsigned int frames = 0;
-  unsigned int last_fps = 0;
-  while (window_ && window_->IsOpen()) {
-    window_->StartLoop();
-    EngineMonitorData engine_monitor;
-    engine_monitor.frame_data.frame_time = time->GetCurrentTime();
-    auto time_delta = time->GetTimeDelta();
-    time_controller += time_delta;
-    frames++;
-    window_->Clear(White);
-
-    for (auto& layer : layers_) {
-      EngineMonitorData::LayerData layer_data;
-
-      layer_data.layer_update_time_ms = time->GetCurrentTime();
-      layer->OnUpdate(time_delta);
-      layer_data.layer_update_time_ms =
-          (time->GetCurrentTime() - layer_data.layer_update_time_ms) * 1000.0f;
-
-      layer_data.layer_draw_time_ms = time->GetCurrentTime();
-      layer->OnDraw(*window_);
-      layer_data.layer_draw_time_ms =
-          (time->GetCurrentTime() - layer_data.layer_draw_time_ms) * 1000.0f;
-      layer_data.identity = *layer;
-      layer_data.layer_name = layer->GetName();
-      engine_monitor.frame_data.layer_data.push_back(layer_data);
-    }
-
-    for (auto& ele : custom_layers_) {
-      EngineMonitorData::Structure custom_layer_data;
-      custom_layer_data.identity = *ele;
-      custom_layer_data.structure_name = ele->structure_name;
-      custom_layer_data.total_update_time = time->GetCurrentTime();
-      ele->before_run();
-      for (auto& layer : ele->layer_array) {
-        EngineMonitorData::LayerData layer_data;
-
-        layer_data.layer_update_time_ms = time->GetCurrentTime();
-        layer->OnUpdate(time_delta);
-        layer_data.layer_update_time_ms =
-            (time->GetCurrentTime() - layer_data.layer_update_time_ms) *
-            1000.0f;
-
-        layer_data.layer_draw_time_ms = time->GetCurrentTime();
-        layer->OnDraw(*window_);
-        layer_data.layer_draw_time_ms =
-            (time->GetCurrentTime() - layer_data.layer_draw_time_ms) * 1000.0f;
-        layer_data.identity = *layer;
-        layer_data.layer_name = layer->GetName();
-        custom_layer_data.layer_array.push_back(layer_data);
-      }
-      ele->after_run();
-      custom_layer_data.total_update_time =
-          time->GetCurrentTime() - custom_layer_data.total_update_time;
-      engine_monitor.frame_data.structure_data.push_back(custom_layer_data);
-    }
-
-    window_->FinishLoop();
-    engine_monitor.frame_data.frame_time =
-        (time->GetCurrentTime() - engine_monitor.frame_data.frame_time) *
-        1000.0f;
-    engine_monitor_ = engine_monitor;
-    if (time_controller > 1.0) {
-      engine_monitor_.fps = frames;
-      VLOG(2) << "Frame rate: " << frames;
-      time_controller = 0.0;
-      frames = 0;
-    }
+  if(Features::IsFeatureEnabled(feature::UseEngineDataMonitor)) {
+    LoopWithMonitorData();
+  } else {
+    LoopWithoutMonitorDats();
   }
   for (auto& layer : layers_) {
     layer->UnregisterEngine();
@@ -175,6 +111,10 @@ std::unique_ptr<Layer> Engine::Detachlayer(const Identity& id) {
   return nullptr;
 }
 
+void Engine::SetClearColor(Color color) {
+  scene_clear_color_ = color;
+}
+
 std::unique_ptr<Layer>& Engine::operator[](std::size_t layer_index) {
   return layers_[layer_index];
 }
@@ -185,6 +125,117 @@ const EngineMonitorData& Engine::GetEngineMonitor() const {
 
 bool Engine::operator==(const Identity& id) {
   return *this == id;
+}
+
+void Engine::LoopWithMonitorData() {
+  auto time = TimeDelta::GetInstance();
+  double time_controller = 0.0;
+  unsigned int frames = 0;
+  unsigned int last_fps = 0;
+  while (window_ && window_->IsOpen()) {
+    window_->StartLoop();
+    EngineMonitorData engine_monitor;
+    engine_monitor.frame_data.frame_time = time->GetCurrentTime();
+    auto time_delta = time->GetTimeDelta();
+    time_controller += time_delta;
+    frames++;
+    window_->Clear(scene_clear_color_);
+
+    for (auto& layer : layers_) {
+      EngineMonitorData::LayerData layer_data;
+
+      layer_data.layer_update_time_ms = time->GetCurrentTime();
+      layer->OnUpdate(time_delta);
+      layer_data.layer_update_time_ms =
+          (time->GetCurrentTime() - layer_data.layer_update_time_ms) * 1000.0f;
+
+      layer_data.layer_draw_time_ms = time->GetCurrentTime();
+      layer->OnDraw(*window_);
+      layer_data.layer_draw_time_ms =
+          (time->GetCurrentTime() - layer_data.layer_draw_time_ms) * 1000.0f;
+      layer_data.identity = *layer;
+      layer_data.layer_name = layer->GetName();
+      engine_monitor.frame_data.layer_data.push_back(layer_data);
+    }
+
+    for (auto& ele : custom_layers_) {
+      EngineMonitorData::Structure custom_layer_data;
+      custom_layer_data.identity = *ele;
+      custom_layer_data.structure_name = ele->structure_name;
+      custom_layer_data.total_update_time = time->GetCurrentTime();
+      ele->before_run();
+      for (auto& layer : ele->layer_array) {
+        EngineMonitorData::LayerData layer_data;
+
+        layer_data.layer_update_time_ms = time->GetCurrentTime();
+        layer->OnUpdate(time_delta);
+        layer_data.layer_update_time_ms =
+            (time->GetCurrentTime() - layer_data.layer_update_time_ms) *
+            1000.0f;
+
+        layer_data.layer_draw_time_ms = time->GetCurrentTime();
+        layer->OnDraw(*window_);
+        layer_data.layer_draw_time_ms =
+            (time->GetCurrentTime() - layer_data.layer_draw_time_ms) * 1000.0f;
+        layer_data.identity = *layer;
+        layer_data.layer_name = layer->GetName();
+        custom_layer_data.layer_array.push_back(layer_data);
+      }
+      ele->after_run();
+      custom_layer_data.total_update_time =
+          time->GetCurrentTime() - custom_layer_data.total_update_time;
+      engine_monitor.frame_data.structure_data.push_back(custom_layer_data);
+    }
+
+    window_->FinishLoop();
+    engine_monitor.frame_data.frame_time =
+        (time->GetCurrentTime() - engine_monitor.frame_data.frame_time) *
+        1000.0f;
+    engine_monitor_ = engine_monitor;
+    if (time_controller > 1.0) {
+      engine_monitor_.fps = frames;
+      VLOG(2) << "Frame rate: " << frames;
+      time_controller = 0.0;
+      frames = 0;
+    }
+  }
+}
+
+void Engine::LoopWithoutMonitorDats() {
+  auto time = TimeDelta::GetInstance();
+  double time_controller = 0.0;
+  unsigned int frames = 0;
+  unsigned int last_fps = 0;
+  while (window_ && window_->IsOpen()) {
+    window_->StartLoop();
+    EngineMonitorData engine_monitor;
+    engine_monitor.frame_data.frame_time = time->GetCurrentTime();
+    auto time_delta = time->GetTimeDelta();
+    time_controller += time_delta;
+    frames++;
+    window_->Clear(scene_clear_color_);
+
+    for (auto& layer : layers_) {
+      layer->OnUpdate(time_delta);
+      layer->OnDraw(*window_);
+    }
+
+    for (auto& ele : custom_layers_) {
+      ele->before_run();
+      for (auto& layer : ele->layer_array) {
+        layer->OnUpdate(time_delta);
+        layer->OnDraw(*window_);
+      }
+      ele->after_run();
+    }
+
+    window_->FinishLoop();
+    if (time_controller > 1.0) {
+      VLOG(2) << "Frame rate: " << frames;
+      time_controller = 0.0;
+      frames = 0;
+    }
+  }
 }
 
 bool Engine::EvaluateLayer(const std::unique_ptr<Layer>& layer) const {

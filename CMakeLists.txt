@@ -9,8 +9,17 @@ macro(mep_set_option var default type docstring)
     set(${var} ${${var}} CACHE ${type} ${docstring} FORCE)
 endmacro()
 
+EXECUTE_PROCESS(COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE)
+message(STATUS "[MEP] Architecture: ${ARCHITECTURE}")
+
+if(${ARCHITECTURE} STREQUAL "arm64")
+    mep_set_option(MEP_USE_ASSIMP FALSE BOOL "TRUE to use Open Asset Import Library for model processing")
+    message(WARNING  "[MEP] Disabling assimp library on arm")
+else()
+    mep_set_option(MEP_USE_ASSIMP TRUE BOOL "TRUE to use Open Asset Import Library for model processing")
+endif()
+
 mep_set_option(MEP_USE_STB TRUE BOOL "TRUE to use stb_image for image processing")
-mep_set_option(MEP_USE_ASSIMP TRUE BOOL "TRUE to use Open Asset Import Library for model processing")
 mep_set_option(MEP_STANDALONE_APP FALSE BOOL "TRUE when building a standalone application")
 mep_set_option(MEP_USE_IMGUI TRUE BOOL "TRUE to use ImGui library for debug output")
 

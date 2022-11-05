@@ -9,7 +9,7 @@ constexpr int kRowSize = 8;
 MeshBase::MeshBase() {
   vertex_buffer_object_ = 0;
   vertex_array_object_ = 0;
-  index_buffer_boject_ = 0;
+  index_buffer_object_ = 0;
 }
 
 void MeshBase::Init(const std::vector<GLfloat>& vertices,
@@ -18,8 +18,8 @@ void MeshBase::Init(const std::vector<GLfloat>& vertices,
   glGenVertexArrays(1, &vertex_array_object_);
   glBindVertexArray(vertex_array_object_);
 
-  glGenBuffers(1, &index_buffer_boject_);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_boject_);
+  glGenBuffers(1, &index_buffer_object_);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_object_);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, kSizeOfIndice * indices.size(),
                &indices[0], GL_STATIC_DRAW);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -47,7 +47,7 @@ void MeshBase::Init(const std::vector<GLfloat>& vertices,
 
 void MeshBase::Draw(RenderTarget& render_target) {
   glBindVertexArray(vertex_array_object_);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_boject_);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_object_);
   glDrawElements(GL_TRIANGLES, GetVerticesCount(), GL_UNSIGNED_INT, 0);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
@@ -66,9 +66,9 @@ void MeshBase::Clear() {
     glDeleteBuffers(1, &vertex_buffer_object_);
     vertex_buffer_object_ = 0;
   }
-  if (index_buffer_boject_ != 0) {
-    glDeleteBuffers(1, &index_buffer_boject_);
-    index_buffer_boject_ = 0;
+  if (index_buffer_object_ != 0) {
+    glDeleteBuffers(1, &index_buffer_object_);
+    index_buffer_object_ = 0;
   }
 }
 

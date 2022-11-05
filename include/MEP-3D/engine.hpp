@@ -53,18 +53,22 @@ class Engine : public std::enable_shared_from_this<Engine>, public Identity {
                               int custom_layer_index,
                               bool on_top = false);
   std::unique_ptr<Layer> Detachlayer(const Identity& id);
+  void SetClearColor(Color color);
   const EngineMonitorData& GetEngineMonitor() const;
   std::unique_ptr<Layer>& operator[](std::size_t layer_index);
   bool operator==(const Identity& id);
   ~Engine();
 
  private:
+  void LoopWithMonitorData();
+  void LoopWithoutMonitorDats();
   bool EvaluateLayer(const std::unique_ptr<Layer>& layer) const;
   bool StructureExists(int index) const;
   WindowPtr window_;
   EngineMonitorData engine_monitor_;
   std::vector<std::unique_ptr<Layer>> layers_;
   std::vector<std::unique_ptr<CustomLayerStructure>> custom_layers_;
+  Color scene_clear_color_;
 };
 
 using EnginePtr = std::shared_ptr<Engine>;

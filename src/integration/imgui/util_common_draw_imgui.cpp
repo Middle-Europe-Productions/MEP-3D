@@ -1,5 +1,6 @@
 #include <MEP-3D/template/util_common_draw.hpp>
 #include <MEP-3D/utils.hpp>
+#include <MEP-3D/features.hpp>
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -353,6 +354,9 @@ int Drawer::DrawTextureComboMenu(std::vector<std::unique_ptr<Texture>>& array,
 void Drawer::DrawEngineMonitorDataConst(
     const EngineMonitorData& engine_monitor_data) {
   ImGui::Text("Frame rate: %.1f", ImGui::GetIO().Framerate);
+  if (!Features::IsFeatureEnabled(feature::UseEngineDataMonitor)) {
+    return;
+  }
   ImGui::Text("Total frame time: %.1f",
               engine_monitor_data.frame_data.frame_time);
   if (ImGui::TreeNode("Layers")) {

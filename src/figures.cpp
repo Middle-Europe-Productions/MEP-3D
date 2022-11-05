@@ -7,6 +7,7 @@ constexpr unsigned int kRowSize = 8;
 const std::vector<unsigned int> kPyramidIndicies = {0, 3, 1, 1, 3, 2,
                                                     2, 3, 0, 0, 1, 2};
 const std::vector<unsigned int> kPlaneIndices = {0, 2, 1, 1, 2, 3};
+const std::vector<unsigned int> kTriangleIndices = {0, 1, 2};
 
 void CalculateNormals(std::vector<GLfloat>& vertice_array,
                       unsigned int normal_offset) {
@@ -54,9 +55,10 @@ Pyramid::Pyramid(Vec3f initial_position) {
   VLOG(3) << __FUNCTION__;
   std::vector<GLfloat> vertices = {
       // x,     y,    z,    u,   v,     nx,   ny,   nz
-      -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,  0.0f, 0.0f, -1.0f, 1.0f,
-      0.5f,  0.0f,  0.0f, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 1.0f, 0.0f,  0.0f,
-      0.0f,  0.0f,  0.0f, 1.0f, 0.0f, 0.5f, 1.0f,  0.0f, 0.0f, 0.0f};
+      -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,  0.0f,
+      0.0f, -1.0f, 1.0f, 0.5f,  0.0f,  0.0f, 0.0f, 0.0f,
+      1.0f, -1.0f, 0.0f, 1.0f, 0.0f,  0.0f, 0.0f,  0.0f,
+      0.0f, 1.0f, 0.0f, 0.5f, 1.0f,  0.0f, 0.0f, 0.0f};
   CalculateNormals(vertices, 5);
   Mesh::Init(vertices, kPyramidIndicies);
   Transform(initial_position);
@@ -69,5 +71,16 @@ Plane::Plane(float size, Vec3f initial_position) {
       size,  0.0f, 0.0f,  -1.0f, 0.0f, -size, 0.0f,  size, 0.0f,  size, 0.0f,
       -1.0f, 0.0f, size,  0.0f,  size, size,  size,  0.0f, -1.0f, 0.0f};
   Mesh::Init(vertices, kPlaneIndices);
+  Transform(initial_position);
+}
+
+Triangle::Triangle(Vec3f initial_position) {
+  VLOG(3) << __FUNCTION__;
+  std::vector<GLfloat> vertices = {
+      // x,     y,    z,    u,   v,     nx,   ny,   nz
+      -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+      0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+      0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,};
+  Mesh::Init(vertices, kTriangleIndices);
   Transform(initial_position);
 }

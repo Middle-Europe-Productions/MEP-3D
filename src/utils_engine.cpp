@@ -6,6 +6,19 @@
 #include <MEP-3D/utils_engine.hpp>
 
 namespace utils {
+std::shared_ptr<Engine> CreateEngine(
+    std::unique_ptr<Window> window,
+    std::unique_ptr<Scene> scene) {
+  DCHECK(window);
+  DCHECK(scene);
+  auto main_engine = std::make_shared<Engine>();
+
+  main_engine->AttachWindow(std::move(window));
+  main_engine->AttachLayer(std::move(scene));
+
+  return main_engine;
+}
+
 std::shared_ptr<Engine> CreateEngineWithSceneUI(
     std::unique_ptr<Window> window,
     std::unique_ptr<Scene> scene,

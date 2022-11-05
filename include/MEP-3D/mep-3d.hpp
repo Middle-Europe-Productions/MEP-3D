@@ -30,5 +30,6 @@
 #include <MEP-3D/window_observer.hpp>
 #include <MEP-3D/perspective_camera.hpp>
 #include <MEP-3D/arcball_camera.hpp>
+#include <MEP-3D/features.hpp>
 
 #endif
