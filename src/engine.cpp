@@ -26,7 +26,7 @@ void Engine::Run() {
     LOG(WARNING) << "Window is not attached on " << __func__;
   }
   LOG(INFO) << "Engine initialized, id: " << ToString();
-  if(Features::IsFeatureEnabled(feature::UseEngineDataMonitor)) {
+  if (Features::IsFeatureEnabled(feature::UseEngineDataMonitor)) {
     LoopWithMonitorData();
   } else {
     LoopWithoutMonitorDats();
@@ -57,7 +57,7 @@ void Engine::AttachLayer(std::unique_ptr<Layer> obs, bool on_top) {
   }
 }
 
-int Engine::AttachStructure(std::unique_ptr<CustomLayerStructure> str) {
+std::size_t Engine::AttachStructure(std::unique_ptr<CustomLayerStructure> str) {
   str->layer_array.erase(
       std::remove_if(str->layer_array.begin(), str->layer_array.end(),
                      [this](const auto& in) {

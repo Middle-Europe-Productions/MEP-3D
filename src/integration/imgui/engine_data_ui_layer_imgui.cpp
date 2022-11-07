@@ -5,7 +5,7 @@
 #include <MEP-3D/template/util_common_draw.hpp>
 
 namespace {
-constexpr Keyboard kBlockEventKey = Keyboard::B;
+constexpr Key kBlockEventKey = Key::B;
 constexpr int kPlotElementsBuffer = 100;
 }  // namespace
 
@@ -23,7 +23,7 @@ class EngineDataUILayerImGUI : public EngineDataUILayer {
     if (!GetEngine())
       return;
     if (!block_applied_ && GetEngine()->GetWindow()) {
-      GetEngine()->GetWindow()->BlockEvents(block_events_, Keyboard::B);
+      GetEngine()->GetWindow()->BlockEvents(block_events_, Key::B);
       block_applied_ = true;
     }
   }
@@ -45,7 +45,7 @@ class EngineDataUILayerImGUI : public EngineDataUILayer {
   }
   bool ShouldIgnoreLayer() const override { return false; }
   void OnKeyEvent(KeyEvent event) override {
-    if (event.action == Action::Released && event.code == Keyboard::B) {
+    if (event.action == Action::Released && event.code == Key::B) {
       LOG(INFO) << "Blocking events!";
       block_events_ = !block_events_;
       block_applied_ = false;

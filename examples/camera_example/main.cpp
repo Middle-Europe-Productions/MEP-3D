@@ -5,7 +5,7 @@ class CameraScene final : public Scene {
  public:
   CameraScene() {}
   void OnAttach() override {
-    auto &window = GetEngine()->GetWindow();
+    auto& window = GetEngine()->GetWindow();
     if (!window) {
       LOG(ERROR) << "Window does not exist";
       return;
@@ -26,6 +26,7 @@ class CameraScene final : public Scene {
     window->AddCamera(camera.get());
     window->AddObserver(camera.get());
     window->AddObserver(camera_2.get());
+    window->AddObserver(arcball_camera.get());
     // Load shader
     auto shader = std::make_unique<Shader>();
     shader->CreateFromString(shaders::kBasicVertexShader,

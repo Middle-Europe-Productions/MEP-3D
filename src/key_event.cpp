@@ -1,182 +1,198 @@
 #include <MEP-3D/key_event.hpp>
 
-std::string KeyboardToString(Keyboard keyboard) {
-  switch (keyboard) {
-    case Keyboard::A:
+std::string KeyToString(Key Key) {
+  switch (Key) {
+    case Key::A:
       return "A";
-    case Keyboard::B:
+    case Key::B:
       return "B";
-    case Keyboard::C:
+    case Key::C:
       return "C";
-    case Keyboard::D:
+    case Key::D:
       return "D";
-    case Keyboard::E:
+    case Key::E:
       return "E";
-    case Keyboard::F:
+    case Key::F:
       return "F";
-    case Keyboard::G:
+    case Key::G:
       return "G";
-    case Keyboard::H:
+    case Key::H:
       return "H";
-    case Keyboard::I:
+    case Key::I:
       return "I";
-    case Keyboard::J:
+    case Key::J:
       return "J";
-    case Keyboard::K:
+    case Key::K:
       return "K";
-    case Keyboard::L:
+    case Key::L:
       return "L";
-    case Keyboard::M:
+    case Key::M:
       return "M";
-    case Keyboard::N:
+    case Key::N:
       return "N";
-    case Keyboard::O:
+    case Key::O:
       return "O";
-    case Keyboard::P:
+    case Key::P:
       return "P";
-    case Keyboard::Q:
+    case Key::Q:
       return "Q";
-    case Keyboard::R:
+    case Key::R:
       return "R";
-    case Keyboard::S:
+    case Key::S:
       return "S";
-    case Keyboard::T:
+    case Key::T:
       return "T";
-    case Keyboard::U:
+    case Key::U:
       return "U";
-    case Keyboard::V:
+    case Key::V:
       return "V";
-    case Keyboard::W:
+    case Key::W:
       return "W";
-    case Keyboard::X:
+    case Key::X:
       return "X";
-    case Keyboard::Y:
+    case Key::Y:
       return "Y";
-    case Keyboard::Z:
+    case Key::Z:
       return "Z";
-    case Keyboard::Space:
+    case Key::Space:
       return "Space";
-    case Keyboard::Apostrophe:
+    case Key::Apostrophe:
       return "Apostrophe";
-    case Keyboard::Comma:
+    case Key::Comma:
       return "Comma";
-    case Keyboard::Minus:
+    case Key::Minus:
       return "Minus";
-    case Keyboard::Period:
+    case Key::Period:
       return "Period";
-    case Keyboard::Slash:
+    case Key::Slash:
       return "Slash";
-    case Keyboard::Key0:
+    case Key::Key0:
       return "Key0";
-    case Keyboard::Key1:
+    case Key::Key1:
       return "Key1";
-    case Keyboard::Key2:
+    case Key::Key2:
       return "Key2";
-    case Keyboard::Key3:
+    case Key::Key3:
       return "Key3";
-    case Keyboard::Key4:
+    case Key::Key4:
       return "Key4";
-    case Keyboard::Key5:
+    case Key::Key5:
       return "Key5";
-    case Keyboard::Key6:
+    case Key::Key6:
       return "Key6";
-    case Keyboard::Key7:
+    case Key::Key7:
       return "Key7";
-    case Keyboard::Key8:
+    case Key::Key8:
       return "Key8";
-    case Keyboard::Key9:
+    case Key::Key9:
       return "Key9";
-    case Keyboard::Semicolon:
+    case Key::Semicolon:
       return "Semicolon";
-    case Keyboard::Equal:
+    case Key::Equal:
       return "Equal";
-    case Keyboard::LeftBracket:
+    case Key::LeftBracket:
       return "LeftBracket";
-    case Keyboard::Backslash:
+    case Key::Backslash:
       return "Backslash";
-    case Keyboard::RightBracket:
+    case Key::RightBracket:
       return "RightBracket";
-    case Keyboard::Accent:
+    case Key::Accent:
       return "Accent";
-    case Keyboard::Escape:
+    case Key::Escape:
       return "Escape";
-    case Keyboard::Enter:
+    case Key::Enter:
       return "Enter";
-    case Keyboard::Tab:
+    case Key::Tab:
       return "Tab";
-    case Keyboard::Backspace:
+    case Key::Backspace:
       return "Backspace";
-    case Keyboard::Insert:
+    case Key::Insert:
       return "Insert";
-    case Keyboard::Delete:
+    case Key::Delete:
       return "Delete";
-    case Keyboard::RightArrow:
+    case Key::RightArrow:
       return "RightArrow";
-    case Keyboard::LeftArrow:
+    case Key::LeftArrow:
       return "LeftArrow";
-    case Keyboard::DownArrow:
+    case Key::DownArrow:
       return "DownArrow";
-    case Keyboard::UpArrow:
+    case Key::UpArrow:
       return "UpArrow";
-    case Keyboard::CapsLock:
+    case Key::CapsLock:
       return "CapsLock";
-    case Keyboard::F1:
+    case Key::F1:
       return "F1";
-    case Keyboard::F2:
+    case Key::F2:
       return "F2";
-    case Keyboard::F3:
+    case Key::F3:
       return "F3";
-    case Keyboard::F4:
+    case Key::F4:
       return "F4";
-    case Keyboard::F5:
+    case Key::F5:
       return "F5";
-    case Keyboard::F6:
+    case Key::F6:
       return "F6";
-    case Keyboard::F7:
+    case Key::F7:
       return "F7";
-    case Keyboard::F8:
+    case Key::F8:
       return "F8";
-    case Keyboard::F9:
+    case Key::F9:
       return "F9";
-    case Keyboard::F10:
+    case Key::F10:
       return "F10";
-    case Keyboard::F11:
+    case Key::F11:
       return "F11";
-    case Keyboard::F12:
+    case Key::F12:
       return "F12";
-    case Keyboard::F13:
+    case Key::F13:
       return "F13";
-    case Keyboard::F14:
+    case Key::F14:
       return "F14";
-    case Keyboard::F15:
+    case Key::F15:
       return "F15";
-    case Keyboard::F16:
+    case Key::F16:
       return "F16";
-    case Keyboard::F17:
+    case Key::F17:
       return "F17";
-    case Keyboard::F18:
+    case Key::F18:
       return "F18";
-    case Keyboard::F19:
+    case Key::F19:
       return "F19";
-    case Keyboard::F20:
+    case Key::F20:
       return "F20";
-    case Keyboard::LeftShift:
+    case Key::LeftShift:
       return "LeftShift";
-    case Keyboard::LeftControl:
+    case Key::LeftControl:
       return "LeftControl";
-    case Keyboard::LeftAlt:
+    case Key::LeftAlt:
       return "LeftAlt";
-    case Keyboard::LeftSuper:
+    case Key::LeftSuper:
       return "LeftSuper";
-    case Keyboard::RightShift:
+    case Key::RightShift:
       return "RightShift";
-    case Keyboard::RightControl:
+    case Key::RightControl:
       return "RightControl";
-    case Keyboard::RightAlt:
+    case Key::RightAlt:
       return "RightAlt";
-    case Keyboard::RightSuper:
+    case Key::RightSuper:
       return "RightSuper";
-    case Keyboard::UnknownKey:
+    case Key::MouseLeft:
+      return "MouseLeft";
+    case Key::MouseRight:
+      return "MouseRight";
+    case Key::MouseMiddle:
+      return "MouseMiddle";
+    case Key::Mouse1:
+      return "Mouse1";
+    case Key::Mouse2:
+      return "Mouse2";
+    case Key::Mouse3:
+      return "Mouse3";
+    case Key::Mouse4:
+      return "Mouse4";
+    case Key::Mouse5:
+      return "Mouse5";
+    case Key::UnknownKey:
       return "UnknownKey";
   }
 }

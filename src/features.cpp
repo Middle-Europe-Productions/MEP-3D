@@ -40,6 +40,7 @@ bool Features::Init(int argc, char* argv[]) {
     }
     VLOG(1) << "Feature parsed " << feature_name;
   }
+  return true;
 }
 
 bool Features::IsFeatureEnabled(std::string_view feature) {

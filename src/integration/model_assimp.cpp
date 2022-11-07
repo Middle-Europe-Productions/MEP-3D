@@ -66,11 +66,11 @@ void LoadTextures(const aiScene* scene,
       std::string filename = "";
       if (material->GetTexture(aiTextureType_DIFFUSE, 0, &texture_path) ==
           AI_SUCCESS) {
-        int id_backslash = std::string(texture_path.data).rfind("\\");
-        int id_slash = std::string(texture_path.data).rfind("/");
+        std::size_t id_backslash = std::string(texture_path.data).rfind("\\");
+        std::size_t id_slash = std::string(texture_path.data).rfind("/");
         if (id_slash != -1) {
           filename = std::string(texture_path.data).substr(id_slash + 1);
-        } else if (id_backslash != -1) {
+        } else if (id_backslash != std::string::npos) {
           filename = std::string(texture_path.data).substr(id_backslash + 1);
         } else {
           filename = texture_path.data;

@@ -21,9 +21,10 @@ typename std::vector<LightPtr>::iterator LightController<LightPtr>::MakeAndBind(
     return point_light_container_.end();
   }
   point_light_container_.emplace_back(std::move(light_ptr));
-  point_light_container_.back()->BindUniforms(*Get<Shader>(),
-                                              point_light_container_.size() - 1,
-                                              struct_name_, uniform_map_);
+  point_light_container_.back()->BindUniforms(
+      *Get<Shader>(),
+      static_cast<unsigned int>(point_light_container_.size() - 1),
+      struct_name_, uniform_map_);
   return point_light_container_.end() - 1;
 }
 
@@ -54,7 +55,8 @@ void LightController<LightPtr>::ForAll(
 
 template <typename LightPtr>
 void LightController<LightPtr>::Use() {
-  glUniform1i(light_count_location_, point_light_container_.size());
+  glUniform1i(light_count_location_,
+              static_cast<GLint>(point_light_container_.size()));
   for (auto& light : point_light_container_) {
     light->Use();
   }

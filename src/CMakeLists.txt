@@ -4,6 +4,7 @@ set(MEP_LIBRARY_NAME mep-3d)
 
 set(SOURCE
   ${SRC_ROOT}/perspective_camera.cpp
+  ${SRC_ROOT}/arcball_camera.cpp
   ${SRC_ROOT}/common.cpp
   ${SRC_ROOT}/integration/time_delta_glfw.cpp
   ${SRC_ROOT}/integration/window_glfw.cpp

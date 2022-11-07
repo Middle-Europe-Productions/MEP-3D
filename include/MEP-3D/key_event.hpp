@@ -3,7 +3,7 @@
 
 #include <string>
 
-enum class Keyboard {
+enum class Key {
   A = 0,
   B = 1,
   C = 2,
@@ -91,20 +91,28 @@ enum class Keyboard {
   RightControl,
   RightAlt,
   RightSuper,
+  MouseLeft,
+  MouseRight,
+  MouseMiddle,
+  Mouse1,
+  Mouse2,
+  Mouse3,
+  Mouse4,
+  Mouse5,
   UnknownKey
 };
 
-std::string KeyboardToString(Keyboard keyboard);
+std::string KeyToString(Key Key);
 
 enum Action { Pressed = 0, Released, UnknownAction };
 struct KeyEvent {
-  Keyboard code = Keyboard::UnknownKey;
+  Key code = Key::UnknownKey;
   Action action = Action::UnknownAction;
 };
 
 struct MouseEvent {
-  double x;
-  double y;
+  float x;
+  float y;
 };
 
 #endif

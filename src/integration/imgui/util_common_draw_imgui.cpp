@@ -1,6 +1,6 @@
+#include <MEP-3D/features.hpp>
 #include <MEP-3D/template/util_common_draw.hpp>
 #include <MEP-3D/utils.hpp>
-#include <MEP-3D/features.hpp>
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -19,11 +19,13 @@ static int frame = 0;
 constexpr int kDegMin = 1;
 constexpr int kDegMax = 180;
 // Jump value
-constexpr float kGlobalSlide = 0.05;
+constexpr float kGlobalSlide = 0.05f;
 
 Color ToMepColor(ImVec4& im_color) {
-  return Color(255 * im_color.x, 255 * im_color.y, 255 * im_color.z,
-               255 * im_color.w);
+  return Color(static_cast<Uint8>(255 * im_color.x),
+               static_cast<Uint8>(255 * im_color.y),
+               static_cast<Uint8>(255 * im_color.z),
+               static_cast<Uint8>(255 * im_color.w));
 }
 ImVec4 FromMepColor(Color& color) {
   return ImVec4(color.Rf(), color.Gf(), color.Bf(), color.Af());
@@ -42,7 +44,7 @@ int DrawComboMenuFromMEP(std::vector<std::unique_ptr<Element>>& array,
   if (ele.size() == 0) {
     return -1;
   }
-  ImGui::Combo(type, &index, ele.data(), ele.size());
+  ImGui::Combo(type, &index, ele.data(), static_cast<int>(ele.size()));
   return index - 1;
 }
 
@@ -64,7 +66,7 @@ Element* DrawComboMenuFromMEP(std::vector<std::unique_ptr<Element>>& array,
   if (selected_index == -1) {
     LOG(INFO) << "Could not find selected element";
   }
-  ImGui::Combo(type, &selected_index, ele.data(), ele.size());
+  ImGui::Combo(type, &selected_index, ele.data(), static_cast<int>(ele.size()));
   return array[selected_index].get();
 }
 }  // namespace
@@ -170,9 +172,14 @@ void Drawer::DrawPerspectiveCamera(PerspectiveCamera& perspective_camera) {
        it != PerspectiveCameraActions::Count; it = utils::IncEnum(it)) {
     ImGui::Text("%s:", ToString(it).c_str());
     ImGui::SameLine();
-    ImGui::Text("%s", KeyboardToString(
-                          perspective_camera.controls_[static_cast<int>(it)])
-                          .c_str());
+    ImGui::Text(
+        "%s%s",
+        KeyToString(perspective_camera.controls_[static_cast<int>(it)]).c_str(),
+        perspective_camera.key_status_[perspective_camera
+                                           .controls_[static_cast<int>(it)]] ==
+                true
+            ? " [pressed]"
+            : "");
   }
 }
 

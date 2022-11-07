@@ -78,7 +78,7 @@ class BenchmarkLayer final : public Scene, private WindowObserver {
     point_light_con->Bind(shader_.get());
     point_light_con->MakeAndBind(std::make_unique<PointLight>(
         AmbientConfig{Color(0, 247, 255), 0.5f},
-        PointConfig{Vec3f{1.0f, 1.0f, 1.0f}, 1, 1, 0.001}, 0.5f));
+        PointConfig{Vec3f{1.0f, 1.0f, 1.0f}, 1, 1, 0.001f}, 0.5f));
 
     Attach(std::move(light));
     Attach(std::move(point_light_con));
@@ -93,7 +93,7 @@ class BenchmarkLayer final : public Scene, private WindowObserver {
     Scene::AddObserver(ui_layer.get());
     GetEngine()->AttachLayerToStructure(std::move(ui_layer), 0, true);
     // Create elements
-    for (int i = 0; i < triangles_count_; i++) {
+    for (unsigned int i = 0; i < triangles_count_; i++) {
       triangles_.emplace_back(std::make_unique<Pyramid>(
           Vec3f{static_cast<float>(triangles_count_ % 10 * 10.f), 1.0f,
                 static_cast<float>(i + 10)}));
@@ -120,7 +120,10 @@ class BenchmarkLayer final : public Scene, private WindowObserver {
     plane->Draw(render_target);
     GetShaders()[0]->Stop();
   }
-  void OnKeyEvent(KeyEvent event) override {}
+  void OnKeyEvent(KeyEvent event) override {
+    LOG(INFO) << KeyToString(event.code) << ", action: "
+              << (event.action == Action::Pressed ? "Pressed" : "Released");
+  }
   void OnMouseEvent(MouseEvent event) override {}
   void OnWindowResizeEvent(Vec2i size) override {}
   void OnEventStatusChanged(bool events_blocked) override {}

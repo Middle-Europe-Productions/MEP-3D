@@ -234,26 +234,26 @@ class MainLayer : private WindowObserver, public Layer {
     shader_.Stop();
   }
   void OnKeyEvent(KeyEvent event) override {
-    // LOG(INFO) << event.code << ", action: " << (event.action ==
-    // Action::Pressed ? "Pressed" : "Released");
-    if (event.code == Keyboard::Z) {
+    LOG(INFO) << KeyToString(event.code) << ", action: "
+              << (event.action == Action::Pressed ? "Pressed" : "Released");
+    if (event.code == Key::Z) {
       pyramids[0]->Rotate(1.0f, Axis::Y);
-    } else if (event.code == Keyboard::R) {
+    } else if (event.code == Key::R) {
       pyramids[0]->ResetModel();
-    } else if (event.code == Keyboard::U) {
+    } else if (event.code == Key::U) {
       if (tex) {
         tex = nullptr;
       }
-    } else if (event.code == Keyboard::I) {
+    } else if (event.code == Key::I) {
       if (!tex) {
         tex = std::make_unique<Texture>();
         tex->Create(image);
         pyramids[0]->Bind(tex.get());
       }
-    } else if (event.code == Keyboard::O && event.action == Action::Released) {
+    } else if (event.code == Key::O && event.action == Action::Released) {
       pyramids.pop_back();
-    } else if (event.code == Keyboard::O && event.action == Action::Released) {
-    } else if (event.code == Keyboard::F && event.action == Action::Released) {
+    } else if (event.code == Key::O && event.action == Action::Released) {
+    } else if (event.code == Key::F && event.action == Action::Released) {
       use_stop_light = !use_stop_light;
     }
   }

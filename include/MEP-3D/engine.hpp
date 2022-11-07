@@ -48,7 +48,7 @@ class Engine : public std::enable_shared_from_this<Engine>, public Identity {
   WindowPtr& GetWindow();
   void Run();
   void AttachLayer(std::unique_ptr<Layer> obs, bool on_top = false);
-  int AttachStructure(std::unique_ptr<CustomLayerStructure> str);
+  std::size_t AttachStructure(std::unique_ptr<CustomLayerStructure> str);
   void AttachLayerToStructure(std::unique_ptr<Layer> layer,
                               int custom_layer_index,
                               bool on_top = false);

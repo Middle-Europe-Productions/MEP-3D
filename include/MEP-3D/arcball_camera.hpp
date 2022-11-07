@@ -1,16 +1,32 @@
 #ifndef ARCBALL_CAMERA_HPP
 #define ARCBALL_CAMERA_HPP
 
-#include <GL/glew.h>
 #include <MEP-3D/camera_base.hpp>
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+
+enum class ArcballCameraActions : int {
+  Left = 0,
+  Right = 1,
+  Up = 2,
+  Down = 3,
+  Grab,
+  Forward,
+  Backward,
+  Count
+};
+
+std::string ToString(ArcballCameraActions pca);
+
+using ArcballCameraControlsMap =
+    std::array<Key, static_cast<int>(ArcballCameraActions::Count)>;
 
 struct ArcballCameraConfig {
   glm::vec3 start_position;
   glm::vec3 start_up;
   glm::vec3 lookat_position;
-  GLfloat start_move_speed;
+  // Camera will observe the window after the initialization.
+  Vec2i initial_viewport_size;
+  float move_speed;
   static ArcballCameraConfig Create();
 };
 
@@ -19,27 +35,31 @@ class Drawer;
 };
 
 class ArcballCamera : public CameraBase {
-public:
-  ArcballCamera(const ArcballCameraConfig &config)
-      : CameraBase(kArcballCamera) {
-    Set(CameraVariables::Position, config.start_position);
-    lookat_position_ = config.lookat_position;
-    world_up_ = config.start_up;
-  }
-  void Update(float time_delta) override {}
-  glm::mat4 GetViewMatrix() const override {
-    return glm::lookAt(Get(CameraVariables::Position), lookat_position_,world_up_);
-  }
-  void OnKeyEvent(KeyEvent event) override {}
-  void OnMouseEvent(MouseEvent event) override {}
-  void OnWindowResizeEvent(Vec2i size) override {}
-  void OnEventStatusChanged(bool events_blocked) override {}
+ public:
+  ArcballCamera(const ArcballCameraConfig& config,
+                const ArcballCameraControlsMap& controls = {
+                    Key::A, Key::D, Key::W, Key::S, Key::MouseLeft, Key::Q,
+                    Key::Z});
+  void Update(float time_delta) override;
+  void OnKeyEvent(KeyEvent event) override;
+  glm::mat4 GetViewMatrix() const override;
+  void OnMouseEvent(MouseEvent event) override;
+  void OnWindowResizeEvent(Vec2i size) override;
+  void OnEventStatusChanged(bool events_blocked) override;
 
-private:
+ private:
+  glm::vec3 GetViewDir() const;
+  glm::vec3 GetRightVector() const;
   friend class UI::Drawer;
 
+  glm::mat4 view_matrix_;
   glm::vec3 lookat_position_;
   glm::vec3 world_up_;
+  Vec2f mouse_change_;
+  Vec2i screen_size_;
+  float move_speed_;
+  bool initial_move_ = true;
+  Vec2f last_mouse_position_ = {0.0, 0.0};
 };
 
 #endif
