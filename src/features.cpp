@@ -1,59 +1,60 @@
-#include <glog/logging.h>
 #include <MEP-3D/features.hpp>
 
-#include <unordered_set>
+#include <vector>
+
+namespace feature {
+#define MEP_FEATURE(var_name, var_value, default_val) \
+  const char* var_name = var_value;
+#include <MEP-3D/mep_features.inl>
+#undef MEP_FEATURE
 
 namespace {
-constexpr char kFeatureFlag[] = "feature";
-constexpr char kFeatureSeparator = ':';
-constexpr char kFeatureSign = '=';
-const std::unordered_set<std::string_view> kTrueValues = {"true", "TRUE", "T",
-                                                          "True"};
-const std::unordered_set<std::string_view> kFalseValues = {"false", "FALSE",
-                                                           "F", "False"};
-};  // namespace
+struct FeatureBody {
+  std::string_view name;
+  bool state;
+  bool default_state;
+};
 
-bool Features::Init(int argc, char* argv[]) {
-#ifdef MEP_ENGINE_USE_IMGUI
-  ForceFeature(feature::UseEngineDataMonitor, true);
-#endif
-  for (int i = 0; i < argc; ++i) {
-    std::string temp(argv[i]);
-    int value = temp.find(kFeatureFlag);
-    int separator = temp.find(kFeatureSeparator);
-    int sign = temp.find(kFeatureSign);
-    if (value == -1 || separator == -1 || sign == -1) {
-      continue;
-    }
-    if (sign < separator || separator < value) {
-      continue;
-    }
-    std::string feature_name(temp.substr(separator + 1, sign - separator - 1));
-    std::string feature_sign(temp.substr(sign + 1, temp.size() - 1));
-    if (kTrueValues.count(feature_sign)) {
-      ForceFeature(feature_name, true);
-    } else if (kFalseValues.count(feature_sign)) {
-      ForceFeature(feature_name, false);
-    } else {
-      LOG(WARNING) << "Could not parse " << temp << ", invalid sign!";
-      continue;
-    }
-    VLOG(1) << "Feature parsed " << feature_name;
-  }
-  return true;
+using FeatureBodyArr = std::vector<FeatureBody>;
+
+FeatureBodyArr kFeaturesList = {
+#define MEP_FEATURE(var_name, var_value, default_val) \
+  {var_value, default_val, default_val},
+#include <MEP-3D/mep_features.inl>
+#undef MEP_FEATURE
+};
+
+FeatureBodyArr::iterator GetFeatureBodyIt(std::string_view feature) {
+  return std::find_if(kFeaturesList.begin(), kFeaturesList.end(),
+                      [feature](const auto& it) { return feature == it.name; });
 }
 
-bool Features::IsFeatureEnabled(std::string_view feature) {
-  if (Get().features_.find(feature) != Get().features_.end()) {
-    return Get().features_[feature];
+bool Exists(FeatureBodyArr::iterator it) {
+  return kFeaturesList.end() != it;
+}
+
+}  // namespace
+
+bool IsFeatureEnabled(std::string_view feature) {
+  auto feature_it = GetFeatureBodyIt(feature);
+  if (Exists(feature_it)) {
+    return feature_it->state;
   }
   return false;
 }
-void Features::ForceFeature(std::string_view feature, bool status) {
-  Get().features_[feature] = status;
+void ForceFeature(std::string_view feature, bool status) {
+  auto feature_it = GetFeatureBodyIt(feature);
+  if (Exists(feature_it)) {
+    feature_it->state = status;
+  }
 }
 
-Features& Features::Get() {
-  static Features feature_;
-  return feature_;
+bool GetFeatureDefaultState(std::string_view feature) {
+  auto feature_it = GetFeatureBodyIt(feature);
+  if (Exists(feature_it)) {
+    return feature_it->default_state;
+  }
+  return false;
 }
+
+};  // namespace feature

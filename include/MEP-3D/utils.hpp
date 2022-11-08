@@ -2,12 +2,16 @@
 #define UTILS_HPP
 
 #include <MEP-3D/common.hpp>
+#include <MEP-3D/features.hpp>
 #include <glm/glm.hpp>
 
 #define NOTREACHED() assert(false);
 
 namespace utils {
+void Init(int argc, char* argv[]);
 void InitLogging(int argc, char* argv[]);
+void InitFeatures(int argc, char* argv[]);
+
 glm::vec3 AxisToGlm(Axis axis);
 float DegToRadians(float degress);
 float RadiansToDeg(float radians);

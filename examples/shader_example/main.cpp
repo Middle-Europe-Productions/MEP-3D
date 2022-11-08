@@ -52,7 +52,7 @@ private:
 };
 
 int main(int argc, char* argv[]) {
-  utils::InitLogging(argc, argv);
+  utils::Init(argc, argv);
   auto window = Window::GetInstance({{1280, 720}, "Camera example"});
   window->Init();
   auto engine = utils::CreateEngine(std::move(window),

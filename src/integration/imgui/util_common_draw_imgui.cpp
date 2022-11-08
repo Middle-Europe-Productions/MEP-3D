@@ -361,7 +361,7 @@ int Drawer::DrawTextureComboMenu(std::vector<std::unique_ptr<Texture>>& array,
 void Drawer::DrawEngineMonitorDataConst(
     const EngineMonitorData& engine_monitor_data) {
   ImGui::Text("Frame rate: %.1f", ImGui::GetIO().Framerate);
-  if (!Features::IsFeatureEnabled(feature::UseEngineDataMonitor)) {
+  if (!feature::IsFeatureEnabled(feature::kUseEngineDataMonitor)) {
     return;
   }
   ImGui::Text("Total frame time: %.1f",

@@ -1,20 +1,16 @@
 #ifndef FEATURES_HPP
 #define FEATURES_HPP
 
-#include <unordered_map>
 #include <string>
 
-#include <MEP-3D/mep_features.hpp>
+namespace feature {
+#define MEP_FEATURE(var_name, var_value, default_val) \
+extern const char* var_name;
+#include <MEP-3D/mep_features.inl>
+#undef MEP_FEATURE
 
-class Features {
-public:
-    static bool Init(int argc, char* argv[]);
-    static bool IsFeatureEnabled(std::string_view feature);
-    static void ForceFeature(std::string_view feature, bool status);
-private:
-    Features() = default;
-    static Features& Get();
-    std::unordered_map<std::string_view, bool> features_;
+bool IsFeatureEnabled(std::string_view feature);
+void ForceFeature(std::string_view feature, bool status);
 };
 
-#endif 
+#endif

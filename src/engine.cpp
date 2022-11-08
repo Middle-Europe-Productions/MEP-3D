@@ -26,7 +26,7 @@ void Engine::Run() {
     LOG(WARNING) << "Window is not attached on " << __func__;
   }
   LOG(INFO) << "Engine initialized, id: " << ToString();
-  if (Features::IsFeatureEnabled(feature::UseEngineDataMonitor)) {
+  if (feature::IsFeatureEnabled(feature::kUseEngineDataMonitor)) {
     LoopWithMonitorData();
   } else {
     LoopWithoutMonitorDats();
