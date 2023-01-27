@@ -37,6 +37,7 @@ set(SOURCE
   ${SRC_ROOT}/scene.cpp
   ${SRC_ROOT}/template/scene_ui_layer.cpp
   ${SRC_ROOT}/template/shaders_preset.cpp
+  ${SRC_ROOT}/template/ui_element.cpp
   ${SRC_ROOT}/common_names.cpp
   ${SRC_ROOT}/config_create_impl.cpp
   ${SRC_ROOT}/scene_ui_parser.cpp
@@ -102,6 +103,7 @@ set(HEADERS
   ${INC_ROOT}/template/scene_ui_layer.hpp
   ${INC_ROOT}/template/util_common_draw.hpp
   ${INC_ROOT}/template/shaders_preset.hpp
+  ${INC_ROOT}/template/ui_element.hpp
   ${INC_ROOT}/common_names.hpp
   ${INC_ROOT}/scene_ui_parser.hpp
   ${INC_ROOT}/features.hpp

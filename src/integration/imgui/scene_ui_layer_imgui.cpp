@@ -24,7 +24,7 @@ constexpr char kDefaultSceneRuntimeConfig[] = R"({
              "return":[
               {
                 "name":"Point Light",
-                "return":0
+                "return": "add_point_light"
               },
               {
                 "name":"Spot Light",
@@ -93,7 +93,7 @@ class SceneUILayerImGUI : public SceneUILayer {
       std::unordered_map<int, SceneUIParser::Callback> handlers = {},
       SceneUIParser::Method handler_attach_method =
           SceneUIParser::Method::FillAndOverride)
-      : menu_action_(MenuAction::None) {
+      : menu_action_(UI::Element::None) {
     factory.emplace_back(std::make_unique<PointLightFactoryImGui>(
         std::bind(&SceneUILayerImGUI::AddPointLight, this,
                   std::placeholders::_1),
@@ -187,20 +187,20 @@ class SceneUILayerImGUI : public SceneUILayer {
 
     ImGui::Begin("Scene", NULL, ImGuiWindowFlags_MenuBar);
     switch (menu_action_) {
-      case MenuAction::AddPointLight:
+      case UI::Element::AddPointLight:
         ImGui::OpenPopup("New Point Light");
-        menu_action_ = MenuAction::None;
+        menu_action_ = UI::Element::None;
         break;
-      case MenuAction::AddSpotLight:
+      case UI::Element::AddSpotLight:
         ImGui::OpenPopup("New Spot Light");
-        menu_action_ = MenuAction::None;
+        menu_action_ = UI::Element::None;
         break;
-      case MenuAction::AddModel:
+      case UI::Element::AddModel:
         ImGui::OpenPopup("New Model");
-        menu_action_ = MenuAction::None;
+        menu_action_ = UI::Element::None;
         break;
       default:
-        menu_action_ = MenuAction::None;
+        menu_action_ = UI::Element::None;
     };
     DrawFactory("New Point Light", factory[0].get());
     DrawFactory("New Spot Light", factory[1].get());
@@ -210,15 +210,15 @@ class SceneUILayerImGUI : public SceneUILayer {
   }
   void InitDefaultHandler() {
     menu_.SetHandler(
-        {{static_cast<int>(MenuAction::None),
+        {{static_cast<int>(UI::Element::None),
           [this]() { ImGui::Text("Not implemented"); }},
-         {static_cast<int>(MenuAction::AddPointLight),
-          [this]() { this->menu_action_ = MenuAction::AddPointLight; }},
-         {static_cast<int>(MenuAction::AddSpotLight),
-          [this]() { this->menu_action_ = MenuAction::AddSpotLight; }},
-         {static_cast<int>(MenuAction::AddModel),
-          [this]() { this->menu_action_ = MenuAction::AddModel; }},
-         {static_cast<int>(MenuAction::DrawDirectionalLight),
+         {static_cast<int>(UI::Element::AddPointLight),
+          [this]() { this->menu_action_ = UI::Element::AddPointLight; }},
+         {static_cast<int>(UI::Element::AddSpotLight),
+          [this]() { this->menu_action_ = UI::Element::AddSpotLight; }},
+         {static_cast<int>(UI::Element::AddModel),
+          [this]() { this->menu_action_ = UI::Element::AddModel; }},
+         {static_cast<int>(UI::Element::DrawDirectionalLight),
           [this]() {
             for (auto& dl_ptr : GetScenePtr()->GetDirectionaLights()) {
               if (ImGui::TreeNode(dl_ptr->Identity::GetName().c_str())) {
@@ -228,7 +228,7 @@ class SceneUILayerImGUI : public SceneUILayer {
               }
             }
           }},
-         {static_cast<int>(MenuAction::DrawPointLight),
+         {static_cast<int>(UI::Element::DrawPointLight),
           [this]() {
             if (GetScenePtr()->GetPointLightController()) {
               for (auto& pl_ptr :
@@ -244,7 +244,7 @@ class SceneUILayerImGUI : public SceneUILayer {
                   *GetScenePtr()->GetPointLightController());
             }
           }},
-         {static_cast<int>(MenuAction::DrawSpotLight),
+         {static_cast<int>(UI::Element::DrawSpotLight),
           [this]() {
             if (GetScenePtr()->GetSpotLightController()) {
               for (auto& sl_ptr :
@@ -260,7 +260,7 @@ class SceneUILayerImGUI : public SceneUILayer {
                   *GetScenePtr()->GetSpotLightController());
             }
           }},
-         {static_cast<int>(MenuAction::DrawShader),
+         {static_cast<int>(UI::Element::DrawShader),
           [this]() {
             for (auto& sh_ptr : GetScenePtr()->GetShaders()) {
               if (ImGui::TreeNode(sh_ptr->Identity::GetName().c_str())) {
@@ -270,11 +270,11 @@ class SceneUILayerImGUI : public SceneUILayer {
               }
             }
           }},
-         {static_cast<int>(MenuAction::DrawModelMenu),
+         {static_cast<int>(UI::Element::DrawModelMenu),
           std::bind(&SceneUILayerImGUI::DrawModelMenu, this)},
-         {static_cast<int>(MenuAction::DrawCamera),
+         {static_cast<int>(UI::Element::DrawCamera),
           std::bind(&SceneUILayerImGUI::DrawCamera, this)},
-         {static_cast<int>(MenuAction::DrawWindow), [this]() {
+         {static_cast<int>(UI::Element::DrawWindow), [this]() {
             DCHECK(GetEngine());
             DCHECK(GetEngine()->GetWindow());
             DCHECK(GetScenePtr());
@@ -350,7 +350,7 @@ class SceneUILayerImGUI : public SceneUILayer {
   }
   virtual bool ShouldIgnoreLayer() const override { return false; }
   std::vector<std::unique_ptr<ElementFactoryImGuiBase>> factory;
-  MenuAction menu_action_;
+  UI::Element menu_action_;
   SceneUIParserImGui menu_;
 };
 

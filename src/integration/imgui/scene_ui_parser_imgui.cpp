@@ -3,6 +3,8 @@
 #include <glog/logging.h>
 #include <imgui.h>
 
+#include <MEP-3D/template/ui_element.hpp>
+
 SceneUIParserImGui::SceneUIParserImGui() : SceneUIParser() {}
 
 void SceneUIParserImGui::Parse(const std::string& json) {
@@ -66,8 +68,18 @@ SceneUIParser::SceneUIParserNode* SceneUIParserImGui::ParseMenuItem(
       for (auto& ele : value) {
         node->next.push_back(ParseMenuItem(ele));
       }
-    } else if (key == "return" && value.is_number()) {
-      node->return_code = value;
+    } else if (key == "return") {
+      if (value.is_number()) {
+        node->return_code = value;
+      } else if (value.is_string()) {
+        LOG(INFO) << value;
+        node->return_code = UI::ElementData::ElementFromString(value);
+        DCHECK(node->return_code != static_cast<int>(UI::Element::Unknown));
+      } else {
+        LOG(ERROR) << "Unknown return type";
+        delete node;
+        return nullptr;
+      }
     } else if (key == "name") {
       node->node_name = value;
     } else {
