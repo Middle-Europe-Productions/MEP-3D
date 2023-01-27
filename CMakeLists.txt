@@ -9,10 +9,9 @@ macro(mep_set_option var default type docstring)
     set(${var} ${${var}} CACHE ${type} ${docstring} FORCE)
 endmacro()
 
-EXECUTE_PROCESS(COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE)
-message(STATUS "[MEP] Architecture: ${ARCHITECTURE}")
+message(STATUS "[MEP] Architecture: ${CMAKE_SYSTEM_PROCESSOR}")
 
-if(${ARCHITECTURE} STREQUAL "arm64")
+if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "arm64")
     mep_set_option(MEP_USE_ASSIMP FALSE BOOL "TRUE to use Open Asset Import Library for model processing")
     message(WARNING  "[MEP] Disabling assimp library on arm")
 else()
