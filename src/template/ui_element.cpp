@@ -12,7 +12,7 @@ std::string ToString(Element element) {
 #define ADD_UI_ELEMENT(var_name, var_string) \
   case var_name:                             \
     return var_string;
-#include <MEP-3D/template/scene_ui_layer_elements.inl>
+#include <MEP-3D/template/ui_elements.inl>
 #undef ADD_UI_ELEMENT
     default:
       NOTREACHED();
@@ -27,6 +27,10 @@ int ElementData::GetElementId(Element element) {
   return static_cast<int>(element);
 }
 
+int ElementData::GetAvalibleId() {
+  return GetElementId(Element::Count) + 1;
+}
+
 Element ElementData::ElementFromString(const std::string& name) {
   if (name.compare("None") == 0) {
     return Element::None;
@@ -35,7 +39,7 @@ Element ElementData::ElementFromString(const std::string& name) {
   else if (name.compare(var_string) == 0) {  \
     return Element::var_name;                \
   }
-#include <MEP-3D/template/scene_ui_layer_elements.inl>
+#include <MEP-3D/template/ui_elements.inl>
 #undef ADD_UI_ELEMENT
   else {
     return Element::Unknown;

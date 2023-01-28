@@ -24,17 +24,17 @@ constexpr char kDefaultSceneRuntimeConfig[] = R"({
              "return":[
               {
                 "name":"Point Light",
-                "return": "add_point_light"
+                "return":"add_point_light"
               },
               {
                 "name":"Spot Light",
-                "return":1
+                "return":"add_spot_light"
               }
             ]
           },
           {
             "name":"Model",
-            "return":2
+            "return":"add_model"
           }
         ]
       }
@@ -48,21 +48,21 @@ constexpr char kDefaultSceneRuntimeConfig[] = R"({
           "return":[
             {
               "name":"Directional Light",
-              "return":7
+              "return":"draw_directional_light"
             },
             {
               "name":"Point Light",
-              "return":9
+              "return":"draw_point_light"
             },
             {
               "name":"Spot Light",
-              "return":8
+              "return":"draw_spot_light"
             }
           ]
         },
         {
           "name":"Models",
-          "return":10
+          "return":"draw_model_menu"
         },
         {
           "name":"Voxels",
@@ -70,15 +70,15 @@ constexpr char kDefaultSceneRuntimeConfig[] = R"({
         },
         {
           "name":"Shader",
-          "return": 11
+          "return":"draw_shader"
         },
         {
           "name":"Cameras",
-          "return": 12
+          "return":"draw_camera"
         },
         {
           "name":"Window",
-          "return":13
+          "return":"draw_window"
         }
       ]
     } 

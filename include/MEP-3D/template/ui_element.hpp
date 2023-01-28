@@ -11,7 +11,7 @@ enum Element {
   Unknown = -2,
   None = -1,
 #define ADD_UI_ELEMENT(var_name, var_string) var_name,
-#include <MEP-3D/template/scene_ui_layer_elements.inl>
+#include <MEP-3D/template/ui_elements.inl>
 #undef ADD_UI_ELEMENT
   Count
 };
@@ -22,6 +22,7 @@ class ElementData {
  public:
   static int GetElementCount();
   static int GetElementId(Element element);
+  static int GetAvalibleId();
   static Element ElementFromString(const std::string& name);
 };
 
