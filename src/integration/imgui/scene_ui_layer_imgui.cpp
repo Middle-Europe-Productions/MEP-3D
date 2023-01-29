@@ -9,6 +9,7 @@
 #include "imgui_addons.hpp"
 #include "model_factory_imgui.hpp"
 #include "point_light_factory_imgui.hpp"
+#include "scene_ui_layer_handler_context.hpp"
 #include "scene_ui_parser_imgui.hpp"
 #include "spot_light_factory_imgui.hpp"
 
@@ -122,46 +123,6 @@ class SceneUILayerImGUI : public SceneUILayer {
   void OnDetach() override {}
   void OnUpdate(float time_delta) override {}
 
-  void DrawModelMenu() {
-    if (GetScenePtr()->GetModels().empty()) {
-      ImGui::Text("You do not have any models yet!");
-      return;
-    }
-    auto& array = GetScenePtr()->GetModels();
-    std::queue<std::vector<std::unique_ptr<Model>>::iterator> to_remove;
-    for (auto it = array.begin(); it != array.end();) {
-      if (ImGui::TreeNode(it->get()->Identity::GetName().c_str())) {
-        if (!UI::Drawer::DrawModel(*it->get())) {
-          to_remove.push(it);
-        }
-        ImGui::Separator();
-        ImGui::TreePop();
-      }
-      it++;
-    }
-    while (!to_remove.empty()) {
-      array.erase(to_remove.front());
-      to_remove.pop();
-    }
-  }
-
-  void DrawCamera() {
-    if (GetScenePtr()->GetCamera().empty()) {
-      ImGui::Text("You do not have any perspective cameras yet!");
-      return;
-    }
-    for (auto& pc : GetScenePtr()->GetCamera()) {
-      if (ImGui::TreeNode(pc->Identity::GetName().c_str())) {
-        UI::Drawer::DrawCamera(pc.get());
-        if (pc.get() == GetEngine()->GetWindow()->GetCamera()) {
-          ImGui::Text("This camera is currently used");
-        }
-        ImGui::Separator();
-        ImGui::TreePop();
-      }
-    }
-  }
-
   void OnDraw(RenderTarget& render_target) override {
     if (!GetScenePtr())
       return;
@@ -210,77 +171,80 @@ class SceneUILayerImGUI : public SceneUILayer {
   }
   void InitDefaultHandler() {
     menu_.SetHandler(
-        {{static_cast<int>(UI::Element::None),
-          [this]() { ImGui::Text("Not implemented"); }},
-         {static_cast<int>(UI::Element::AddPointLight),
-          [this]() { this->menu_action_ = UI::Element::AddPointLight; }},
-         {static_cast<int>(UI::Element::AddSpotLight),
-          [this]() { this->menu_action_ = UI::Element::AddSpotLight; }},
-         {static_cast<int>(UI::Element::AddModel),
-          [this]() { this->menu_action_ = UI::Element::AddModel; }},
-         {static_cast<int>(UI::Element::DrawDirectionalLight),
-          [this]() {
-            for (auto& dl_ptr : GetScenePtr()->GetDirectionaLights()) {
-              if (ImGui::TreeNode(dl_ptr->Identity::GetName().c_str())) {
-                UI::Drawer::DrawDirectionalLight(*dl_ptr.get());
-                ImGui::Separator();
-                ImGui::TreePop();
-              }
-            }
-          }},
-         {static_cast<int>(UI::Element::DrawPointLight),
-          [this]() {
-            if (GetScenePtr()->GetPointLightController()) {
-              for (auto& pl_ptr :
-                   GetScenePtr()->GetPointLightController()->GetContainer()) {
-                if (ImGui::TreeNode(pl_ptr->Identity::GetName().c_str())) {
-                  UI::Drawer::DrawPointLight(*pl_ptr.get());
-                  ImGui::Separator();
-                  ImGui::TreePop();
-                }
-              }
+        GET_UI_CONTEXT(SceneUILayer).GetHandlerMapWithContext(this));
+    /*
+menu_.SetHandler(
+    {{static_cast<int>(UI::Element::None),
+      [this]() { ImGui::Text("Not implemented"); }},
+     {static_cast<int>(UI::Element::AddPointLight),
+      [this]() { this->menu_action_ = UI::Element::AddPointLight; }},
+     {static_cast<int>(UI::Element::AddSpotLight),
+      [this]() { this->menu_action_ = UI::Element::AddSpotLight; }},
+     {static_cast<int>(UI::Element::AddModel),
+      [this]() { this->menu_action_ = UI::Element::AddModel; }},
+     {static_cast<int>(UI::Element::DrawDirectionalLight),
+      [this]() {
+        for (auto& dl_ptr : GetScenePtr()->GetDirectionaLights()) {
+          if (ImGui::TreeNode(dl_ptr->Identity::GetName().c_str())) {
+            UI::Drawer::DrawDirectionalLight(*dl_ptr.get());
+            ImGui::Separator();
+            ImGui::TreePop();
+          }
+        }
+      }},
+     {static_cast<int>(UI::Element::DrawPointLight),
+      [this]() {
+        if (GetScenePtr()->GetPointLightController()) {
+          for (auto& pl_ptr :
+               GetScenePtr()->GetPointLightController()->GetContainer()) {
+            if (ImGui::TreeNode(pl_ptr->Identity::GetName().c_str())) {
+              UI::Drawer::DrawPointLight(*pl_ptr.get());
               ImGui::Separator();
-              UI::Drawer::DrawAssetControllerConst(
-                  *GetScenePtr()->GetPointLightController());
+              ImGui::TreePop();
             }
-          }},
-         {static_cast<int>(UI::Element::DrawSpotLight),
-          [this]() {
-            if (GetScenePtr()->GetSpotLightController()) {
-              for (auto& sl_ptr :
-                   GetScenePtr()->GetSpotLightController()->GetContainer()) {
-                if (ImGui::TreeNode(sl_ptr->Identity::GetName().c_str())) {
-                  UI::Drawer::DrawSpotLight(*sl_ptr.get());
-                  ImGui::Separator();
-                  ImGui::TreePop();
-                }
-              }
+          }
+          ImGui::Separator();
+          UI::Drawer::DrawAssetControllerConst(
+              *GetScenePtr()->GetPointLightController());
+        }
+      }},
+     {static_cast<int>(UI::Element::DrawSpotLight),
+      [this]() {
+        if (GetScenePtr()->GetSpotLightController()) {
+          for (auto& sl_ptr :
+               GetScenePtr()->GetSpotLightController()->GetContainer()) {
+            if (ImGui::TreeNode(sl_ptr->Identity::GetName().c_str())) {
+              UI::Drawer::DrawSpotLight(*sl_ptr.get());
               ImGui::Separator();
-              UI::Drawer::DrawAssetControllerConst(
-                  *GetScenePtr()->GetSpotLightController());
+              ImGui::TreePop();
             }
-          }},
-         {static_cast<int>(UI::Element::DrawShader),
-          [this]() {
-            for (auto& sh_ptr : GetScenePtr()->GetShaders()) {
-              if (ImGui::TreeNode(sh_ptr->Identity::GetName().c_str())) {
-                UI::Drawer::DrawShader(*sh_ptr.get());
-                ImGui::Separator();
-                ImGui::TreePop();
-              }
-            }
-          }},
-         {static_cast<int>(UI::Element::DrawModelMenu),
-          std::bind(&SceneUILayerImGUI::DrawModelMenu, this)},
-         {static_cast<int>(UI::Element::DrawCamera),
-          std::bind(&SceneUILayerImGUI::DrawCamera, this)},
-         {static_cast<int>(UI::Element::DrawWindow), [this]() {
-            DCHECK(GetEngine());
-            DCHECK(GetEngine()->GetWindow());
-            DCHECK(GetScenePtr());
-            UI::Drawer::DrawWindowInterface(*GetEngine()->GetWindow(),
-                                            *GetScenePtr());
-          }}});
+          }
+          ImGui::Separator();
+          UI::Drawer::DrawAssetControllerConst(
+              *GetScenePtr()->GetSpotLightController());
+        }
+      }},
+     {static_cast<int>(UI::Element::DrawShader),
+      [this]() {
+        for (auto& sh_ptr : GetScenePtr()->GetShaders()) {
+          if (ImGui::TreeNode(sh_ptr->Identity::GetName().c_str())) {
+            UI::Drawer::DrawShader(*sh_ptr.get());
+            ImGui::Separator();
+            ImGui::TreePop();
+          }
+        }
+      }},
+     {static_cast<int>(UI::Element::DrawModelMenu),
+      std::bind(&SceneUILayerImGUI::DrawModelMenu, this)},
+     {static_cast<int>(UI::Element::DrawCamera),
+      std::bind(&SceneUILayerImGUI::DrawCamera, this)},
+     {static_cast<int>(UI::Element::DrawWindow), [this]() {
+        DCHECK(GetEngine());
+        DCHECK(GetEngine()->GetWindow());
+        DCHECK(GetScenePtr());
+        UI::Drawer::DrawWindowInterface(*GetEngine()->GetWindow(),
+                                        *GetScenePtr());
+      }}});*/
   }
 
   ~SceneUILayerImGUI() { LOG(INFO) << __FUNCTION__; }

@@ -172,6 +172,9 @@ if (NOT MEP_STANDALONE_APP)
     ${SRC_ROOT}/integration/imgui/imgui_addons.hpp
     ${SRC_ROOT}/integration/imgui/scene_ui_parser_imgui.cpp
     ${SRC_ROOT}/integration/imgui/scene_ui_parser_imgui.hpp
+    ${SRC_ROOT}/integration/imgui/scene_ui_layer_handler_context.hpp
+    ${SRC_ROOT}/integration/imgui/scene_ui_layer_imgui.cpp
+    ${SRC_ROOT}/integration/imgui/handlers/ui_handlers.cpp
   )
 
 else()

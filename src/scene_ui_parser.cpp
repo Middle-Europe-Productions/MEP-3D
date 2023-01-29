@@ -20,6 +20,7 @@ SceneUIParser::SceneUIParser() : handler_map_() {
 
 void SceneUIParser::SetHandler(
     const std::unordered_map<int, Callback>& handler_map) {
+  DCHECK(handler_map.size() != 0);
   handler_map_ = handler_map;
 }
 
