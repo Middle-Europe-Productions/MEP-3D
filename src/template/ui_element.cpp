@@ -2,6 +2,10 @@
 
 #include <MEP-3D/utils.hpp>
 
+#include <glog/logging.h>
+
+#undef ADD_UI_ELEMENT
+
 namespace UI {
 std::string ToString(Element element) {
   switch (element) {
@@ -31,7 +35,18 @@ int ElementData::GetAvalibleId() {
   return GetElementId(Element::Count) + 1;
 }
 
-Element ElementData::ElementFromString(const std::string& name) {
+ElementData& ElementData::Get() {
+  static ElementData instance;
+  return instance;
+}
+
+void ElementData::CreateElement(int id, const std::string& name) {
+  DCHECK(id > UI_ELEMENT_COUNT);
+  DCHECK(Get().elements_.find(name) == Get().elements_.end());
+  Get().elements_[name] = id;
+}
+
+int ElementData::IdFromString(const std::string& name) {
   if (name.compare("None") == 0) {
     return Element::None;
   }
@@ -42,6 +57,9 @@ Element ElementData::ElementFromString(const std::string& name) {
 #include <MEP-3D/template/ui_elements.inl>
 #undef ADD_UI_ELEMENT
   else {
+    if (Get().elements_.find(name) != Get().elements_.end()) {
+      return Get().elements_[name];
+    }
     return Element::Unknown;
   }
 }  // namespace UI

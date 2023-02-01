@@ -72,7 +72,7 @@ SceneUIParser::SceneUIParserNode* SceneUIParserImGui::ParseMenuItem(
       if (value.is_number()) {
         node->return_code = value;
       } else if (value.is_string()) {
-        node->return_code = UI::ElementData::ElementFromString(value);
+        node->return_code = UI::ElementData::IdFromString(value);
         DCHECK(node->return_code != static_cast<int>(UI::Element::Unknown));
       } else {
         LOG(ERROR) << "Unknown return type";
@@ -122,7 +122,7 @@ SceneUIParser::SceneUIParserNode* SceneUIParserImGui::ParseSceneItem(
       if (value.is_number()) {
         node->return_code = value;
       } else if (value.is_string()) {
-        node->return_code = UI::ElementData::ElementFromString(value);
+        node->return_code = UI::ElementData::IdFromString(value);
         DCHECK(node->return_code != static_cast<int>(UI::Element::Unknown));
       } else {
         LOG(ERROR) << "Unknown return type";

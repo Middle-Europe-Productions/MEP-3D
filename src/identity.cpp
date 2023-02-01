@@ -25,7 +25,9 @@ Identity::Identity(std::string_view class_name, std::string_view name)
 }
 
 Identity::Identity(const Identity& id)
-    : class_name_(id.class_name_), global_id_(id.global_id_), id_(id.id_) {}
+    : class_name_(id.class_name_),
+      global_id_(global_id_provider_),
+      id_(id.id_) {}
 
 bool Identity::IsValid() {
   return class_name_.size() == 0;
@@ -64,7 +66,11 @@ Identity& Identity::operator=(const Identity& id) {
 }
 
 bool Identity::operator==(const Identity& x) const {
-  return this->GetId() == x.GetId() && this->GetGlobalId() == x.GetId();
+  return this->GetId() == x.GetId() && this->GetGlobalId() == x.GetGlobalId();
+}
+
+bool Identity::operator<(const Identity& x) const {
+  return this->GetGlobalId() < x.GetGlobalId();
 }
 
 const std::unordered_map<std::string_view, int>& Identity::GetIdentityMap() {

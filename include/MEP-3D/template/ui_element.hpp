@@ -1,6 +1,7 @@
 #ifndef UI_ELEMENT_HPP
 #define UI_ELEMENT_HPP
 
+#include <MEP-3D/non_copyable.hpp>
 #include <MEP-3D/scene_ui_parser.hpp>
 
 #include <string>
@@ -16,15 +17,25 @@ enum Element {
   Count
 };
 
+#define UI_ELEMENT_COUNT static_cast<int>(UI::Element::Count)
+
 std::string ToString(Element element);
 
-class ElementData {
+class ElementData : public NonCopyable {
  public:
   static int GetElementCount();
   static int GetElementId(Element element);
   static int GetAvalibleId();
-  static Element ElementFromString(const std::string& name);
+  static int IdFromString(const std::string& name);
+  static ElementData& Get();
+  void CreateElement(int id, const std::string& name);
+
+ private:
+  std::unordered_map<std::string, int> elements_;
 };
+
+#define ADD_UI_ELEMENT(var_name, var_string) \
+  UI::ElementData::Get().CreateElement(static_cast<int>(var_name), var_string)
 
 };  // namespace UI
 

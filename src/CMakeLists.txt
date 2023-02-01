@@ -44,6 +44,9 @@ set(SOURCE
   ${SRC_ROOT}/key_event.cpp
   ${SRC_ROOT}/camera_base.cpp
   ${SRC_ROOT}/features.cpp
+  ${SRC_ROOT}/ilc/ilc_client.cpp
+  ${SRC_ROOT}/ilc/ilc_daemon_default.cpp
+  ${SRC_ROOT}/ilc/ilc_connector.cpp
 )
 
 set(HEADERS
@@ -104,9 +107,13 @@ set(HEADERS
   ${INC_ROOT}/template/util_common_draw.hpp
   ${INC_ROOT}/template/shaders_preset.hpp
   ${INC_ROOT}/template/ui_element.hpp
+  ${INC_ROOT}/template/scene_ui_layer_handler_context.hpp
   ${INC_ROOT}/common_names.hpp
   ${INC_ROOT}/scene_ui_parser.hpp
   ${INC_ROOT}/features.hpp
+  ${INC_ROOT}/ilc/ilc_client.hpp
+  ${INC_ROOT}/ilc/ilc_daemon.hpp
+  ${INC_ROOT}/ilc/ilc_connector.hpp
 )
 
 set(INCLUDE_DIRECTORIES
@@ -172,7 +179,6 @@ if (NOT MEP_STANDALONE_APP)
     ${SRC_ROOT}/integration/imgui/imgui_addons.hpp
     ${SRC_ROOT}/integration/imgui/scene_ui_parser_imgui.cpp
     ${SRC_ROOT}/integration/imgui/scene_ui_parser_imgui.hpp
-    ${SRC_ROOT}/integration/imgui/scene_ui_layer_handler_context.hpp
     ${SRC_ROOT}/integration/imgui/scene_ui_layer_imgui.cpp
     ${SRC_ROOT}/integration/imgui/handlers/ui_handlers.cpp
   )

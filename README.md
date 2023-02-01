@@ -66,6 +66,7 @@ Example:
 * Image loading using STB
 * Texture handler integrated with mesh
 * Camera with build-in key input handling
+* Inter-layer communication (ILC) -  a mechanism that allows communication between layers using the JSON interface.
 
 ### Avalible lightning
 

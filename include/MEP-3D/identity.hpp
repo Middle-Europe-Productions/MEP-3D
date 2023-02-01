@@ -18,6 +18,7 @@ class Identity {
   virtual std::string ToString() const;
   Identity& operator=(const Identity& id);
   bool operator==(const Identity& x) const;
+  bool operator<(const Identity& x) const;
   static const std::unordered_map<std::string_view, int>& GetIdentityMap();
   virtual ~Identity();
 

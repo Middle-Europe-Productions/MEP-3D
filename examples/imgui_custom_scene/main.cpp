@@ -2,6 +2,9 @@
 
 #include <imgui.h>
 
+#include <MEP-3D/template/ui_element.hpp>
+#include <MEP-3D/template/ui_handlers_impl.hpp>
+
 class DefaultScene final : public Scene {
  public:
   DefaultScene() {}
@@ -21,7 +24,7 @@ constexpr char kMyRuntimeConfig[] = R"({
           "return":[
             {
               "name":"First menu",
-              "return":1
+              "return":"test"
             }
           ]
         }
@@ -30,11 +33,14 @@ constexpr char kMyRuntimeConfig[] = R"({
    ]
 })";
 
-const auto kMyHandler = []() {
+enum MyOwnEnum { Test = UI_ELEMENT_COUNT + 1 };
+
+UI_HANDLER(MyOwnEnum, Test, SceneUILayer) {
   ImGui::Text("Hello");
   static bool pressed = false;
   if (ImGui::Button("Button")) {
     pressed = !pressed;
+    GetContext()->Send("target", "hello");
   }
   if (pressed) {
     ImGui::Text("World!");
@@ -42,12 +48,12 @@ const auto kMyHandler = []() {
 };
 
 int main(int argc, char* argv[]) {
+  ADD_UI_ELEMENT(MyOwnEnum::Test, "test");
   utils::Init(argc, argv);
   auto window = Window::GetInstance({{1280, 720}, "Custom Scene"});
   window->Init();
   auto engine = utils::CreateEngineWithSceneUI(
       std::move(window), std::make_unique<DefaultScene>(),
-      SceneUILayer::Create(kMyRuntimeConfig, {{1, kMyHandler}},
-                           SceneUIParser::Method::DoNotUseDefault));
+      SceneUILayer::Create(kMyRuntimeConfig));
   engine->Run();
 }

@@ -1,10 +1,12 @@
 #include <MEP-3D/common_names.hpp>
 #include <MEP-3D/engine.hpp>
 #include <MEP-3D/features.hpp>
+#include <MEP-3D/ilc/ilc_daemon.hpp>
 
 Engine::Engine()
     : Identity(kEngine), window_(nullptr), scene_clear_color_(White) {
   LOG(INFO) << "Engine created: " << ToString();
+  ILCDaemon::Init();
 }
 
 void Engine::AttachWindow(WindowPtr window) {
