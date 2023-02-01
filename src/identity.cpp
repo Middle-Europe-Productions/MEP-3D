@@ -25,7 +25,8 @@ Identity::Identity(std::string_view class_name, std::string_view name)
 }
 
 Identity::Identity(const Identity& id)
-    : class_name_(id.class_name_),
+    : name_(id.name_),
+      class_name_(id.class_name_),
       global_id_(global_id_provider_),
       id_(id.id_) {}
 
@@ -50,7 +51,8 @@ std::string_view Identity::GetClass() const {
 }
 
 std::string Identity::ToString() const {
-  return "\"Identity\": { name: " + std::string(class_name_) +
+  return "\"Identity\": { name: " + std::string(name_) +
+         ", \"class_name\": " + std::string(class_name_) +
          ", \"id\": " + std::to_string(id_) +
          ", \"global_id\": " + std::to_string(global_id_) + "}";
 }

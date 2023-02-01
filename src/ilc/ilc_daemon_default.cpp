@@ -17,6 +17,23 @@ std::string ILCPackageToString(const ILCPackage& data) {
   output += " \"message\" : \"" + data.message_ + "\"\n}";
   return output;
 }
+ILCClient* FindById(std::map<const Identity, ILCClient*>& connections, int id) {
+  for (auto& ele : connections) {
+    if (ele.first.GetGlobalId() == id) {
+      return ele.second;
+    }
+  }
+  return nullptr;
+}
+ILCClient* FindByName(std::map<const Identity, ILCClient*>& connections,
+                      std::string_view id) {
+  for (auto& ele : connections) {
+    if (ele.first.GetName() == std::string(id)) {
+      return ele.second;
+    }
+  }
+  return nullptr;
+}
 }  // namespace
 
 ILCDaemon::ILCDaemon() {
@@ -25,9 +42,6 @@ ILCDaemon::ILCDaemon() {
 
 ILCDaemon::~ILCDaemon() {
   LOG(INFO) << "Exiting ILC Daemon";
-  for (auto& connection : connections_) {
-    connection.second->OnConnectionClosed();
-  }
 }
 
 bool ILCDaemon::SendToClient(std::unique_ptr<ILCPackage> data) {
@@ -79,6 +93,17 @@ void ILCDaemon::Update(std::size_t packages_) {
     auto package = std::move(Instance().packages_.back());
     Instance().packages_.pop();
     VLOG(9) << ILCPackageToString(*package);
+    ILCClient* client = nullptr;
+    if (package->layer_id_.has_value()) {
+      client = FindById(connections_, package->layer_id_.value());
+    } else if (package->layer_name_.has_value()) {
+      client = FindByName(connections_, package->layer_name_.value());
+    }
+    if (!client) {
+      LOG(WARNING) << "Unkown package target, dropping";
+      continue;
+    }
+    client->OnReceive(package->id_, package->message_);
   }
 }
 
