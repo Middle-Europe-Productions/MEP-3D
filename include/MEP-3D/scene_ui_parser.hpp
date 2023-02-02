@@ -16,7 +16,7 @@ class SceneUIParser {
     std::vector<SceneUIParserNode*> next;
     SceneUIParserNode();
   };
-  enum class Element : unsigned int { Menu = 0, Scene = 1, Count };
+  enum class Element : unsigned int { Menu = 0, Scene = 1, Popup, Count };
   enum class Method : unsigned int {
     Override = 1 << 0,
     FillMissing = 1 << 1,

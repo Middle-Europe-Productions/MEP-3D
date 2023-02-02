@@ -167,14 +167,6 @@ if (NOT MEP_STANDALONE_APP)
     ${SRC_ROOT}/integration/imgui/engine_data_ui_layer_imgui.cpp
     ${SRC_ROOT}/integration/imgui/scene_ui_layer_imgui.cpp
     ${SRC_ROOT}/integration/imgui/util_common_draw_imgui.cpp
-    ${SRC_ROOT}/integration/imgui/element_factory_imgui.inl
-    ${SRC_ROOT}/integration/imgui/element_factory_imgui.hpp
-    ${SRC_ROOT}/integration/imgui/point_light_factory_imgui.cpp
-    ${SRC_ROOT}/integration/imgui/point_light_factory_imgui.hpp
-    ${SRC_ROOT}/integration/imgui/spot_light_factory_imgui.cpp
-    ${SRC_ROOT}/integration/imgui/spot_light_factory_imgui.hpp
-    ${SRC_ROOT}/integration/imgui/model_factory_imgui.cpp
-    ${SRC_ROOT}/integration/imgui/model_factory_imgui.hpp
     ${SRC_ROOT}/integration/imgui/imgui_addons.cpp
     ${SRC_ROOT}/integration/imgui/imgui_addons.hpp
     ${SRC_ROOT}/integration/imgui/scene_ui_parser_imgui.cpp

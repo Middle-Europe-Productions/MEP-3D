@@ -94,6 +94,8 @@ SceneUIParser::Element SceneUIParser::ElementFromString(
     return Element::Menu;
   } else if (element_name == std::string(kSceneNodeName)) {
     return Element::Scene;
+  } else if (element_name == std::string(kPopupNodeName)) {
+    return Element::Popup;
   }
   return Element::Count;
 }

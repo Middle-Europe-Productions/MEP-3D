@@ -21,6 +21,7 @@ extern const char* kEngine;
 // Json parser
 extern const char* kMenuNodeName;
 extern const char* kSceneNodeName;
+extern const char* kPopupNodeName;
 extern const char* kDefaultImGuiName;
 
 #endif

@@ -8,6 +8,8 @@
 #include <numeric>
 
 #include "imgui_addons.hpp"
+#include "scene_ui_parser_imgui.hpp"
+
 namespace {
 constexpr int kGlobalPlotBufferSize = 100;
 // Framerate
@@ -408,5 +410,17 @@ void Drawer::DrawAssetControllerConst(const AssetController& scene) {
     ImGui::SameLine();
     ImGui::Text("%s", model->GetName().c_str());
   }
+}
+
+void Drawer::OpenPopup(const std::string& name) {
+  ImguiPopupController::Get().RequestPopupOpen(name);
+}
+
+void Drawer::OpenPopup(UI::Element name) {
+  ImguiPopupController::Get().RequestPopupOpen(ElementData::IdToString(name));
+}
+
+void Drawer::OpenPopup(int id) {
+  ImguiPopupController::Get().RequestPopupOpen(ElementData::IdToString(id));
 }
 }  // namespace UI

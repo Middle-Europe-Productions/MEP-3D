@@ -5,6 +5,24 @@
 
 #include <MEP-3D/template/ui_element.hpp>
 
+ImguiPopupController& ImguiPopupController::Get() {
+  static ImguiPopupController instance;
+  return instance;
+}
+
+void ImguiPopupController::RequestPopupOpen(const std::string& name) {
+  ImguiPopupController::Get().requested_popups_.push(name);
+}
+
+bool ImguiPopupController::OpenAllOnCurrentStack() {
+  auto& elements = ImguiPopupController::Get().requested_popups_;
+  while (!elements.empty()) {
+    ImGui::OpenPopup(elements.back().c_str());
+    elements.pop();
+  }
+  return true;
+}
+
 SceneUIParserImGui::SceneUIParserImGui() : SceneUIParser() {}
 
 void SceneUIParserImGui::Parse(const std::string& json) {
@@ -52,6 +70,18 @@ void SceneUIParserImGui::Parse(const std::string& json) {
         it->second->start_callback = []() { return true; };
         for (auto& ele : value) {
           it->second->next.push_back(ParseSceneItem(ele, 0));
+        }
+      } else {
+        LOG(WARNING) << "Value is not an array";
+      }
+    } else if (ele == Element::Popup) {
+      if (value.is_array()) {
+        it->second = new SceneUIParserNode();
+        it->second->start_callback =
+            std::bind(&ImguiPopupController::OpenAllOnCurrentStack,
+                      ImguiPopupController::Get());
+        for (auto& ele : value) {
+          it->second->next.push_back(ParsePopupItem(ele, 0));
         }
       } else {
         LOG(WARNING) << "Value is not an array";
@@ -150,5 +180,47 @@ SceneUIParser::SceneUIParserNode* SceneUIParserImGui::ParseSceneItem(
         static_cast<bool (&)(const char*, int)>(ImGui::CollapsingHeader),
         node->node_name.c_str(), 0);
   }
+  return node;
+}
+
+SceneUIParser::SceneUIParserNode* SceneUIParserImGui::ParsePopupItem(
+    nlohmann::json& json_data,
+    int depth) {
+  if (depth > 1) {
+    LOG(INFO) << "Invalid scene element depth is " << depth;
+    return nullptr;
+  }
+  SceneUIParserNode* node = new SceneUIParserNode();
+  for (auto& [key, value] : json_data.items()) {
+    if (key == "return" && value.is_array()) {
+      for (auto& ele : value) {
+        node->next.push_back(ParseSceneItem(ele, depth + 1));
+      }
+    } else if (key == "return") {
+      if (value.is_number()) {
+        node->return_code = value;
+      } else if (value.is_string()) {
+        node->return_code = UI::ElementData::IdFromString(value);
+        DCHECK(node->return_code != static_cast<int>(UI::Element::Unknown));
+      } else {
+        LOG(ERROR) << "Unknown return type";
+        delete node;
+        return nullptr;
+      }
+    } else if (key == "name") {
+      node->node_name = value;
+    } else {
+      LOG(ERROR) << "Invalid item: " << key;
+      delete node;
+      return nullptr;
+    }
+  }
+  if (node->node_name.empty()) {
+    node->node_name = UI::ElementData::IdToString(node->return_code);
+  }
+  node->start_callback = std::bind(ImGui::BeginPopup, node->node_name.c_str(),
+                                   ImGuiWindowFlags_MenuBar);
+  node->finish_callback = std::bind(ImGui::EndPopup);
+
   return node;
 }

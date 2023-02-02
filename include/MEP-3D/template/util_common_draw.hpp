@@ -7,6 +7,7 @@
 #include <MEP-3D/model.hpp>
 #include <MEP-3D/scene.hpp>
 #include <MEP-3D/shader.hpp>
+#include <MEP-3D/template/ui_element.hpp>
 
 namespace UI {
 class Drawer {
@@ -41,6 +42,11 @@ class Drawer {
   static void DrawEngineMonitorDataConst(
       const EngineMonitorData& engine_monitor_data);
   static void DrawAssetControllerConst(const AssetController& scene);
+
+  // Utility
+  static void OpenPopup(const std::string& name);
+  static void OpenPopup(UI::Element name);
+  static void OpenPopup(int id);
 
  private:
   Drawer() = delete;

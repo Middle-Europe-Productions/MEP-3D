@@ -76,24 +76,29 @@ inline int MakeHandlerInfo(int element) {
 #define SCENE_UI_HANDLER_NAME(element_id, context_class) \
   scene_ui_layer_handler_##element_id##_##context_class
 
-#define UI_HANDLER(element_class, element_id, context_class)             \
-  class SCENE_UI_HANDLER_NAME(element_id, context_class)                 \
-      : public UI_HANDLER_BASE(context_class) {                          \
-   public:                                                               \
-    SCENE_UI_HANDLER_NAME(element_id, context_class)() = default;        \
-    ~SCENE_UI_HANDLER_NAME(element_id, context_class)() = default;       \
-    void Draw() override;                                                \
-    int GetId() const override { return element_id_; }                   \
-                                                                         \
-   private:                                                              \
-    static int element_id_;                                              \
-  };                                                                     \
-                                                                         \
-  int SCENE_UI_HANDLER_NAME(element_id, context_class)::element_id_ =    \
-      MakeHandlerInfo<UI_CONTEXT_NAME(context_class),                    \
-                      SCENE_UI_HANDLER_NAME(element_id, context_class)>( \
-          static_cast<int>(element_class::element_id));                  \
-                                                                         \
+#define UI_HANDLER_D(element_class, element_id, context_class, data_structure) \
+  class SCENE_UI_HANDLER_NAME(element_id, context_class)                       \
+      : public UI_HANDLER_BASE(context_class) {                                \
+   public:                                                                     \
+    SCENE_UI_HANDLER_NAME(element_id, context_class)() = default;              \
+    ~SCENE_UI_HANDLER_NAME(element_id, context_class)() = default;             \
+    void Draw() override;                                                      \
+    int GetId() const override { return element_id_; }                         \
+    data_structure& GetData() { return data_; }                                \
+                                                                               \
+   private:                                                                    \
+    static int element_id_;                                                    \
+    data_structure data_;                                                      \
+  };                                                                           \
+                                                                               \
+  int SCENE_UI_HANDLER_NAME(element_id, context_class)::element_id_ =          \
+      MakeHandlerInfo<UI_CONTEXT_NAME(context_class),                          \
+                      SCENE_UI_HANDLER_NAME(element_id, context_class)>(       \
+          static_cast<int>(element_class::element_id));                        \
+                                                                               \
   void SCENE_UI_HANDLER_NAME(element_id, context_class)::Draw()
+
+#define UI_HANDLER(element_class, element_id, context_class) \
+  UI_HANDLER_D(element_class, element_id, context_class, int)
 
 #endif

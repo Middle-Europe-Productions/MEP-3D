@@ -1,6 +1,4 @@
 
-ADD_UI_ELEMENT(AddPointLight, "add_point_light")
-
 ADD_UI_ELEMENT(AddSpotLight, "add_spot_light")
 
 ADD_UI_ELEMENT(AddModel, "add_model")
@@ -26,3 +24,15 @@ ADD_UI_ELEMENT(DrawShader, "draw_shader")
 ADD_UI_ELEMENT(DrawCamera, "draw_camera")
 
 ADD_UI_ELEMENT(DrawWindow, "draw_window")
+
+ADD_UI_ELEMENT(OpenPointLightPopup, "open_point_light_popup")
+
+ADD_UI_ELEMENT(PointLightPopup, "point_light_popup")
+
+ADD_UI_ELEMENT(OpenSpotLightPopup, "open_spot_light_popup")
+
+ADD_UI_ELEMENT(SpotLightPopup, "spot_light_popup")
+
+ADD_UI_ELEMENT(OpenModelPopup, "open_model_popup")
+
+ADD_UI_ELEMENT(ModelPopup, "model_popup")

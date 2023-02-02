@@ -63,4 +63,19 @@ int ElementData::IdFromString(const std::string& name) {
     return Element::Unknown;
   }
 }  // namespace UI
+
+std::string ElementData::IdToString(int id) {
+  DCHECK(id >= 0);
+  if (id < UI_ELEMENT_COUNT) {
+    LOG(INFO) << "Here";
+    return ToString(static_cast<Element>(id));
+  } else {
+    for (auto& ele : Get().elements_) {
+      if (ele.second == id) {
+        return ele.first;
+      }
+    }
+  }
+  return "Unknown";
+}
 };  // namespace UI

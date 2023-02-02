@@ -8,10 +8,7 @@
 #include <MEP-3D/utils.hpp>
 
 #include "imgui_addons.hpp"
-#include "model_factory_imgui.hpp"
-#include "point_light_factory_imgui.hpp"
 #include "scene_ui_parser_imgui.hpp"
-#include "spot_light_factory_imgui.hpp"
 
 namespace {
 
@@ -25,17 +22,17 @@ constexpr char kDefaultSceneRuntimeConfig[] = R"({
              "return":[
               {
                 "name":"Point Light",
-                "return":"add_point_light"
+                "return":"open_point_light_popup"
               },
               {
                 "name":"Spot Light",
-                "return":"add_spot_light"
+                "return":"open_spot_light_popup"
               }
             ]
           },
           {
             "name":"Model",
-            "return":"add_model"
+            "return":"open_model_popup"
           }
         ]
       }
@@ -83,6 +80,17 @@ constexpr char kDefaultSceneRuntimeConfig[] = R"({
         }
       ]
     } 
+   ],
+   "popup":[
+    {
+      "return":"point_light_popup"
+    },
+    {
+      "return":"spot_light_popup"
+    },
+    {
+      "return":"model_popup"
+    }
    ]
 })";
 };  // namespace
@@ -95,20 +103,6 @@ class SceneUILayerImGUI : public SceneUILayer {
       SceneUIParser::Method handler_attach_method =
           SceneUIParser::Method::FillAndOverride)
       : menu_action_(UI::Element::None) {
-    factory.emplace_back(std::make_unique<PointLightFactoryImGui>(
-        std::bind(&SceneUILayerImGUI::AddPointLight, this,
-                  std::placeholders::_1),
-        std::bind(&SceneUILayerImGUI::RemovePointLight, this,
-                  std::placeholders::_1)));
-    factory.emplace_back(std::make_unique<SpotLightFactoryImGui>(
-        std::bind(&SceneUILayerImGUI::AddSpotLight, this,
-                  std::placeholders::_1),
-        std::bind(&SceneUILayerImGUI::RemoveSpotLight, this,
-                  std::placeholders::_1)));
-    factory.emplace_back(std::make_unique<ModelFactoryImGui>(
-        std::bind(&SceneUILayerImGUI::AddModel, this, std::placeholders::_1),
-        std::bind(&SceneUILayerImGUI::RemoveModel, this,
-                  std::placeholders::_1)));
     if (!utils::Contains(handler_attach_method,
                          SceneUIParser::Method::DoNotUseDefault)) {
       InitDefaultHandler();
@@ -147,173 +141,18 @@ class SceneUILayerImGUI : public SceneUILayer {
     ImGui::End();
 
     ImGui::Begin("Scene", NULL, ImGuiWindowFlags_MenuBar);
-    switch (menu_action_) {
-      case UI::Element::AddPointLight:
-        ImGui::OpenPopup("New Point Light");
-        menu_action_ = UI::Element::None;
-        break;
-      case UI::Element::AddSpotLight:
-        ImGui::OpenPopup("New Spot Light");
-        menu_action_ = UI::Element::None;
-        break;
-      case UI::Element::AddModel:
-        ImGui::OpenPopup("New Model");
-        menu_action_ = UI::Element::None;
-        break;
-      default:
-        menu_action_ = UI::Element::None;
-    };
-    DrawFactory("New Point Light", factory[0].get());
-    DrawFactory("New Spot Light", factory[1].get());
-    DrawFactory("New Model", factory[2].get());
     menu_.Draw();
     ImGui::End();
   }
   void InitDefaultHandler() {
     menu_.SetHandler(
         GET_UI_CONTEXT(SceneUILayer).GetHandlerMapWithContext(this));
-    /*
-menu_.SetHandler(
-    {{static_cast<int>(UI::Element::None),
-      [this]() { ImGui::Text("Not implemented"); }},
-     {static_cast<int>(UI::Element::AddPointLight),
-      [this]() { this->menu_action_ = UI::Element::AddPointLight; }},
-     {static_cast<int>(UI::Element::AddSpotLight),
-      [this]() { this->menu_action_ = UI::Element::AddSpotLight; }},
-     {static_cast<int>(UI::Element::AddModel),
-      [this]() { this->menu_action_ = UI::Element::AddModel; }},
-     {static_cast<int>(UI::Element::DrawDirectionalLight),
-      [this]() {
-        for (auto& dl_ptr : GetScenePtr()->GetDirectionaLights()) {
-          if (ImGui::TreeNode(dl_ptr->Identity::GetName().c_str())) {
-            UI::Drawer::DrawDirectionalLight(*dl_ptr.get());
-            ImGui::Separator();
-            ImGui::TreePop();
-          }
-        }
-      }},
-     {static_cast<int>(UI::Element::DrawPointLight),
-      [this]() {
-        if (GetScenePtr()->GetPointLightController()) {
-          for (auto& pl_ptr :
-               GetScenePtr()->GetPointLightController()->GetContainer()) {
-            if (ImGui::TreeNode(pl_ptr->Identity::GetName().c_str())) {
-              UI::Drawer::DrawPointLight(*pl_ptr.get());
-              ImGui::Separator();
-              ImGui::TreePop();
-            }
-          }
-          ImGui::Separator();
-          UI::Drawer::DrawAssetControllerConst(
-              *GetScenePtr()->GetPointLightController());
-        }
-      }},
-     {static_cast<int>(UI::Element::DrawSpotLight),
-      [this]() {
-        if (GetScenePtr()->GetSpotLightController()) {
-          for (auto& sl_ptr :
-               GetScenePtr()->GetSpotLightController()->GetContainer()) {
-            if (ImGui::TreeNode(sl_ptr->Identity::GetName().c_str())) {
-              UI::Drawer::DrawSpotLight(*sl_ptr.get());
-              ImGui::Separator();
-              ImGui::TreePop();
-            }
-          }
-          ImGui::Separator();
-          UI::Drawer::DrawAssetControllerConst(
-              *GetScenePtr()->GetSpotLightController());
-        }
-      }},
-     {static_cast<int>(UI::Element::DrawShader),
-      [this]() {
-        for (auto& sh_ptr : GetScenePtr()->GetShaders()) {
-          if (ImGui::TreeNode(sh_ptr->Identity::GetName().c_str())) {
-            UI::Drawer::DrawShader(*sh_ptr.get());
-            ImGui::Separator();
-            ImGui::TreePop();
-          }
-        }
-      }},
-     {static_cast<int>(UI::Element::DrawModelMenu),
-      std::bind(&SceneUILayerImGUI::DrawModelMenu, this)},
-     {static_cast<int>(UI::Element::DrawCamera),
-      std::bind(&SceneUILayerImGUI::DrawCamera, this)},
-     {static_cast<int>(UI::Element::DrawWindow), [this]() {
-        DCHECK(GetEngine());
-        DCHECK(GetEngine()->GetWindow());
-        DCHECK(GetScenePtr());
-        UI::Drawer::DrawWindowInterface(*GetEngine()->GetWindow(),
-                                        *GetScenePtr());
-      }}});*/
   }
 
   ~SceneUILayerImGUI() { LOG(INFO) << __FUNCTION__; }
 
  private:
-  template <typename What>
-  void DrawFactory(const std::string& name, What* factory) {
-    if (ImGui::BeginPopup(name.c_str(), ImGuiWindowFlags_MenuBar)) {
-      factory->ImGUIDraw(*GetScenePtr());
-      ImGui::EndPopup();
-    } else {
-      factory->Remove();
-    }
-  }
-  PointLight* AddPointLight(PointLightPtr point_light) {
-    LOG(INFO) << __FUNCTION__ << ", " << __LINE__;
-    auto& cont = GetScenePtr()->GetPointLightController();
-    if (!cont)
-      return nullptr;
-    auto it = cont->MakeAndBind(std::move(point_light));
-    if (cont->IsValid(it)) {
-      return it->get();
-    }
-    return nullptr;
-  }
-  SpotLight* AddSpotLight(SpotLightPtr spot_light) {
-    LOG(INFO) << __FUNCTION__ << ", " << __LINE__;
-    auto& cont = GetScenePtr()->GetSpotLightController();
-    if (!cont) {
-      LOG(INFO) << __FUNCTION__ << ", " << __LINE__;
-      return nullptr;
-    }
-    auto it = cont->MakeAndBind(std::move(spot_light));
-    if (cont->IsValid(it)) {
-      return it->get();
-    }
-    LOG(INFO) << __FUNCTION__ << ", " << __LINE__;
-    return nullptr;
-  }
-  Model* AddModel(ModelPtr model) {
-    LOG(INFO) << __FUNCTION__ << ", " << __LINE__;
-    GetScenePtr()->GetModels().emplace_back(std::move(model));
-    return GetScenePtr()->GetModels().back().get();
-  }
-  void RemovePointLight(const Identity& id) {
-    LOG(INFO) << __FUNCTION__ << ", " << __LINE__;
-    auto& cont = GetScenePtr()->GetPointLightController();
-    if (!cont)
-      return;
-    cont->Remove(id);
-  }
-  void RemoveSpotLight(const Identity& id) {
-    LOG(INFO) << __FUNCTION__ << ", " << __LINE__;
-    auto& cont = GetScenePtr()->GetSpotLightController();
-    if (!cont)
-      return;
-    cont->Remove(id);
-  }
-  void RemoveModel(const Identity& id) {
-    LOG(INFO) << __FUNCTION__ << ", " << __LINE__;
-    auto& cont = GetScenePtr()->GetModels();
-    cont.erase(std::remove_if(cont.begin(), cont.end(),
-                              [&id](const auto& in) {
-                                return in->GetGlobalId() == id.GetGlobalId();
-                              }),
-               cont.end());
-  }
   virtual bool ShouldIgnoreLayer() const override { return false; }
-  std::vector<std::unique_ptr<ElementFactoryImGuiBase>> factory;
   UI::Element menu_action_;
   SceneUIParserImGui menu_;
 };

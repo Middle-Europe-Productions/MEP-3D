@@ -27,6 +27,7 @@ class ElementData : public NonCopyable {
   static int GetElementId(Element element);
   static int GetAvalibleId();
   static int IdFromString(const std::string& name);
+  static std::string IdToString(int name);
   static ElementData& Get();
   void CreateElement(int id, const std::string& name);
 

@@ -37,25 +37,41 @@ constexpr char kMyRuntimeConfig[] = R"({
         }
       ]
     } 
+   ],
+   "popup":[
+    {
+      "return": "my_popup"
+    } 
    ]
 })";
 
-enum MyOwnEnum { Test = UI_ELEMENT_COUNT + 1 };
+enum MyOwnEnum { Test = UI_ELEMENT_COUNT + 1, Popup };
 
-UI_HANDLER(MyOwnEnum, Test, SceneUILayer) {
+struct Data {
+  int data = 0;
+  void Reset() { data = 0; }
+};
+
+UI_HANDLER_D(MyOwnEnum, Test, SceneUILayer, Data) {
   ImGui::Text("Hello");
-  static bool pressed = false;
   if (ImGui::Button("Button")) {
-    pressed = !pressed;
-    GetContext()->Send(kSceneName, "hello");
+    GetContext()->Send(kSceneName, std::to_string(GetData().data++));
   }
-  if (pressed) {
-    ImGui::Text("World!");
+  if (ImGui::Button("Open popup")) {
+    UI::Drawer::OpenPopup(MyOwnEnum::Popup);
   }
+  if (ImGui::Button("Reset")) {
+    GetData().Reset();
+  }
+};
+
+UI_HANDLER(MyOwnEnum, Popup, SceneUILayer) {
+  ImGui::Text("Hello");
 };
 
 int main(int argc, char* argv[]) {
   ADD_UI_ELEMENT(MyOwnEnum::Test, "test");
+  ADD_UI_ELEMENT(MyOwnEnum::Popup, "my_popup");
   utils::Init(argc, argv);
   auto window = Window::GetInstance({{1280, 720}, "Custom Scene"});
   window->Init();

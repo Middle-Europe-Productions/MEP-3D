@@ -47,5 +47,12 @@ int Drawer::DrawTextureComboMenu(std::vector<std::unique_ptr<Texture>>& array,
 
 void Drawer::DrawEngineMonitorDataConst(
     const EngineMonitorData& engine_monitor_data) {}
+
 void Drawer::DrawAssetControllerConst(const AssetController& scene) {}
+
+void Drawer::OpenPopup(const std::string& name) {}
+
+void Drawer::OpenPopup(UI::Element name) {}
+
+void Drawer::OpenPopup(int id) {}
 }  // namespace UI
