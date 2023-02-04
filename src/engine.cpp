@@ -196,7 +196,7 @@ void Engine::LoopWithMonitorData() {
     engine_monitor_ = engine_monitor;
     if (time_controller > 1.0) {
       engine_monitor_.fps = frames;
-      VLOG(2) << "Frame rate: " << frames;
+      VLOG(9) << "Frame rate: " << frames;
       time_controller = 0.0;
       frames = 0;
     }

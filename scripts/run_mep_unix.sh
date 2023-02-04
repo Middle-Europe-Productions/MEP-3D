@@ -44,4 +44,4 @@ if [ $? -gt 0 ]; then
 fi
 
 echo "[MEP] Launching $TARGET"
-(cd $SCRIPT_DIR/$TARGET/ && ./$TARGET $@)
+(cd $SCRIPT_DIR/ && ./$TARGET $@)

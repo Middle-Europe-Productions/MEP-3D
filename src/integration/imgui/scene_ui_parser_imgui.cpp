@@ -3,7 +3,13 @@
 #include <glog/logging.h>
 #include <imgui.h>
 
+#include <MEP-3D/common_names.hpp>
 #include <MEP-3D/template/ui_element.hpp>
+#include <MEP-3D/utils.hpp>
+
+namespace {
+constexpr char kTabBarId[] = "##tab_bar";
+}
 
 ImguiPopupController& ImguiPopupController::Get() {
   static ImguiPopupController instance;
@@ -26,6 +32,7 @@ bool ImguiPopupController::OpenAllOnCurrentStack() {
 SceneUIParserImGui::SceneUIParserImGui() : SceneUIParser() {}
 
 void SceneUIParserImGui::Parse(const std::string& json) {
+  LOG(INFO) << __func__;
   try {
     root_ = nlohmann::json::parse(json);
   } catch (const std::exception& e) {
@@ -33,61 +40,97 @@ void SceneUIParserImGui::Parse(const std::string& json) {
     return;
   }
   for (auto& [key, value] : root_.items()) {
+    if (key == std::string(kWindowNodeName)) {
+      DCHECK(value.is_array())
+          << "Invalid window node, list of elements is expected";
+      for (auto& window : value) {
+        auto* node = new SceneUIParserNode();
+        for (auto& [sub_key, sub_value] : window.items()) {
+          if (sub_key == "name") {
+            LOG(INFO) << sub_key << __LINE__;
+            node->node_name = sub_value;
+          } else if (sub_key == "return") {
+            LOG(INFO) << sub_key << __LINE__;
+            node->start_callback =
+                std::bind(ImGui::Begin, node->node_name.c_str(), (bool*)NULL,
+                          ImGuiWindowFlags_MenuBar);
+            node->finish_callback = std::bind(ImGui::End);
+            node->next = ParseWindow(sub_value);
+          } else if (sub_key == "file") {
+            node->start_callback =
+                std::bind(ImGui::Begin, node->node_name.c_str(), (bool*)NULL,
+                          ImGuiWindowFlags_MenuBar);
+            node->finish_callback = std::bind(ImGui::End);
+            auto sub_config = utils::LoadFromFile(sub_value);
+            DCHECK(sub_config != "");
+            try {
+              auto new_parse_value = nlohmann::json::parse(sub_config);
+              node->next = ParseWindow(new_parse_value);
+            } catch (const std::exception& e) {
+              LOG(FATAL) << "Could not parse! Error: " << e.what();
+              continue;
+            }
+          }
+        }
+        windows_root_.push_back(node);
+      }
+    }
+  }
+}
+
+std::vector<SceneUIParser::SceneUIParserNode*> SceneUIParserImGui::ParseWindow(
+    nlohmann::json& json_data) {
+  LOG(INFO) << __func__;
+  std::vector<SceneUIParserNode*> nodes;
+  for (auto& [key, value] : json_data.items()) {
     auto ele = ElementFromString(key);
     if (ele == Element::Count) {
       LOG(ERROR) << "Unknown parse key: " << key << ", ignoring tree!";
       VLOG(1) << "Value: " << value;
       continue;
     }
-    auto it = nodes_.find(ele);
-    if (it == nodes_.end()) {
-      LOG(FATAL) << "Could not find " << key << ", something is not right!";
-      continue;
-    }
-    if (it->second != nullptr) {
-      LOG(INFO) << "Reparsing " << key;
-      ClearElement(ele);
-      if (it->second != nullptr) {
-        LOG(FATAL)
-            << "Element was not properly cleared something is not right!";
-      }
-    }
     VLOG(2) << "Parsing: " << key << ", value: " << static_cast<int>(ele);
     if (ele == Element::Menu) {
       if (value.is_array()) {
-        it->second = new SceneUIParserNode();
-        it->second->start_callback = std::bind(&ImGui::BeginMenuBar);
-        it->second->finish_callback = std::bind(&ImGui::EndMenuBar);
+        auto* node = new SceneUIParserNode();
+        node->start_callback = std::bind(&ImGui::BeginMenuBar);
+        node->finish_callback = std::bind(&ImGui::EndMenuBar);
         for (auto& ele : value) {
-          it->second->next.push_back(ParseMenuItem(ele));
+          node->next.push_back(ParseMenuItem(ele));
         }
+        nodes.push_back(node);
       } else {
         LOG(WARNING) << "Value is not an array";
       }
     } else if (ele == Element::Scene) {
       if (value.is_array()) {
-        it->second = new SceneUIParserNode();
-        it->second->start_callback = []() { return true; };
+        auto* node = new SceneUIParserNode();
+        node->start_callback =
+            std::bind(ImGui::BeginTabBar, kTabBarId, ImGuiTabBarFlags_None);
+        node->finish_callback = std::bind(ImGui::EndTabBar);
         for (auto& ele : value) {
-          it->second->next.push_back(ParseSceneItem(ele, 0));
+          node->next.push_back(ParseSceneItem(ele, 0));
         }
+        nodes.push_back(node);
       } else {
         LOG(WARNING) << "Value is not an array";
       }
     } else if (ele == Element::Popup) {
       if (value.is_array()) {
-        it->second = new SceneUIParserNode();
-        it->second->start_callback =
+        auto* node = new SceneUIParserNode();
+        node->start_callback =
             std::bind(&ImguiPopupController::OpenAllOnCurrentStack,
                       ImguiPopupController::Get());
         for (auto& ele : value) {
-          it->second->next.push_back(ParsePopupItem(ele, 0));
+          node->next.push_back(ParsePopupItem(ele, 0));
         }
+        nodes.push_back(node);
       } else {
         LOG(WARNING) << "Value is not an array";
       }
     }
   }
+  return nodes;
 }
 
 SceneUIParser::SceneUIParserNode* SceneUIParserImGui::ParseMenuItem(
@@ -138,10 +181,6 @@ SceneUIParser::SceneUIParserNode* SceneUIParserImGui::ParseMenuItem(
 SceneUIParser::SceneUIParserNode* SceneUIParserImGui::ParseSceneItem(
     nlohmann::json& json_data,
     int depth) {
-  if (depth > 2) {
-    LOG(INFO) << "Invalid scene element depth is " << depth;
-    return nullptr;
-  }
   SceneUIParserNode* node = new SceneUIParserNode();
   for (auto& [key, value] : json_data.items()) {
     if (key == "return" && value.is_array()) {
@@ -168,14 +207,10 @@ SceneUIParser::SceneUIParserNode* SceneUIParserImGui::ParseSceneItem(
     }
   }
   if (depth == 0) {
-    node->start_callback = std::bind(
-        ImGui::BeginTabBar, node->node_name.c_str(), ImGuiTabBarFlags_None);
-    node->finish_callback = std::bind(ImGui::EndTabBar);
-  } else if (depth == 1) {
     node->start_callback =
         std::bind(ImGui::BeginTabItem, node->node_name.c_str(), (bool*)NULL, 0);
     node->finish_callback = std::bind(ImGui::EndTabItem);
-  } else if (depth >= 2) {
+  } else if (depth >= 1) {
     node->start_callback = std::bind(
         static_cast<bool (&)(const char*, int)>(ImGui::CollapsingHeader),
         node->node_name.c_str(), 0);

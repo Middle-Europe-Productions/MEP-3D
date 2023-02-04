@@ -13,86 +13,96 @@
 namespace {
 
 constexpr char kDefaultSceneRuntimeConfig[] = R"({
-   "menu":[
-      {
-        "name":"New",
-        "return":[
+  "window": [
+    {
+      "name": "Scene",
+      "return": {
+        "menu": [
           {
-             "name":"Light",
-             "return":[
+            "name": "New",
+            "return": [
               {
-                "name":"Point Light",
-                "return":"open_point_light_popup"
+                "name": "Light",
+                "return": [
+                  {
+                    "name": "Point Light",
+                    "return": "open_point_light_popup"
+                  },
+                  {
+                    "name": "Spot Light",
+                    "return": "open_spot_light_popup"
+                  }
+                ]
               },
               {
-                "name":"Spot Light",
-                "return":"open_spot_light_popup"
+                "name": "Model",
+                "return": "open_model_popup"
+              }
+            ]
+          }
+        ],
+        "scene": [
+          {
+            "name": "Light",
+            "return": [
+              {
+                "name": "Directional Light",
+                "return": "draw_directional_light"
+              },
+              {
+                "name": "Point Light",
+                "return": "draw_point_light"
+              },
+              {
+                "name": "Spot Light",
+                "return": "draw_spot_light"
               }
             ]
           },
           {
-            "name":"Model",
-            "return":"open_model_popup"
+            "name": "Models",
+            "return": "draw_model_menu"
+          },
+          {
+            "name": "Voxels",
+            "return": -1
+          },
+          {
+            "name": "Shader",
+            "return": "draw_shader"
+          },
+          {
+            "name": "Cameras",
+            "return": "draw_camera"
+          },
+          {
+            "name": "Window",
+            "return": "draw_window"
+          }
+        ],
+        "popup": [
+          {
+            "return": "point_light_popup"
+          },
+          {
+            "return": "spot_light_popup"
+          },
+          {
+            "return": "model_popup"
           }
         ]
       }
-   ],
-   "scene":[
-    {
-      "name":"Items",
-      "return": [
-        {
-          "name":"Light",
-          "return":[
-            {
-              "name":"Directional Light",
-              "return":"draw_directional_light"
-            },
-            {
-              "name":"Point Light",
-              "return":"draw_point_light"
-            },
-            {
-              "name":"Spot Light",
-              "return":"draw_spot_light"
-            }
-          ]
-        },
-        {
-          "name":"Models",
-          "return":"draw_model_menu"
-        },
-        {
-          "name":"Voxels",
-          "return":-1
-        },
-        {
-          "name":"Shader",
-          "return":"draw_shader"
-        },
-        {
-          "name":"Cameras",
-          "return":"draw_camera"
-        },
-        {
-          "name":"Window",
-          "return":"draw_window"
-        }
-      ]
-    } 
-   ],
-   "popup":[
-    {
-      "return":"point_light_popup"
-    },
-    {
-      "return":"spot_light_popup"
-    },
-    {
-      "return":"model_popup"
     }
-   ]
-})";
+  ]
+}
+)";
+
+constexpr ImGuiWindowFlags kDockspaceWindowFlags =
+    ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking |
+    ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse |
+    ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+    ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus |
+    ImGuiWindowFlags_NoBackground;
 };  // namespace
 
 class SceneUILayerImGUI : public SceneUILayer {
@@ -113,15 +123,16 @@ class SceneUILayerImGUI : public SceneUILayer {
     menu_.Parse(runtime_configuration.c_str());
     LOG(INFO) << __FUNCTION__;
   }
-  void OnAttach() override { ImGui::ApplyMepStyle(); }
+  void OnAttach() override {
+    ImGui::ApplyMepSceneStyle();
+    ImGui::ApplyMepStyle();
+  }
   void OnDetach() override {}
   void OnUpdate(float time_delta) override {}
 
   void OnDraw(RenderTarget& render_target) override {
     if (!GetScenePtr())
       return;
-    ImGuiWindowFlags window_flags =
-        ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
     const ImGuiViewport* viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(viewport->WorkPos);
     ImGui::SetNextWindowSize(viewport->WorkSize);
@@ -129,20 +140,13 @@ class SceneUILayerImGUI : public SceneUILayer {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-    window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse |
-                    ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-    window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus |
-                    ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground;
 
-    ImGui::Begin("Dockspace", NULL, window_flags);
+    ImGui::Begin("Dockspace", NULL, kDockspaceWindowFlags);
     ImGui::PopStyleVar(3);
     ImGui::DockSpace(ImGui::GetID("master_dockspace"), ImVec2(0.0f, 0.0f),
                      ImGuiDockNodeFlags_PassthruCentralNode);
     ImGui::End();
-
-    ImGui::Begin("Scene", NULL, ImGuiWindowFlags_MenuBar);
     menu_.Draw();
-    ImGui::End();
   }
   void InitDefaultHandler() {
     menu_.SetHandler(

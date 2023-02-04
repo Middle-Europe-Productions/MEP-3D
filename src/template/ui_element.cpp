@@ -67,7 +67,6 @@ int ElementData::IdFromString(const std::string& name) {
 std::string ElementData::IdToString(int id) {
   DCHECK(id >= 0);
   if (id < UI_ELEMENT_COUNT) {
-    LOG(INFO) << "Here";
     return ToString(static_cast<Element>(id));
   } else {
     for (auto& ele : Get().elements_) {

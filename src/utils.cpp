@@ -1,13 +1,13 @@
 #include <GL/glew.h>
-#include <MEP-3D/utils.hpp>
 #include <MEP-3D/features.hpp>
+#include <MEP-3D/utils.hpp>
 
 #include <algorithm>
+#include <fstream>
 #include <unordered_map>
 #include <unordered_set>
 
 #include <glog/logging.h>
-
 
 namespace {
 constexpr char kSeparator = '=';
@@ -144,4 +144,14 @@ float utils::DegToRadians(float degress) {
 
 float utils::RadiansToDeg(float radians) {
   return radians * 180.0f / 3.14159265f;
+}
+
+std::string utils::LoadFromFile(const std::string& file_path) {
+  std::ifstream input_file(file_path);
+  if (!input_file.is_open()) {
+    LOG(ERROR) << "Unable to open file " << file_path;
+    return "";
+  }
+  return std::string((std::istreambuf_iterator<char>(input_file)),
+                     std::istreambuf_iterator<char>());
 }

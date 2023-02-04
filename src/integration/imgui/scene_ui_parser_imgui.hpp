@@ -22,6 +22,7 @@ class SceneUIParserImGui : public SceneUIParser {
   virtual void Parse(const std::string& json) override;
 
  private:
+  std::vector<SceneUIParserNode*> ParseWindow(nlohmann::json& json_data);
   SceneUIParserNode* ParseMenuItem(nlohmann::json& json_data);
   SceneUIParserNode* ParseSceneItem(nlohmann::json& json_data, int depth);
   SceneUIParserNode* ParsePopupItem(nlohmann::json& json_data, int depth);

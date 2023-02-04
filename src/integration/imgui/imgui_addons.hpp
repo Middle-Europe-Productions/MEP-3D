@@ -6,6 +6,7 @@ bool Spinner(const char* label,
              float radius,
              int thickness,
              const unsigned int& color);
+void ApplyMepSceneStyle();
 void ApplyMepStyle();
 }  // namespace ImGui
 

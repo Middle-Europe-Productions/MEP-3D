@@ -39,7 +39,7 @@ run_mep_unix.sh <target> <flags>
 * Using MSVC build script
 Open the visual studio developer console or set environment variables.
 ```sh
-cd <build>/examples
+cd scripts
 run_mep_msvc.bat -t/--target <target> -m/--mode <mode=Debug> <flags>
 ```
 ### Flags

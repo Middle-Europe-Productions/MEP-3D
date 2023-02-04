@@ -46,6 +46,11 @@ bool Spinner(const char* label,
   window->DrawList->PathStroke(color, false, thickness);
   return true;
 }
+void ApplyMepSceneStyle() {
+  ImGuiIO& io = ImGui::GetIO();
+  io.IniFilename = "mep.conf";
+}
+
 void ApplyMepStyle() {
   ImGuiStyle* style = &ImGui::GetStyle();
 

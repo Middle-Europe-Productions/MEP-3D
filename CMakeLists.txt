@@ -21,7 +21,11 @@ endif()
 mep_set_option(MEP_USE_STB TRUE BOOL "TRUE to use stb_image for image processing")
 mep_set_option(MEP_STANDALONE_APP FALSE BOOL "TRUE when building a standalone application")
 mep_set_option(MEP_USE_IMGUI TRUE BOOL "TRUE to use ImGui library for debug output")
+mep_set_option(MEP_BUILD_EXAMPLES TRUE BOOL "TRUE to include MEP examples")
+
 
 add_subdirectory(third-party/)
 add_subdirectory(src/)
-add_subdirectory(examples/)
+if(MEP_BUILD_EXAMPLES)
+    add_subdirectory(examples/)
+endif()

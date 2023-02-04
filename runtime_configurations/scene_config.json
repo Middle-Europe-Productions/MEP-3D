@@ -1,0 +1,76 @@
+{
+  "menu": [
+    {
+      "name": "New",
+      "return": [
+        {
+          "name": "Light",
+          "return": [
+            {
+              "name": "Point Light",
+              "return": "open_point_light_popup"
+            },
+            {
+              "name": "Spot Light",
+              "return": "open_spot_light_popup"
+            }
+          ]
+        },
+        {
+          "name": "Model",
+          "return": "open_model_popup"
+        }
+      ]
+    }
+  ],
+  "scene": [
+    {
+      "name": "Light",
+      "return": [
+        {
+          "name": "Directional Light",
+          "return": "draw_directional_light"
+        },
+        {
+          "name": "Point Light",
+          "return": "draw_point_light"
+        },
+        {
+          "name": "Spot Light",
+          "return": "draw_spot_light"
+        }
+      ]
+    },
+    {
+      "name": "Models",
+      "return": "draw_model_menu"
+    },
+    {
+      "name": "Voxels",
+      "return": -1
+    },
+    {
+      "name": "Shader",
+      "return": "draw_shader"
+    },
+    {
+      "name": "Cameras",
+      "return": "draw_camera"
+    },
+    {
+      "name": "Window",
+      "return": "draw_window"
+    }
+  ],
+  "popup": [
+    {
+      "return": "point_light_popup"
+    },
+    {
+      "return": "spot_light_popup"
+    },
+    {
+      "return": "model_popup"
+    }
+  ]
+}

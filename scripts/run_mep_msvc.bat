@@ -44,15 +44,15 @@ IF %target% equ "" (
     goto :eof
 )
 
-IF NOT exist %target%\%target%.sln (
+IF NOT exist ..\build\examples\%target%\%target%.sln (
     ECHO "[MEP] Target %1%target% does not exist!"
     goto :eof
 )
 ECHO "[MEP] Building MEP %target% with mode %mode%" 
-msbuild %target%\%target%.sln /p:Configuration=%mode%
+msbuild ..\build\examples\%target%\%target%.sln /p:Configuration=%mode%
 if errorlevel 1 (
     ECHO "[MEP] Compilation failed!"
     goto :eof
 )
 ECHO "[MEP] Launching MEP %target% with mode %mode%"
-start /d "%target%/" %mode%\%target%.exe %*
+start /d "../output/%target%/" %target%.exe %*

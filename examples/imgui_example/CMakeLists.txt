@@ -1,39 +1,43 @@
 project(imgui_example)
 
-set(SHADERS_DIR ${PROJECT_SOURCE_DIR}/../../shaders)
+mep_set_output_dir(imgui_example)
 
-set(SHADERS
-  ${SHADERS_DIR}/shader.frag
-  ${SHADERS_DIR}/shader.vert
-)
+set(PS_DIR ${PROJECT_SOURCE_DIR}/../../)
 
-source_group("Shader Files" FILES ${SHADERS})
+source_group("Shader Files")
 
-add_executable(${PROJECT_NAME} main.cpp ${SHADERS})
+add_executable(${PROJECT_NAME} main.cpp)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC mep-3d)
 
 file(
   COPY
-  ${SHADERS_DIR}/
+  ${PS_DIR}/shaders
   DESTINATION
-  ${PROJECT_BINARY_DIR}/shaders
+  ${MEP_OUTPUT_DIR}/imgui_example
 )
 
 file(
   COPY
   ${PROJECT_SOURCE_DIR}/textures
   DESTINATION
-  ${PROJECT_BINARY_DIR}/
+  ${MEP_OUTPUT_DIR}/imgui_example
 )
 
 file(
   COPY
   ${PROJECT_SOURCE_DIR}/models
   DESTINATION
-  ${PROJECT_BINARY_DIR}/
+  ${MEP_OUTPUT_DIR}/imgui_example
+)
+
+file(
+  COPY
+  ${PS_DIR}/runtime_configurations
+  DESTINATION
+  ${MEP_OUTPUT_DIR}/imgui_example
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY 
-  ${PROJECT_BINARY_DIR}
+  ${MEP_OUTPUT_DIR}
 )

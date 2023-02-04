@@ -1,26 +1,10 @@
 #include <glog/logging.h>
 #include <MEP-3D/common_names.hpp>
 #include <MEP-3D/shader.hpp>
+#include <MEP-3D/utils.hpp>
 #include <array>
 #include <fstream>
 #include <glm/gtc/type_ptr.hpp>
-
-namespace {
-std::string LoadFromFile(const std::string& path) {
-  std::ifstream file_stream(path, std::ios::in);
-  if (!file_stream.is_open()) {
-    LOG(ERROR) << "Could not open a file: " << path << "!";
-    return "";
-  }
-  std::string output;
-  std::string line = "";
-  while (!file_stream.eof()) {
-    std::getline(file_stream, line);
-    output.append(line + "\n");
-  }
-  return output;
-}
-}  // namespace
 
 Shader::Shader() : Asset(kShader) {
   LOG(INFO) << __FUNCTION__ << ", " << ToString();
@@ -50,7 +34,7 @@ void Shader::Stop() {
 
 bool Shader::CreateFromFile(const std::string& vertex_location) {
   status_.created_from_file = true;
-  std::string vertex_code = LoadFromFile(vertex_location);
+  std::string vertex_code = utils::LoadFromFile(vertex_location);
   status_.vertex_path = vertex_location;
   if (vertex_code == "")
     return false;
@@ -60,9 +44,9 @@ bool Shader::CreateFromFile(const std::string& vertex_location) {
 bool Shader::CreateFromFile(const std::string& vertex_location,
                             const std::string& fragment_location) {
   status_.created_from_file = true;
-  std::string vertex_code = LoadFromFile(vertex_location);
+  std::string vertex_code = utils::LoadFromFile(vertex_location);
   status_.vertex_path = vertex_location;
-  std::string fragment_code = LoadFromFile(fragment_location);
+  std::string fragment_code = utils::LoadFromFile(fragment_location);
   status_.fragment_path = fragment_location;
   if (vertex_code == "" || fragment_code == "")
     return false;

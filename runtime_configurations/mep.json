@@ -1,0 +1,8 @@
+{
+  "window": [
+    {
+      "name": "Scene",
+      "file": "runtime_configurations/scene_config.json" 
+    }
+  ]
+}

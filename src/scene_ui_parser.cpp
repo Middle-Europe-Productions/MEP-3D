@@ -5,7 +5,7 @@
 
 namespace {
 constexpr auto DoNothing = []() {};
-constexpr auto DoNothingWithReplay = []() -> bool { return false; };
+constexpr auto DoNothingWithReplay = []() -> bool { return true; };
 };  // namespace
 
 SceneUIParser::SceneUIParserNode::SceneUIParserNode()
@@ -42,9 +42,8 @@ void SceneUIParser::MergeHandler(
 }
 
 void SceneUIParser::Draw() {
-  for (Element it = Element::Menu; it != Element::Count;
-       it = utils::IncEnum(it)) {
-    DrawRecursive(nodes_[it]);
+  for (auto* node : windows_root_) {
+    DrawRecursive(node);
   }
 }
 

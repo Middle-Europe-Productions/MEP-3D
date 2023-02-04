@@ -89,7 +89,8 @@ class BenchmarkLayer final : public Scene, private WindowObserver {
     spot_light_con->Bind(shader_.get());
     Attach(std::move(spot_light_con));
     // Add UI
-    auto ui_layer = SceneUILayer::Create();
+    auto ui_layer = SceneUILayer::Create(
+        utils::LoadFromFile("runtime_configurations/mep.json"));
     Scene::AddObserver(ui_layer.get());
     GetEngine()->AttachLayerToStructure(std::move(ui_layer), 0, true);
     // Create elements

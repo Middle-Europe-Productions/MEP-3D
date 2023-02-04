@@ -39,6 +39,7 @@ class SceneUIParser {
   void ClearChildren(SceneUIParserNode* current);
   void ClearElement(Element what);
   void Init();
+  std::vector<SceneUIParserNode*> windows_root_;
   std::unordered_map<Element, SceneUIParserNode*> nodes_;
   nlohmann::json root_;
 };

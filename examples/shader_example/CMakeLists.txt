@@ -1,7 +1,9 @@
 project(shader_example)
 
-source_group("Shader Files" FILES ${SHADERS})
+mep_set_output_dir(shader_example)
 
-add_executable(${PROJECT_NAME} main.cpp ${SHADERS})
+source_group("Shader Files")
+
+add_executable(${PROJECT_NAME} main.cpp)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC mep-3d)
