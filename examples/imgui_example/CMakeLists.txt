@@ -1,6 +1,4 @@
-project(imgui_example)
-
-mep_set_output_dir(imgui_example)
+mep_project(imgui_example)
 
 set(PS_DIR ${PROJECT_SOURCE_DIR}/../../)
 

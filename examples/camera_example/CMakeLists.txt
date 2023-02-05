@@ -1,6 +1,4 @@
-project(camera_example)
-
-mep_set_output_dir(camera_example)
+mep_project(camera_example)
 
 add_executable(${PROJECT_NAME} main.cpp)
 

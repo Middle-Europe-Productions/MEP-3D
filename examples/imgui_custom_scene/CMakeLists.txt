@@ -1,6 +1,4 @@
-project(imgui_custom_scene)
-
-mep_set_output_dir(imgui_custom_scene)
+mep_project(imgui_custom_scene)
 
 source_group("Shader Files")
 

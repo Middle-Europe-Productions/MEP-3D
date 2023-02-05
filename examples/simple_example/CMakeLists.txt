@@ -1,6 +1,4 @@
-project(simple_example)
-
-mep_set_output_dir(simple_example)
+mep_project(simple_example)
 
 set(SHADERS_DIR ${PROJECT_SOURCE_DIR}/../../shaders)
 

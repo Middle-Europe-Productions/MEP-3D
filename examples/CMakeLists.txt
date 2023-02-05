@@ -1,10 +1,4 @@
 set(MEP_OUTPUT_DIR "${PROJECT_SOURCE_DIR}/output")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${PROJECT_SOURCE_DIR}/output")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${PROJECT_SOURCE_DIR}/output")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG "${PROJECT_SOURCE_DIR}/output")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE "${PROJECT_SOURCE_DIR}/output")
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${PROJECT_SOURCE_DIR}/output")
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${PROJECT_SOURCE_DIR}/output")
 
 macro(mep_set_output_dir target)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${MEP_OUTPUT_DIR}/${target}")
@@ -13,6 +7,11 @@ macro(mep_set_output_dir target)
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE "${MEP_OUTPUT_DIR}/${target}")
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${MEP_OUTPUT_DIR}/${target}")
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${MEP_OUTPUT_DIR}/${target}")
+endmacro()
+
+macro(mep_project name)
+  project(${name})
+  mep_set_output_dir(${name})
 endmacro()
 
 add_subdirectory(imgui_example)

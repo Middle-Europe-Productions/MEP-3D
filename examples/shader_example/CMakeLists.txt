@@ -1,6 +1,4 @@
-project(shader_example)
-
-mep_set_output_dir(shader_example)
+mep_project(shader_example)
 
 source_group("Shader Files")
 

@@ -35,15 +35,21 @@ set(SOURCE
   ${SRC_ROOT}/engine.cpp
   ${SRC_ROOT}/layer.cpp
   ${SRC_ROOT}/scene.cpp
-  ${SRC_ROOT}/template/scene_ui_layer.cpp
-  ${SRC_ROOT}/template/shaders_preset.cpp
-  ${SRC_ROOT}/template/ui_element.cpp
   ${SRC_ROOT}/common_names.cpp
   ${SRC_ROOT}/config_create_impl.cpp
   ${SRC_ROOT}/scene_ui_parser.cpp
   ${SRC_ROOT}/key_event.cpp
   ${SRC_ROOT}/camera_base.cpp
   ${SRC_ROOT}/features.cpp
+  ${SRC_ROOT}/async_progress.cpp
+  ${SRC_ROOT}/file_reader_with_progress.cpp
+  ${SRC_ROOT}/texture_3d.cpp
+  ${SRC_ROOT}/volume.cpp
+# template/
+  ${SRC_ROOT}/template/scene_ui_layer.cpp
+  ${SRC_ROOT}/template/shaders_preset.cpp
+  ${SRC_ROOT}/template/ui_element.cpp
+# ilc/
   ${SRC_ROOT}/ilc/ilc_client.cpp
   ${SRC_ROOT}/ilc/ilc_daemon_default.cpp
   ${SRC_ROOT}/ilc/ilc_connector.cpp
@@ -102,15 +108,21 @@ set(HEADERS
   ${INC_ROOT}/engine.hpp
   ${INC_ROOT}/user_interface.hpp
   ${INC_ROOT}/scene.hpp
+  ${INC_ROOT}/common_names.hpp
+  ${INC_ROOT}/scene_ui_parser.hpp
+  ${INC_ROOT}/features.hpp
+  ${INC_ROOT}/async_progress.hpp
+  ${INC_ROOT}/file_reader_with_progress.hpp
+  ${INC_ROOT}/texture_3d.hpp
+  ${INC_ROOT}/volume.hpp
+# template/
   ${INC_ROOT}/template/engine_data_ui_layer.hpp
   ${INC_ROOT}/template/scene_ui_layer.hpp
   ${INC_ROOT}/template/util_common_draw.hpp
   ${INC_ROOT}/template/shaders_preset.hpp
   ${INC_ROOT}/template/ui_element.hpp
   ${INC_ROOT}/template/scene_ui_layer_handler_context.hpp
-  ${INC_ROOT}/common_names.hpp
-  ${INC_ROOT}/scene_ui_parser.hpp
-  ${INC_ROOT}/features.hpp
+# ilc/
   ${INC_ROOT}/ilc/ilc_client.hpp
   ${INC_ROOT}/ilc/ilc_daemon.hpp
   ${INC_ROOT}/ilc/ilc_connector.hpp
