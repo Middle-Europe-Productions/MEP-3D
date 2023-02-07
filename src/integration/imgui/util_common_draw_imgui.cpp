@@ -304,6 +304,33 @@ bool Drawer::DrawShader(Shader& shader) {
   return true;
 }
 
+bool Drawer::DrawVolume(Volume& volume) {
+  auto status = volume.GetStatus();
+  if (status == Status::NotImplemented) {
+    ImGui::Text("Volume module is not implemented!");
+  } else {
+    ImGui::Text("Volume Type: %s", ToString(volume.GetType()).c_str());
+    ImGui::Text("Volume Status: %s", ToString(status).c_str());
+    ImGui::Text("Volume Dimentions: %i x %i x %i", volume.GetDimensions().x_,
+                volume.GetDimensions().y_, volume.GetDimensions().z_);
+    ImGui::Text("Volume Size: %i [MB]", volume.GetSizeInKB() / 1024);
+    if (status == Status::Loading) {
+      ImGui::BufferingBar("spinner_volume", volume.GetProgress(), {500, 4},
+                          ImGui::GetColorU32(ImGuiCol_ButtonHovered),
+                          ImGui::GetColorU32(ImGuiCol_TabActive));
+      ImGui::Spinner("spinner_volume", 10, 4,
+                     ImGui::GetColorU32(ImGuiCol_TabActive));
+    } else if (status == Status::Avalible) {
+      ImGui::Separator();
+      UI::Drawer::DrawAssetControllerConst(volume);
+    }
+  }
+  if (ImGui::Button("Delete")) {
+    return false;
+  }
+  return true;
+}
+
 void Drawer::DrawModelController(ModelController& model_controller) {
   float* model_ptr = (float*)glm::value_ptr(model_controller.GetModel());
   ImGui::Text("Position");

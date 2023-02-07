@@ -5,10 +5,10 @@
 AsyncProgress::AsyncProgress() : progress_(0.f) {}
 
 float AsyncProgress::GetProgress() {
-  return progress_.load();
+  return progress_.load(std::memory_order_acquire);
 }
 
 void AsyncProgress::SetProgress(float progress) {
   DCHECK(progress >= 0.f && progress <= 1.f);
-  progress_ = progress;
+  progress_.store(progress, std::memory_order_release);
 }

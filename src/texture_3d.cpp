@@ -55,3 +55,13 @@ Texture3D::~Texture3D() {
   VLOG(4) << __func__;
   Clear();
 }
+
+std::string ToString(Texture3D::Type type) {
+  switch (type) {
+    case Texture3D::Type::BYTE_8:
+      return "8 Byte";
+    case Texture3D::Type::BYTE_16:
+      return "16 Byte";
+  }
+  return "Unkown";
+}

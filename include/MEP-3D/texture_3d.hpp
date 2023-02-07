@@ -21,4 +21,6 @@ class Texture3D : public Asset {
   GLuint texture_id_;
 };
 
+std::string ToString(Texture3D::Type type);
+
 #endif

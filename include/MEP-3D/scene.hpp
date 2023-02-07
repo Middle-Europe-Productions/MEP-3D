@@ -1,6 +1,7 @@
 #ifndef SCENE_HPP
 #define SCENE_HPP
 
+#include <MEP-3D/arcball_camera.hpp>
 #include <MEP-3D/directional_light.hpp>
 #include <MEP-3D/layer.hpp>
 #include <MEP-3D/light_controller.hpp>
@@ -11,7 +12,7 @@
 #include <MEP-3D/perspective_camera.hpp>
 #include <MEP-3D/shader.hpp>
 #include <MEP-3D/spot_light.hpp>
-#include <MEP-3D/arcball_camera.hpp>
+#include <MEP-3D/volume.hpp>
 
 #include <memory>
 #include <vector>
@@ -52,6 +53,8 @@ class Scene : public Layer, public ObserverList<SceneObserver> {
   std::vector<std::unique_ptr<Shader>>& GetShaders();
   std::vector<std::unique_ptr<Material>>& GetMaterial();
   std::vector<std::unique_ptr<Texture>>& GetTexture();
+  std::vector<std::unique_ptr<CameraBase>>& GetCamera();
+  std::vector<std::unique_ptr<Volume>>& GetVolume();
   void Attach(std::unique_ptr<DirectionalLight> directional_light);
   void Attach(std::unique_ptr<SpotLightController> spot_light_controller);
   void Attach(std::unique_ptr<PointLightController> point_light_controller);
@@ -62,7 +65,7 @@ class Scene : public Layer, public ObserverList<SceneObserver> {
   void Attach(std::unique_ptr<CameraBase> camera_base);
   void Attach(std::unique_ptr<PerspectiveCamera> camera_base);
   void Attach(std::unique_ptr<ArcballCamera> arcball_camera);
-  std::vector<std::unique_ptr<CameraBase>>& GetCamera();
+  void Attach(std::unique_ptr<Volume> Volume);
   template <typename First, typename... Args>
   void Attach(First&& first, Args&&... args);
   // Usable
@@ -83,6 +86,7 @@ class Scene : public Layer, public ObserverList<SceneObserver> {
   virtual ~Scene();
 
  private:
+  std::vector<std::unique_ptr<Volume>> volumes_;
   std::vector<std::unique_ptr<DirectionalLight>> directional_lights_;
   std::vector<std::unique_ptr<Model>> models_;
   std::vector<std::unique_ptr<Shader>> shaders_;

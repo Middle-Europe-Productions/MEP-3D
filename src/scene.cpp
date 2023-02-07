@@ -37,6 +37,10 @@ std::vector<std::unique_ptr<CameraBase>>& Scene::GetCamera() {
   return camera_;
 }
 
+std::vector<std::unique_ptr<Volume>>& Scene::GetVolume() {
+  return volumes_;
+}
+
 void Scene::Attach(std::unique_ptr<DirectionalLight> directional_light) {
   DCHECK(directional_light);
   directional_lights_.emplace_back(std::move(directional_light));
@@ -98,6 +102,11 @@ void Scene::Attach(std::unique_ptr<PerspectiveCamera> camera_base) {
 
 void Scene::Attach(std::unique_ptr<ArcballCamera> arcball_camera) {
   Attach(std::unique_ptr<CameraBase>(std::move(arcball_camera)));
+}
+
+void Scene::Attach(std::unique_ptr<Volume> volume) {
+  DCHECK(volume);
+  volumes_.emplace_back(std::move(volume));
 }
 
 void Scene::UseAllDirectionalLights() {

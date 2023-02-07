@@ -17,6 +17,7 @@ const char* kPointLight = "point_light";
 const char* kLayer = "layer";
 const char* kExecutor = "executor";
 const char* kEngine = "engine";
+const char* kVolume = "volume";
 
 const char* kWindowNodeName = "window";
 const char* kMenuNodeName = "menu";

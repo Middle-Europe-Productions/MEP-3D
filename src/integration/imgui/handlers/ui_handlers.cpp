@@ -37,6 +37,31 @@ UI_HANDLER(UI::Element, DrawModelMenu, SceneUILayer) {
   }
 }
 
+UI_HANDLER(UI::Element, DrawVolume, SceneUILayer) {
+  auto* context = GetContext();
+  DCHECK(context);
+  if (context->GetScenePtr()->GetVolume().empty()) {
+    ImGui::Text("You do not have any volumes yet!");
+    return;
+  }
+  auto& array = context->GetScenePtr()->GetVolume();
+  std::queue<std::vector<std::unique_ptr<Volume>>::iterator> to_remove;
+  for (auto it = array.begin(); it != array.end();) {
+    if (ImGui::TreeNode(it->get()->Identity::GetName().c_str())) {
+      if (!UI::Drawer::DrawVolume(*it->get())) {
+        to_remove.push(it);
+      }
+      ImGui::Separator();
+      ImGui::TreePop();
+    }
+    it++;
+  }
+  while (!to_remove.empty()) {
+    array.erase(to_remove.front());
+    to_remove.pop();
+  }
+};
+
 UI_HANDLER(UI::Element, DrawPointLight, SceneUILayer) {
   auto* context = GetContext();
   DCHECK(context);

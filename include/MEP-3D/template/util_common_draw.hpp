@@ -8,6 +8,7 @@
 #include <MEP-3D/scene.hpp>
 #include <MEP-3D/shader.hpp>
 #include <MEP-3D/template/ui_element.hpp>
+#include <MEP-3D/volume.hpp>
 
 namespace UI {
 class Drawer {
@@ -30,6 +31,7 @@ class Drawer {
   static bool DrawPointLight(PointLight& point_light);
   static bool DrawModel(Model& model);
   static bool DrawShader(Shader& shader);
+  static bool DrawVolume(Volume& volume);
   // Combo menus
   static int DrawShaderComboMenu(std::vector<std::unique_ptr<Shader>>& array,
                                  int selected);

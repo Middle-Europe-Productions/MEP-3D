@@ -27,9 +27,13 @@ class ResourceBase {
   ResourceBase();
   Status GetStatus() const;
   void UpdateStatus(Status status);
+  void WaitForResource();
+  ~ResourceBase();
 
  private:
+  void EvaluateTask(Status new_status);
   std::atomic<Status> status_;
+  std::atomic<bool> active_task_;
 };
 
 #endif

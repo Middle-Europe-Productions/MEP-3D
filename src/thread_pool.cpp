@@ -17,7 +17,7 @@ ThreadPool::ThreadPool() {
   for (Executors exe = Executors::Resource; exe != Executors::Count;
        exe = utils::IncEnum(exe)) {
     // TOOD: Add config
-    executor_pool_[exe] =
-        std::make_unique<Executor>(Executor::Type::NonBlocking, 1);
+    executor_pool_[exe] = std::make_unique<Executor>(
+        Executor::Type::NonBlocking, std::thread::hardware_concurrency());
   }
 }

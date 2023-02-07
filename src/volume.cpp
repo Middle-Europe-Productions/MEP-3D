@@ -5,7 +5,12 @@
 
 namespace {
 constexpr int kChunkSize = 1024;
-};
+constexpr long long kKiloByte = 1024;
+};  // namespace
+
+Volume::Volume() : Identity(kVolume) {
+  active_.store(true, std::memory_order_release);
+}
 
 void Volume::LoadFromFile(const std::string_view file_path,
                           Vec3i size,
@@ -33,10 +38,14 @@ void Volume::LoadFromFile(const std::string_view file_path,
             }
             long long rea_c = 0;
             while (!infile.eof()) {
+              if (!this->IsActive()) {
+                return false;
+              }
               infile.read(chunk.data(), kChunkSize);
               rea_c = infile.gcount();
               data_.insert(data_.end(), chunk.data(), chunk.data() + rea_c);
               this->SetProgress(infile.GetProgress());
+              this->size_bytes_ += rea_c;
             }
             return true;
           },
@@ -77,8 +86,16 @@ const Uint8* Volume::GetData() const {
   return data_.data();
 }
 
-const Vec3i& Volume::GetSize() const {
+bool Volume::IsActive() const {
+  return active_.load(std::memory_order_acquire);
+}
+
+const Vec3i& Volume::GetDimensions() const {
   return volume_size_;
+}
+
+long long Volume::GetSizeInKB() const {
+  return size_bytes_.load() / kKiloByte;
 }
 
 const Texture3D::Type Volume::GetType() const {
@@ -95,4 +112,9 @@ void Volume::Init() {
   texture_ = std::make_unique<Texture3D>();
   texture_->Create(data_.data(), volume_size_, type_);
   DCHECK(texture_->IsValid());
+}
+
+Volume::~Volume() {
+  active_.store(false, std::memory_order_release);
+  WaitForResource();
 }

@@ -32,6 +32,10 @@ bool Drawer::DrawShader(Shader& shader) {
   return true;
 }
 
+bool Drawer::DrawVolume(Volume& volume) {
+  return true;
+}
+
 int Drawer::DrawShaderComboMenu(std::vector<std::unique_ptr<Shader>>& array,
                                 int selected) {
   return -1;

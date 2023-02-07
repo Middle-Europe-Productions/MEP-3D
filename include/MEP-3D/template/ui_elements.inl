@@ -36,3 +36,5 @@ ADD_UI_ELEMENT(SpotLightPopup, "spot_light_popup")
 ADD_UI_ELEMENT(OpenModelPopup, "open_model_popup")
 
 ADD_UI_ELEMENT(ModelPopup, "model_popup")
+
+ADD_UI_ELEMENT(DrawVolume, "draw_volume")
