@@ -53,7 +53,21 @@ set(SOURCE
   ${SRC_ROOT}/ilc/ilc_client.cpp
   ${SRC_ROOT}/ilc/ilc_daemon_default.cpp
   ${SRC_ROOT}/ilc/ilc_connector.cpp
+  # platform
+  ${SRC_ROOT}/platform/platform_delegate.cpp
 )
+
+if (WIN32)
+list(APPEND SOURCE 
+  # platform
+  ${SRC_ROOT}/platform/platform_delegate_windows.cpp
+)
+else()
+list(APPEND SOURCE 
+  # platform
+  ${SRC_ROOT}/platform/platform_delegate_generic.cpp
+)
+endif()
 
 set(HEADERS
   ${INC_ROOT}/mep-3d.hpp
@@ -126,6 +140,8 @@ set(HEADERS
   ${INC_ROOT}/ilc/ilc_client.hpp
   ${INC_ROOT}/ilc/ilc_daemon.hpp
   ${INC_ROOT}/ilc/ilc_connector.hpp
+# platform
+  ${INC_ROOT}/platform/platform_delegate.hpp
 )
 
 set(INCLUDE_DIRECTORIES

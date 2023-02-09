@@ -112,6 +112,7 @@ void Volume::Init() {
   texture_ = std::make_unique<Texture3D>();
   texture_->Create(data_.data(), volume_size_, type_);
   DCHECK(texture_->IsValid());
+  UpdateStatus(Status::Avalible);
 }
 
 Volume::~Volume() {

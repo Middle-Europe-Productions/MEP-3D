@@ -15,7 +15,7 @@ class DefaultScene final : public Scene {
   void OnAttach() override {}
   void OnDetach() override {}
   void OnUpdate(float time_delta) override {}
-  void OnDraw(RenderTarget& render_target) override {}
+  void OnDraw(RenderTarget& render_target) override { DrawAll(render_target); }
   virtual void OnReceive(const Identity& id, const std::string& message) {
     LOG(INFO) << "Message received: " << id.ToString() << ", " << message;
   }
@@ -37,6 +37,10 @@ constexpr char kMyRuntimeConfig[] = R"({
               {
               "name": "Volume Controller",
               "return": "test"
+              },
+              {
+              "name": "System Info",
+              "return": "system_info"
               }
             ]
           }

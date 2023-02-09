@@ -1,5 +1,6 @@
 #include <MEP-3D/template/scene_ui_layer_handler_context.hpp>
 
+#include <MEP-3D/platform/platform_delegate.hpp>
 #include <MEP-3D/template/ui_element.hpp>
 #include <MEP-3D/template/util_common_draw.hpp>
 
@@ -294,4 +295,18 @@ UI_HANDLER_D(UI::Element, ModelPopup, SceneUILayer, ModelWrap) {
   if (ImGui::Button("Cancel")) {
     ImGui::CloseCurrentPopup();
   }
+}
+
+UI_HANDLER(UI::Element, SystemInfo, SceneUILayer) {
+  constexpr std::size_t kDivider = 1024;
+  PlatformDelegate::MemorySnapshot memory_snapsot =
+      PlatformDelegate::Get()->GetMemorySnapshot();
+  ImGui::Text("RAM Avalible: %lli MB",
+              memory_snapsot.avalible_ram_memory_kb / kDivider);
+  ImGui::Text("RAM Total: %lli MB",
+              memory_snapsot.total_ram_memory_kb / kDivider);
+  ImGui::Separator();
+  ImGui::Text("CPU info: %s", memory_snapsot.cpu_info.c_str());
+  ImGui::Text("CPU type: %s", ToString(memory_snapsot.processor_type).c_str());
+  ImGui::Text("Cores: %lli", memory_snapsot.number_of_avalible_cores);
 }

@@ -41,7 +41,7 @@ class Scene : public Layer, public ObserverList<SceneObserver> {
     All
   };
   enum class UpdatableElements : int { Camera = 1, All };
-  enum class DrawableElements : int { Models = 1, All };
+  enum class DrawableElements : int { Models = 1, Volume = 2, All };
   Scene() = default;
   Scene(const std::string& name) : Layer(name) {}
   void AddObserver(SceneObserver* obs);
@@ -74,7 +74,6 @@ class Scene : public Layer, public ObserverList<SceneObserver> {
   void UseAllSpotLights();
   void UseAllLights(UsableElements usable_elements = UsableElements::All);
   // Drawable
-  std::size_t DrawAllModels(RenderTarget& render_target);
   std::size_t DrawAll(
       RenderTarget& render_target,
       DrawableElements drawable_elements = DrawableElements::All);

@@ -38,3 +38,5 @@ ADD_UI_ELEMENT(OpenModelPopup, "open_model_popup")
 ADD_UI_ELEMENT(ModelPopup, "model_popup")
 
 ADD_UI_ELEMENT(DrawVolume, "draw_volume")
+
+ADD_UI_ELEMENT(SystemInfo, "system_info")

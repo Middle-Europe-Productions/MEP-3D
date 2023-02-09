@@ -1,5 +1,19 @@
 #include <MEP-3D/scene.hpp>
 
+namespace {
+template <typename ArrayT>
+std::size_t DrawAllElements(ArrayT& elements, RenderTarget& render_target) {
+  int draw_calls = 0;
+  for (auto& element : elements) {
+    if (element->ShouldDraw()) {
+      element->Draw(render_target);
+      draw_calls++;
+    }
+  }
+  return draw_calls;
+}
+}  // namespace
+
 void Scene::AddObserver(SceneObserver* obs) {
   if (obs) {
     ObserverList<SceneObserver>::AddObserver(obs);
@@ -135,24 +149,17 @@ void Scene::UseAllLights(UsableElements usable_elements) {
     UseAllPointLights();
 }
 
-std::size_t Scene::DrawAllModels(RenderTarget& render_target) {
-  int draw_calls = 0;
-  for (auto& model : models_) {
-    if (model->ShouldDraw()) {
-      model->Draw(render_target);
-      draw_calls++;
-    }
-  }
-  return draw_calls;
-}
-
 std::size_t Scene::DrawAll(RenderTarget& render_target,
                            // TODO: Fix
                            DrawableElements drawable_elements) {
   std::size_t draw_calls = 0;
   if (drawable_elements == DrawableElements::Models ||
       drawable_elements == DrawableElements::All) {
-    draw_calls += DrawAllModels(render_target);
+    draw_calls += DrawAllElements(models_, render_target);
+  }
+  if (drawable_elements == DrawableElements::Volume ||
+      drawable_elements == DrawableElements::All) {
+    draw_calls += DrawAllElements(volumes_, render_target);
   }
   return draw_calls;
 }
