@@ -306,7 +306,13 @@ UI_HANDLER(UI::Element, SystemInfo, SceneUILayer) {
   ImGui::Text("RAM Total: %lli MB",
               memory_snapsot.total_ram_memory_kb / kDivider);
   ImGui::Separator();
-  ImGui::Text("CPU info: %s", memory_snapsot.cpu_info.c_str());
-  ImGui::Text("CPU type: %s", ToString(memory_snapsot.processor_type).c_str());
+  ImGui::Text("CPU");
+  ImGui::Text("Info: %s", memory_snapsot.cpu_info.c_str());
+  ImGui::Text("Type: %s", ToString(memory_snapsot.processor_type).c_str());
   ImGui::Text("Cores: %lli", memory_snapsot.number_of_avalible_cores);
+  ImGui::Separator();
+  ImGui::Text("GPU");
+  ImGui::Text("Vendor: %s", memory_snapsot.gpu_vendor.c_str());
+  ImGui::Text("Name: %s", memory_snapsot.gpu_name.c_str());
+  ImGui::Text("Driver: %s", memory_snapsot.gpu_driver.c_str());
 }

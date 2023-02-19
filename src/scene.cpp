@@ -44,7 +44,7 @@ std::vector<std::unique_ptr<Material>>& Scene::GetMaterial() {
   return materials_;
 }
 
-std::vector<std::unique_ptr<Texture>>& Scene::GetTexture() {
+std::vector<std::unique_ptr<TextureBase>>& Scene::GetTexture() {
   return textures_;
 }
 std::vector<std::unique_ptr<CameraBase>>& Scene::GetCamera() {
@@ -94,7 +94,23 @@ void Scene::Attach(std::unique_ptr<Material> material) {
     obs->OnMaterialAttached(material);
   });
 }
+void Scene::Attach(std::unique_ptr<TextureBase> texture) {
+  DCHECK(texture);
+  textures_.emplace_back(std::move(texture));
+  ForAllObservers([texture = textures_.back().get()](auto* obs) {
+    obs->OnTextureAttached(texture);
+  });
+}
+
 void Scene::Attach(std::unique_ptr<Texture> texture) {
+  DCHECK(texture);
+  textures_.emplace_back(std::move(texture));
+  ForAllObservers([texture = textures_.back().get()](auto* obs) {
+    obs->OnTextureAttached(texture);
+  });
+}
+
+void Scene::Attach(std::unique_ptr<Texture3D> texture) {
   DCHECK(texture);
   textures_.emplace_back(std::move(texture));
   ForAllObservers([texture = textures_.back().get()](auto* obs) {

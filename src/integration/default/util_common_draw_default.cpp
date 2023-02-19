@@ -44,8 +44,9 @@ int Drawer::DrawMaterialComboMenu(std::vector<std::unique_ptr<Material>>& array,
                                   int selected) {
   return -1;
 }
-int Drawer::DrawTextureComboMenu(std::vector<std::unique_ptr<Texture>>& array,
-                                 int selected) {
+int Drawer::DrawTextureComboMenu(
+    std::vector<std::unique_ptr<TextureBase>>& array,
+    int selected) {
   return -1;
 }
 

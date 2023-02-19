@@ -38,8 +38,9 @@ class Drawer {
   static int DrawMaterialComboMenu(
       std::vector<std::unique_ptr<Material>>& array,
       int selected);
-  static int DrawTextureComboMenu(std::vector<std::unique_ptr<Texture>>& array,
-                                  int selected);
+  static int DrawTextureComboMenu(
+      std::vector<std::unique_ptr<TextureBase>>& array,
+      int selected);
   // Constant elements
   static void DrawEngineMonitorDataConst(
       const EngineMonitorData& engine_monitor_data);

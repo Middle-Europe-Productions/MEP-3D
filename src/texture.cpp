@@ -7,7 +7,7 @@ namespace {
 constexpr int kDefaultResolution = 16;
 }
 
-Texture::Texture() : Asset(kTexture) {
+Texture::Texture() : TextureBase(kTexture) {
   texture_id_ = 0;
 }
 

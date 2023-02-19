@@ -9,6 +9,20 @@ const std::vector<unsigned int> kPyramidIndicies = {0, 3, 1, 1, 3, 2,
 const std::vector<unsigned int> kPlaneIndices = {0, 2, 1, 1, 2, 3};
 const std::vector<unsigned int> kTriangleIndices = {0, 1, 2};
 
+const std::vector<unsigned int> kCubeIndices = {
+    // bottom face
+    0, 2, 3, 3, 1, 0,
+    // top face
+    4, 6, 7, 7, 5, 4,
+    // front face
+    8, 10, 11, 11, 9, 8,
+    // back face
+    12, 14, 15, 15, 13, 12,
+    // left face
+    16, 17, 18, 18, 19, 17,
+    // right face
+    20, 22, 23, 23, 21, 20};
+
 void CalculateNormals(std::vector<GLfloat>& vertice_array,
                       unsigned int normal_offset) {
   for (std::size_t i = 0; i < kPyramidIndicies.size(); i += 3) {
@@ -55,10 +69,9 @@ Pyramid::Pyramid(Vec3f initial_position) {
   VLOG(3) << __FUNCTION__;
   std::vector<GLfloat> vertices = {
       // x,     y,    z,    u,   v,     nx,   ny,   nz
-      -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,  0.0f,
-      0.0f, -1.0f, 1.0f, 0.5f,  0.0f,  0.0f, 0.0f, 0.0f,
-      1.0f, -1.0f, 0.0f, 1.0f, 0.0f,  0.0f, 0.0f,  0.0f,
-      0.0f, 1.0f, 0.0f, 0.5f, 1.0f,  0.0f, 0.0f, 0.0f};
+      -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,  0.0f, 0.0f, -1.0f, 1.0f,
+      0.5f,  0.0f,  0.0f, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 1.0f, 0.0f,  0.0f,
+      0.0f,  0.0f,  0.0f, 1.0f, 0.0f, 0.5f, 1.0f,  0.0f, 0.0f, 0.0f};
   CalculateNormals(vertices, 5);
   Mesh::Init(vertices, kPyramidIndicies);
   Transform(initial_position);
@@ -67,6 +80,7 @@ Pyramid::Pyramid(Vec3f initial_position) {
 Plane::Plane(float size, Vec3f initial_position) {
   VLOG(3) << __FUNCTION__;
   std::vector<GLfloat> vertices = {
+      // x, y, z, u, v, nx, ny, nx
       -size, 0.0f, -size, 0.0f,  0.0f, 0.0f,  -1.0f, 0.0f, size,  0.0f, -size,
       size,  0.0f, 0.0f,  -1.0f, 0.0f, -size, 0.0f,  size, 0.0f,  size, 0.0f,
       -1.0f, 0.0f, size,  0.0f,  size, size,  size,  0.0f, -1.0f, 0.0f};
@@ -74,13 +88,47 @@ Plane::Plane(float size, Vec3f initial_position) {
   Transform(initial_position);
 }
 
+Cube::Cube(float size, Vec3f initial_position) {
+  VLOG(3) << __FUNCTION__;
+  std::vector<GLfloat> vertices = {
+      // x, y, z, u, v, nx, ny, nz
+      // bottom face
+      -size, 0.0f, -size, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, size, 0.0f, -size,
+      size, 0.0f, 0.0f, -1.0f, 0.0f, -size, 0.0f, size, 0.0f, size, 0.0f, -1.0f,
+      0.0f, size, 0.0f, size, size, size, 0.0f, -1.0f, 0.0f,
+      // top face
+      -size, 2 * size, -size, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, size, 2 * size,
+      -size, size, 0.0f, 0.0f, 1.0f, 0.0f, -size, 2 * size, size, 0.0f, size,
+      0.0f, 1.0f, 0.0f, size, 2 * size, size, size, size, 0.0f, 1.0f, 0.0f,
+      // front face
+      -size, 0.0f, size, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, size, 0.0f, size, size,
+      0.0f, 0.0f, 0.0f, 1.0f, -size, 2 * size, size, 0.0f, 2 * size, 0.0f, 0.0f,
+      1.0f, size, 2 * size, size, size, 2 * size, 0.0f, 0.0f, 1.0f,
+      // back face
+      -size, 0.0f, -size, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, size, 0.0f, -size,
+      size, 0.0f, 0.0f, 0.0f, -1.0f, -size, 2 * size, -size, 0.0f, 2 * size,
+      0.0f, 0.0f, -1.0f, size, 2 * size, -size, size, 2 * size, 0.0f, 0.0f,
+      -1.0f,
+      // left face
+      -size, 0.0f, size, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -size, 2 * size, size,
+      0.0f, 2 * size, -1.0f, 0.0f, 0.0f, -size, 0.0f, -size, size, 0.0f, -1.0f,
+      0.0f, 0.0f, -size, 2 * size, -size, size, 2 * size, -1.0f, 0.0f, 0.0f,
+      // right face
+      size, 0.0f, size, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, size, 2 * size, size,
+      0.0f, 2 * size, 1.0f, 0.0f, 0.0f, size, 0.0f, -size, size, 0.0f, 1.0f,
+      0.0f, 0.0f, size, 2 * size, -size, size, 2 * size, 1.0f, 0.0f, 0.0f};
+
+  Mesh::Init(vertices, kCubeIndices);
+  Transform(initial_position);
+}
+
 Triangle::Triangle(Vec3f initial_position) {
   VLOG(3) << __FUNCTION__;
   std::vector<GLfloat> vertices = {
       // x,     y,    z,    u,   v,     nx,   ny,   nz
-      -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-      0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-      0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,};
+      -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.5f, -0.5f, 0.0f, 0.0f,
+      0.0f,  0.0f,  0.0f, 0.0f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f,  0.0f, 0.0f,
+  };
   Mesh::Init(vertices, kTriangleIndices);
   Transform(initial_position);
 }

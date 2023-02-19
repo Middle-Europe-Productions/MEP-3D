@@ -2,14 +2,13 @@
 #define TEXTURE_HPP
 
 #include <GL/glew.h>
-#include <MEP-3D/asset.hpp>
-#include <MEP-3D/asset_observer.hpp>
 #include <MEP-3D/image.hpp>
 #include <MEP-3D/observer_list.hpp>
+#include <MEP-3D/texture_base.hpp>
 
 #include <memory>
 
-class Texture : public Asset {
+class Texture : public TextureBase {
  public:
   Texture();
   void Create(Color color);

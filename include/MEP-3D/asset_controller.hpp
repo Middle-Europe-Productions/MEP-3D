@@ -4,12 +4,12 @@
 #include <MEP-3D/asset_observer.hpp>
 #include <MEP-3D/material.hpp>
 #include <MEP-3D/shader.hpp>
-#include <MEP-3D/texture.hpp>
+#include <MEP-3D/texture_base.hpp>
 
 class AssetController : private AssetObserver {
  public:
   AssetController();
-  void Bind(Texture* object);
+  void Bind(TextureBase* object);
   void Bind(Shader* object);
   void Bind(Material* object);
   template <typename What>
@@ -20,7 +20,7 @@ class AssetController : private AssetObserver {
   ~AssetController();
 
  private:
-  Texture* texture_;
+  TextureBase* texture_;
   Shader* shader_;
   Material* material_;
 };

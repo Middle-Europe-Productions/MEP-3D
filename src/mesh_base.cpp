@@ -13,8 +13,11 @@ MeshBase::MeshBase() {
 }
 
 void MeshBase::Init(const std::vector<GLfloat>& vertices,
-                    const std::vector<unsigned int>& indices) {
-  vertices_count_ = vertices.size();
+                    const std::vector<unsigned int>& indices,
+                    bool position_only) {
+  VLOG(3) << "Registering mesh indices size: " << indices.size()
+          << ", vertices size: " << vertices.size()
+          << ", is position only: " << std::boolalpha << position_only;
   glGenVertexArrays(1, &vertex_array_object_);
   glBindVertexArray(vertex_array_object_);
 
@@ -29,16 +32,24 @@ void MeshBase::Init(const std::vector<GLfloat>& vertices,
   glBufferData(GL_ARRAY_BUFFER, vertices.size() * kSizeOfVertice, &vertices[0],
                GL_STATIC_DRAW);
 
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, kSizeOfVertice * kRowSize, 0);
-  glEnableVertexAttribArray(0);
+  if (!position_only) {
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, kSizeOfVertice * kRowSize,
+                          0);
+    glEnableVertexAttribArray(0);
 
-  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, kSizeOfVertice * kRowSize,
-                        (void*)(kSizeOfVertice * 3));
-  glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, kSizeOfVertice * kRowSize,
+                          (void*)(kSizeOfVertice * 3));
+    glEnableVertexAttribArray(1);
 
-  glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, kSizeOfVertice * kRowSize,
-                        (void*)(kSizeOfVertice * 5));
-  glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, kSizeOfVertice * kRowSize,
+                          (void*)(kSizeOfVertice * 5));
+    glEnableVertexAttribArray(2);
+    vertices_count_ = vertices.size() / 3;
+  } else {
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(0);
+    vertices_count_ = indices.size();
+  }
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);

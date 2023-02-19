@@ -25,6 +25,7 @@
 #include <MEP-3D/template/engine_data_ui_layer.hpp>
 #include <MEP-3D/template/scene_ui_layer.hpp>
 #include <MEP-3D/template/scene_ui_layer_handler_context.hpp>
+#include <MEP-3D/template/shaders_preset.hpp>
 #include <MEP-3D/template/ui_element.hpp>
 #include <MEP-3D/template/util_common_draw.hpp>
 #include <MEP-3D/texture.hpp>

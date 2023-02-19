@@ -322,6 +322,8 @@ bool Drawer::DrawVolume(Volume& volume) {
                      ImGui::GetColorU32(ImGuiCol_TabActive));
     } else if (status == Status::Avalible) {
       ImGui::Separator();
+      UI::Drawer::DrawModelController(volume);
+      ImGui::Separator();
       UI::Drawer::DrawAssetControllerConst(volume);
     }
   }
@@ -382,8 +384,9 @@ int Drawer::DrawMaterialComboMenu(std::vector<std::unique_ptr<Material>>& array,
   return DrawComboMenuFromMEP(array, selected, "##material");
 }
 
-int Drawer::DrawTextureComboMenu(std::vector<std::unique_ptr<Texture>>& array,
-                                 int selected) {
+int Drawer::DrawTextureComboMenu(
+    std::vector<std::unique_ptr<TextureBase>>& array,
+    int selected) {
   return DrawComboMenuFromMEP(array, selected, "##texture");
 }
 
@@ -422,7 +425,7 @@ void Drawer::DrawEngineMonitorDataConst(
   }
 }
 void Drawer::DrawAssetControllerConst(const AssetController& scene) {
-  if (auto* texture = scene.Get<Texture>()) {
+  if (auto* texture = scene.Get<TextureBase>()) {
     ImGui::Text("Texture: ");
     ImGui::SameLine();
     ImGui::Text("%s", texture->GetName().c_str());

@@ -1,6 +1,7 @@
 #include <MEP-3D/platform/platform_delegate.hpp>
 
 #include <MEP-3D/no_destructor.hpp>
+#include <MEP-3D/platform/platform_utils.hpp>
 
 #include <glog/logging.h>
 
@@ -67,8 +68,17 @@ std::string GetCpuInfo() {
 
 class PlatformDelegateWindows : public PlatformDelegate {
  public:
-  PlatformDelegateWindows() { LOG(INFO) << __func__ << " initialized"; }
+  PlatformDelegateWindows() {
+    LOG(INFO) << __func__ << " initialized";
+    snapshot_.cpu_info = GetCpuInfo();
+    snapshot_.number_of_avalible_cores = GetNumberOfCores();
+    snapshot_.processor_type = GetProcessorType();
+    utils::FetchGpuInfo(&snapshot_);
+  }
   MemorySnapshot GetMemorySnapshot() override;
+
+ private:
+  MemorySnapshot snapshot_;
 };
 
 PlatformDelegate* PlatformDelegate::Get() {
@@ -80,8 +90,7 @@ PlatformDelegate::MemorySnapshot PlatformDelegateWindows::GetMemorySnapshot() {
   MEMORYSTATUSEX statex;
   statex.dwLength = sizeof(statex);
   GlobalMemoryStatusEx(&statex);
-
-  return {GetCpuInfo(), statex.ullTotalPhys / kDivisorKb,
-          statex.ullAvailPhys / kDivisorKb, GetNumberOfCores(),
-          GetProcessorType()};
+  snapshot_.total_ram_memory_kb = statex.ullTotalPhys / kDivisorKb;
+  snapshot_.avalible_ram_memory_kb = statex.ullAvailPhys / kDivisorKb;
+  return snapshot_;
 }

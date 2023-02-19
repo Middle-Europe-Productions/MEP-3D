@@ -41,7 +41,8 @@ class BenchmarkLayer final : public Scene, private WindowObserver {
   BenchmarkLayer(unsigned int triangles_count)
       : Scene("benchmark_layer_" + std::to_string(triangles_count)),
         triangles_count_(triangles_count),
-        shader_(std::make_unique<Shader>("main_shader")) {}
+        shader_(std::make_unique<Shader>("main_shader")),
+        cube(1.0, {10.0, 5.0, 0.0}) {}
   void OnAttach() override {
     auto& window = GetEngine()->GetWindow();
     // Camera config
@@ -105,6 +106,8 @@ class BenchmarkLayer final : public Scene, private WindowObserver {
     plane = std::make_unique<Plane>(100.0f);
     plane->Bind(plain_tex.get());
     plane->Bind(shader_.get());
+    cube.Bind(shader_.get());
+    cube.Bind(plain_tex.get());
     Attach(std::move(shader_), std::move(plain_tex), std::move(camera_));
   }
   void OnDetach() override {}
@@ -112,7 +115,8 @@ class BenchmarkLayer final : public Scene, private WindowObserver {
   void OnDraw(RenderTarget& render_target) override {
     GetShaders()[0]->Use();
     UseAllLights();
-    DrawAllModels(render_target);
+    DrawAll(render_target);
+    cube.Draw(render_target);
     GetTexture()[0]->Use();
     GetShaders()[0]->SetUniform("use_texture", 1);
     for (auto& tr : triangles_) {
@@ -134,6 +138,7 @@ class BenchmarkLayer final : public Scene, private WindowObserver {
   std::unique_ptr<Shader> shader_;
   unsigned int triangles_count_;
   Image image;
+  Cube cube;
   std::unique_ptr<Plane> plane;
   std::unique_ptr<Texture> plain_tex;
   std::unique_ptr<PerspectiveCamera> camera_;

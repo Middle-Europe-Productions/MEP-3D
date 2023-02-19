@@ -89,4 +89,4 @@ Objects are always loaded in the dedicated resource thread pool.
 
 
 ### Known issues
-arm64: problem with building assimp, you can disable it by 
+arm64: problem with building assimp

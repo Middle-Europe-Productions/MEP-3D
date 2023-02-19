@@ -2,11 +2,11 @@
 #define TEXTURE_3D_HPP
 
 #include <GL/glew.h>
-#include <MEP-3D/asset.hpp>
 #include <MEP-3D/common.hpp>
+#include <MEP-3D/texture_base.hpp>
 #include <MEP-3D/vector.hpp>
 
-class Texture3D : public Asset {
+class Texture3D : public TextureBase {
  public:
   enum class Type { BYTE_8, BYTE_16 };
   Texture3D();

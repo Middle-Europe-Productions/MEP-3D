@@ -55,6 +55,7 @@ set(SOURCE
   ${SRC_ROOT}/ilc/ilc_connector.cpp
   # platform
   ${SRC_ROOT}/platform/platform_delegate.cpp
+  ${SRC_ROOT}/platform/platform_utils_generic.cpp
 )
 
 if (WIN32)
@@ -142,6 +143,7 @@ set(HEADERS
   ${INC_ROOT}/ilc/ilc_connector.hpp
 # platform
   ${INC_ROOT}/platform/platform_delegate.hpp
+  ${INC_ROOT}/platform/platform_utils.hpp
 )
 
 set(INCLUDE_DIRECTORIES

@@ -6,10 +6,21 @@
 namespace {
 constexpr int kChunkSize = 1024;
 constexpr long long kKiloByte = 1024;
+// unit cube vertices
+const std::vector<float> vertices = {-0.5f, -0.5f, -0.5f, 0.5f,  -0.5f, -0.5f,
+                                     0.5f,  0.5f,  -0.5f, -0.5f, 0.5f,  -0.5f,
+                                     -0.5f, -0.5f, 0.5f,  0.5f,  -0.5f, 0.5f,
+                                     0.5f,  0.5f,  0.5f,  -0.5f, 0.5f,  0.5f};
+
+// unit cube indices
+const std::vector<unsigned int> cubeIndices = {
+    0, 5, 4, 5, 0, 1, 3, 7, 6, 3, 6, 2, 7, 4, 6, 6, 4, 5,
+    2, 1, 3, 3, 1, 0, 3, 0, 7, 7, 0, 4, 6, 5, 2, 2, 5, 1};
 };  // namespace
 
 Volume::Volume() : Identity(kVolume) {
   active_.store(true, std::memory_order_release);
+  Mesh::Init(vertices, cubeIndices, true);
 }
 
 void Volume::LoadFromFile(const std::string_view file_path,
@@ -28,7 +39,7 @@ void Volume::LoadFromFile(const std::string_view file_path,
               return false;
             }
             DCHECK(infile.GetSize() > 0);
-            std::vector<char> chunk(kChunkSize, 0);
+            std::vector<Uint8> chunk(kChunkSize, 0);
             this->UpdateStatus(Status::Loading);
             try {
               data_.reserve(infile.GetSize());
@@ -41,7 +52,7 @@ void Volume::LoadFromFile(const std::string_view file_path,
               if (!this->IsActive()) {
                 return false;
               }
-              infile.read(chunk.data(), kChunkSize);
+              infile.read(reinterpret_cast<char*>(chunk.data()), kChunkSize);
               rea_c = infile.gcount();
               data_.insert(data_.end(), chunk.data(), chunk.data() + rea_c);
               this->SetProgress(infile.GetProgress());
@@ -66,10 +77,7 @@ void Volume::Draw(RenderTarget& render_target) {
       return;
     }
   }
-  if (!Get<Shader>()) {
-    return;
-  }
-  texture_->Use();
+  Mesh::Draw(render_target);
 }
 
 Uint8* Volume::GetData() {
@@ -111,6 +119,7 @@ void Volume::Init() {
   DCHECK(data_.size() > 0);
   texture_ = std::make_unique<Texture3D>();
   texture_->Create(data_.data(), volume_size_, type_);
+  Bind(texture_.get());
   DCHECK(texture_->IsValid());
   UpdateStatus(Status::Avalible);
 }

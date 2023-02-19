@@ -4,21 +4,21 @@
 #include <MEP-3D/asset_controller.hpp>
 #include <MEP-3D/async_progress.hpp>
 #include <MEP-3D/drawable.hpp>
+#include <MEP-3D/figures.hpp>
 #include <MEP-3D/identity.hpp>
 #include <MEP-3D/resource_base.hpp>
 #include <MEP-3D/texture_3d.hpp>
 
 class Volume : public Identity,
-               public Drawable,
+               public Mesh,
                public ResourceBase,
-               public AsyncProgress,
-               public AssetController {
+               public AsyncProgress {
  public:
   Volume();
   void LoadFromFile(const std::string_view file_path,
                     Vec3i size,
                     Texture3D::Type type = Texture3D::Type::BYTE_8);
-  void Draw(RenderTarget& render_target);
+  void Draw(RenderTarget& render_target) override;
   Uint8* GetData();
   const Uint8* GetData() const;
   bool IsActive() const;

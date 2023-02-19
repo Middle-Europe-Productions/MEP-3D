@@ -27,8 +27,8 @@ void Mesh::Draw(RenderTarget& render_target) {
                        render_target.GetCamera()->GetPosition());
   }
 
-  Texture* texture = nullptr;
-  if ((texture = Get<Texture>()))
+  TextureBase* texture = nullptr;
+  if ((texture = Get<TextureBase>()))
     texture->Use();
 
   MeshBase::Draw(render_target);

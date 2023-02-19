@@ -15,6 +15,9 @@ class PlatformDelegate : public NonCopyable {
     std::size_t avalible_ram_memory_kb;
     std::size_t number_of_avalible_cores;
     ProcessorType processor_type;
+    std::string gpu_vendor;
+    std::string gpu_name;
+    std::string gpu_driver;
   };
   virtual MemorySnapshot GetMemorySnapshot() = 0;
 

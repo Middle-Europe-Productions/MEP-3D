@@ -2,11 +2,12 @@
 
 #include <MEP-3D/common_names.hpp>
 
-Texture3D::Texture3D() : texture_id_(0), Asset(kTexture3d) {
+Texture3D::Texture3D() : texture_id_(0), TextureBase(kTexture3d) {
   VLOG(4) << __func__;
 }
 
 void Texture3D::Create(const Uint8* data, Vec3i size, Type type) {
+  VLOG(3) << __FUNCTION__ << ", " << ToString();
   glGenTextures(1, &texture_id_);
   if (texture_id_ == 0) {
     LOG(ERROR) << "Could not create a texture!";
@@ -14,13 +15,13 @@ void Texture3D::Create(const Uint8* data, Vec3i size, Type type) {
   }
   glBindTexture(GL_TEXTURE_3D, texture_id_);
 
-  glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  // set the texture parameters
+  glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+  glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+  glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP);
   glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-  glBindTexture(GL_TEXTURE_3D, 0);
+  glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
   VLOG(2) << "Transferring texture to gpu " << ToString();
   if (type == Type::BYTE_8) {
     glTexImage3D(GL_TEXTURE_3D, 0, GL_R8, size.x_, size.y_, size.z_, 0, GL_RED,

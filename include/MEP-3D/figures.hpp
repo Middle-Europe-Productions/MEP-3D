@@ -16,9 +16,14 @@ class Plane : public Mesh {
   Plane(float size = 10.0f, Vec3f initial_position = {0.0f, 0.0f, 0.0f});
 };
 
+class Cube : public Mesh {
+ public:
+  Cube(float size = 10.0f, Vec3f initial_position = {0.0f, 0.0f, 0.0f});
+};
+
 class Triangle : public Mesh {
-public:
- Triangle(Vec3f initial_position = {0.0f, 0.0f, 0.0f});
+ public:
+  Triangle(Vec3f initial_position = {0.0f, 0.0f, 0.0f});
 };
 
 #endif

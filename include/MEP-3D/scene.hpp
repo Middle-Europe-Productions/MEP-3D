@@ -25,7 +25,7 @@ class SceneObserver : public Observer {
   virtual void OnModelAttached(Model* model) { DCHECK(model); };
   virtual void OnShaderAttached(Shader* shader) { DCHECK(shader); };
   virtual void OnMaterialAttached(Material* material) { DCHECK(material); };
-  virtual void OnTextureAttached(Texture* texture) { DCHECK(texture); };
+  virtual void OnTextureAttached(TextureBase* texture) { DCHECK(texture); };
   virtual void OnCameraAttached(CameraBase* perspective_camera) {
     DCHECK(perspective_camera);
   };
@@ -52,7 +52,7 @@ class Scene : public Layer, public ObserverList<SceneObserver> {
   std::vector<std::unique_ptr<Model>>& GetModels();
   std::vector<std::unique_ptr<Shader>>& GetShaders();
   std::vector<std::unique_ptr<Material>>& GetMaterial();
-  std::vector<std::unique_ptr<Texture>>& GetTexture();
+  std::vector<std::unique_ptr<TextureBase>>& GetTexture();
   std::vector<std::unique_ptr<CameraBase>>& GetCamera();
   std::vector<std::unique_ptr<Volume>>& GetVolume();
   void Attach(std::unique_ptr<DirectionalLight> directional_light);
@@ -61,7 +61,9 @@ class Scene : public Layer, public ObserverList<SceneObserver> {
   void Attach(std::unique_ptr<Model> model);
   void Attach(std::unique_ptr<Shader> shader);
   void Attach(std::unique_ptr<Material> material);
+  void Attach(std::unique_ptr<TextureBase> texture);
   void Attach(std::unique_ptr<Texture> texture);
+  void Attach(std::unique_ptr<Texture3D> texture);
   void Attach(std::unique_ptr<CameraBase> camera_base);
   void Attach(std::unique_ptr<PerspectiveCamera> camera_base);
   void Attach(std::unique_ptr<ArcballCamera> arcball_camera);
@@ -90,7 +92,7 @@ class Scene : public Layer, public ObserverList<SceneObserver> {
   std::vector<std::unique_ptr<Model>> models_;
   std::vector<std::unique_ptr<Shader>> shaders_;
   std::vector<std::unique_ptr<Material>> materials_;
-  std::vector<std::unique_ptr<Texture>> textures_;
+  std::vector<std::unique_ptr<TextureBase>> textures_;
   std::vector<std::unique_ptr<CameraBase>> camera_;
   std::unique_ptr<SpotLightController> spot_light_controller_;
   std::unique_ptr<PointLightController> point_light_controller_;

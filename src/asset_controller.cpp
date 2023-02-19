@@ -4,7 +4,7 @@
 AssetController::AssetController()
     : texture_(nullptr), shader_(nullptr), material_(nullptr) {}
 
-void AssetController::Bind(Texture* object) {
+void AssetController::Bind(TextureBase* object) {
   if (texture_) {
     texture_->RemoveObserver(this);
   }
