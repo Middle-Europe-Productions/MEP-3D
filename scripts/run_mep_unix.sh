@@ -1,6 +1,7 @@
 #!/bin/bash
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+TARGET_BASE_DIR="$SCRIPT_DIR/../build/examples"
 TARGET=""
 MODE=Debug
 
@@ -31,12 +32,12 @@ fi
 
 echo "[MEP] Building $TARGET" 
 
-if [ ! -d "$SCRIPT_DIR/$TARGET/" ]; then
-    echo "[MEP] Target $SCRIPT_DIR/$TARGET does not exist!"
+if [ ! -d "$TARGET_BASE_DIR/$TARGET/" ]; then
+    echo "[MEP] Target $TARGET_BASE_DIR/$TARGET does not exist!"
     exit
 fi
 
-make BUILD=$MODE -f $SCRIPT_DIR/$TARGET/Makefile
+make BUILD=$MODE -f $TARGET_BASE_DIR/$TARGET/Makefile
 
 if [ $? -gt 0 ]; then
    echo "[MEP] Compilation failed!"
@@ -44,4 +45,4 @@ if [ $? -gt 0 ]; then
 fi
 
 echo "[MEP] Launching $TARGET"
-(cd $SCRIPT_DIR/ && ./$TARGET $@)
+(cd $SCRIPT_DIR/../output/$TARGET && ./$TARGET $@)
