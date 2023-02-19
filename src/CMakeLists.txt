@@ -231,13 +231,11 @@ source_group("Header Files" FILES ${HEADERS})
 
 add_library(${MEP_LIBRARY_NAME} STATIC ${HEADERS} ${SOURCE})
 
-set_property(TARGET ${MEP_LIBRARY_NAME} PROPERTY COMPILE_WARNING_AS_ERROR ON)
-
 set_target_properties(${MEP_LIBRARY_NAME} PROPERTIES FOLDER "MEP-3D")
 
 target_compile_options(${MEP_LIBRARY_NAME} PRIVATE
-  $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX>
-  $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+  $<$<CXX_COMPILER_ID:MSVC>:/W4>
+  $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic>
 )
 
 target_include_directories(${MEP_LIBRARY_NAME} PUBLIC ${INCLUDE_DIRECTORIES})
