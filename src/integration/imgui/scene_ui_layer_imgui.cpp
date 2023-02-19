@@ -111,8 +111,7 @@ class SceneUILayerImGUI : public SceneUILayer {
       const std::string& runtime_configuration,
       std::unordered_map<int, SceneUIParser::Callback> handlers = {},
       SceneUIParser::Method handler_attach_method =
-          SceneUIParser::Method::FillAndOverride)
-      : menu_action_(UI::Element::None) {
+          SceneUIParser::Method::FillAndOverride) {
     if (!utils::Contains(handler_attach_method,
                          SceneUIParser::Method::DoNotUseDefault)) {
       InitDefaultHandler();
@@ -128,9 +127,9 @@ class SceneUILayerImGUI : public SceneUILayer {
     ImGui::ApplyMepStyle();
   }
   void OnDetach() override {}
-  void OnUpdate(float time_delta) override {}
+  void OnUpdate(float) override {}
 
-  void OnDraw(RenderTarget& render_target) override {
+  void OnDraw(RenderTarget&) override {
     if (!GetScenePtr())
       return;
     const ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -157,7 +156,6 @@ class SceneUILayerImGUI : public SceneUILayer {
 
  private:
   virtual bool ShouldIgnoreLayer() const override { return false; }
-  UI::Element menu_action_;
   SceneUIParserImGui menu_;
 };
 

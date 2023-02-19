@@ -56,7 +56,7 @@ void MeshBase::Init(const std::vector<GLfloat>& vertices,
   glBindVertexArray(0);
 }
 
-void MeshBase::Draw(RenderTarget& render_target) {
+void MeshBase::Draw(RenderTarget&) {
   glBindVertexArray(vertex_array_object_);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_object_);
   glDrawElements(GL_TRIANGLES, GetVerticesCount(), GL_UNSIGNED_INT, 0);
@@ -98,5 +98,5 @@ MeshBaseFactory::MeshBaseFactory(std::vector<GLfloat>&& vertices,
 MeshBasePtr MeshBaseFactory::Create() {
   auto obj = std::make_unique<MeshBase>();
   obj->Init(vertices_, indices_);
-  return std::move(obj);
+  return obj;
 }

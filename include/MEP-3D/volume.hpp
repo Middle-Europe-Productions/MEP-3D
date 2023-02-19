@@ -24,12 +24,12 @@ class Volume : public Identity,
   bool IsActive() const;
   const Vec3i& GetDimensions() const;
   long long GetSizeInKB() const;
-  const Texture3D::Type GetType() const;
+  Texture3D::Type GetType() const;
   void ClearVolume();
   ~Volume();
 
  private:
-  void Init();
+  void TransformToTexture();
   Texture3D::Type type_;
   Vec3i volume_size_;
   std::vector<Uint8> data_;

@@ -1,12 +1,12 @@
 #include <MEP-3D/common_names.hpp>
 #include <MEP-3D/template/scene_ui_layer.hpp>
 
-void SceneUILayer::OnAttach(Scene* scene) {
+void SceneUILayer::OnSceneAttach(Scene* scene) {
   LOG(INFO) << "Scene attached";
   scene_ptr_ = scene;
 }
 
-void SceneUILayer::OnDetach() {
+void SceneUILayer::OnSceneDetach() {
   LOG(INFO) << "Scene detached";
   scene_ptr_ = nullptr;
 }

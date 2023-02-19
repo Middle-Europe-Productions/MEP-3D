@@ -166,7 +166,7 @@ class VolumeRenderer final : public Scene {
     glDisable(GL_BLEND);
   }
 
-  virtual void OnReceive(const Identity& id, const std::string& message) {
+  virtual void OnReceive(const Identity& id, const std::string& message) override {
     LOG(INFO) << "Message received: " << id.ToString() << ", " << message;
   }
 

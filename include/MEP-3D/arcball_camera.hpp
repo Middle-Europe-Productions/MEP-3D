@@ -40,12 +40,12 @@ class ArcballCamera : public CameraBase {
                 const ArcballCameraControlsMap& controls = {
                     Key::A, Key::D, Key::W, Key::S, Key::MouseLeft, Key::Q,
                     Key::Z});
-  void Update(float time_delta) override;
+  void Update(float) override;
   void OnKeyEvent(KeyEvent event) override;
   glm::mat4 GetViewMatrix() const override;
   void OnMouseEvent(MouseEvent event) override;
   void OnWindowResizeEvent(Vec2i size) override;
-  void OnEventStatusChanged(bool events_blocked) override;
+  void OnEventStatusChanged(bool) override;
 
  private:
   glm::vec3 GetViewDir() const;

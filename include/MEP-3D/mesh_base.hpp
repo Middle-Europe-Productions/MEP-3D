@@ -12,7 +12,7 @@ class MeshBase : public Drawable {
   virtual void Init(const std::vector<GLfloat>& vertices,
                     const std::vector<unsigned int>& indices,
                     bool position_only = false);
-  virtual void Draw(RenderTarget& render_target);
+  virtual void Draw(RenderTarget&);
   unsigned int GetVerticesCount() const;
   virtual ~MeshBase();
 

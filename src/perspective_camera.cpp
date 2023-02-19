@@ -99,7 +99,7 @@ void PerspectiveCamera::OnMouseEvent(MouseEvent event) {
   Changed();
 }
 
-void PerspectiveCamera::OnWindowResizeEvent(Vec2i size) {}
+void PerspectiveCamera::OnWindowResizeEvent(Vec2i) {}
 
 void PerspectiveCamera::OnEventStatusChanged(bool events_blocked) {
   if (events_blocked == true) {

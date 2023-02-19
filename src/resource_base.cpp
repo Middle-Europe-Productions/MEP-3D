@@ -55,6 +55,8 @@ void ResourceBase::EvaluateTask(Status new_status) {
     case Status::Failed:
     case Status::Uninitialized:
     case Status::Avalible:
+    case Status::NotImplemented:
+    case Status::Unknown:
       active_task_.store(false, std::memory_order_release);
       active_task_.notify_all();
   }

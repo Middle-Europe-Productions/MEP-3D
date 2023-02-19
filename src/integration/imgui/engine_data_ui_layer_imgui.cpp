@@ -4,11 +4,6 @@
 #include <MEP-3D/template/engine_data_ui_layer.hpp>
 #include <MEP-3D/template/util_common_draw.hpp>
 
-namespace {
-constexpr Key kBlockEventKey = Key::B;
-constexpr int kPlotElementsBuffer = 100;
-}  // namespace
-
 class EngineDataUILayerImGUI : public EngineDataUILayer {
   void OnAttach() override {
     auto engine = GetEngine();
@@ -19,7 +14,7 @@ class EngineDataUILayerImGUI : public EngineDataUILayer {
     block_applied_ = false;
   }
   void OnDetach() override {}
-  void OnUpdate(float time_delta) override {
+  void OnUpdate(float) override {
     if (!GetEngine())
       return;
     if (!block_applied_ && GetEngine()->GetWindow()) {
@@ -27,7 +22,7 @@ class EngineDataUILayerImGUI : public EngineDataUILayer {
       block_applied_ = true;
     }
   }
-  void OnDraw(RenderTarget& render_target) override {
+  void OnDraw(RenderTarget&) override {
     ImGui::Begin("Engine Data");
     ImGui::Checkbox("Pause", &should_not_update_);
     if (should_not_update_) {
@@ -51,9 +46,9 @@ class EngineDataUILayerImGUI : public EngineDataUILayer {
       block_applied_ = false;
     }
   }
-  void OnMouseEvent(MouseEvent event) override {}
-  void OnWindowResizeEvent(Vec2i size) override {}
-  void OnEventStatusChanged(bool events_blocked) override {}
+  void OnMouseEvent(MouseEvent) override {}
+  void OnWindowResizeEvent(Vec2i) override {}
+  void OnEventStatusChanged(bool) override {}
 
  private:
   EngineMonitorData buffer;

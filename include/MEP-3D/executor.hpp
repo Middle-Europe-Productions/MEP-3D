@@ -23,6 +23,7 @@ class Task {
  public:
   Task(TaskCallback task);
   virtual void Execute();
+  virtual ~Task() = default;
 
  protected:
   TaskCallback task_;
@@ -55,7 +56,6 @@ class Executor : public NonCopyable, public Identity {
   std::atomic<bool> active_;
   std::mutex mutex_;
   std::queue<TaskPtr> task_queue_;
-  std::size_t number_of_thread_;
 };
 using ExecutorPtr = std::unique_ptr<Executor>;
 

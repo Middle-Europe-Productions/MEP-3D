@@ -69,7 +69,7 @@ class Shader : public Asset {
   bool AddShader(GLuint program,
                  const std::string& shader_code,
                  GLenum shader_type);
-  bool GetUniformLocation(GLuint& location, const std::string& name);
+  bool GetUniformLocation(GLint& location, const std::string& name);
   ShaderStatus status_;
 };
 

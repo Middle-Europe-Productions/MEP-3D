@@ -2,7 +2,7 @@
 
 #include <MEP-3D/common_names.hpp>
 
-Texture3D::Texture3D() : texture_id_(0), TextureBase(kTexture3d) {
+Texture3D::Texture3D() : TextureBase(kTexture3d), texture_id_(0) {
   VLOG(4) << __func__;
 }
 

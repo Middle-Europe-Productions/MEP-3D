@@ -19,6 +19,7 @@ class SpotLight : public PointLight {
   void CalcuateEdge();
   SpotConfig& GetSpotConfigRef();
   static std::unique_ptr<SpotLight> Create();
+  virtual ~SpotLight() = default;
 
  private:
   SpotConfig spot_config_;

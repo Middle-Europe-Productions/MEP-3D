@@ -8,8 +8,8 @@
 
 class SceneUILayer : public Layer, public SceneObserver {
  public:
-  void OnAttach(Scene* scene);
-  void OnDetach();
+  void OnSceneAttach(Scene* scene) override;
+  void OnSceneDetach() override;
   Scene* GetScenePtr();
   static std::unique_ptr<SceneUILayer> Create(
       const std::string& runtime_configuration = "",

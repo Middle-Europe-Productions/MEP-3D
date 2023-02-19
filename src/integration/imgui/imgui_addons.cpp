@@ -102,6 +102,7 @@ bool BufferingBar(const char* label,
       ImVec2(pos.x + circleEnd - o2, bb.Min.y + r), r, bg_col);
   window->DrawList->AddCircleFilled(
       ImVec2(pos.x + circleEnd - o3, bb.Min.y + r), r, bg_col);
+  return true;
 }
 
 void ApplyMepSceneStyle() {

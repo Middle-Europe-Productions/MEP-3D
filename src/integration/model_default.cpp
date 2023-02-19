@@ -11,11 +11,11 @@ Model::Model(const std::string& name) : Identity(__FUNCTION__, name.c_str()) {
   LOG(WARNING) << __FUNCTION__ << ", not implemented!";
 }
 
-void Model::Load(const std::string& file_path) {
+void Model::Load(const std::string&) {
   LOG(WARNING) << __FUNCTION__ << ", not implemented!";
 }
 
-void Model::Draw(RenderTarget& render_target) {
+void Model::Draw(RenderTarget&) {
   VLOG(3) << __FUNCTION__ << ", not implemented!";
 }
 

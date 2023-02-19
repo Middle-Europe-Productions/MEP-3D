@@ -125,15 +125,10 @@ const EngineMonitorData& Engine::GetEngineMonitor() const {
   return engine_monitor_;
 }
 
-bool Engine::operator==(const Identity& id) {
-  return *this == id;
-}
-
 void Engine::LoopWithMonitorData() {
   auto time = TimeDelta::GetInstance();
   double time_controller = 0.0;
   unsigned int frames = 0;
-  unsigned int last_fps = 0;
   while (window_ && window_->IsOpen()) {
     window_->StartLoop();
     EngineMonitorData engine_monitor;
@@ -207,7 +202,6 @@ void Engine::LoopWithoutMonitorDats() {
   auto time = TimeDelta::GetInstance();
   double time_controller = 0.0;
   unsigned int frames = 0;
-  unsigned int last_fps = 0;
   while (window_ && window_->IsOpen()) {
     window_->StartLoop();
     EngineMonitorData engine_monitor;
@@ -249,8 +243,9 @@ bool Engine::EvaluateLayer(const std::unique_ptr<Layer>& layer) const {
   }
   return true;
 }
+
 bool Engine::StructureExists(int index) const {
-  return index >= 0 && index < custom_layers_.size();
+  return index >= 0 && static_cast<std::size_t>(index) < custom_layers_.size();
 }
 
 Engine::~Engine() {

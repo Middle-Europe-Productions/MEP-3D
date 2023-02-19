@@ -291,8 +291,8 @@ bool Shader::AddShader(GLuint program,
   return true;
 }
 
-bool Shader::GetUniformLocation(GLuint& location, const std::string& name) {
-  GLuint local_loc = glGetUniformLocation(shader_id_, name.c_str());
+bool Shader::GetUniformLocation(GLint& location, const std::string& name) {
+  GLint local_loc = glGetUniformLocation(shader_id_, name.c_str());
   if (local_loc == -1) {
     LOG(ERROR) << "Value: " + name + " does not exist in shader id: " +
                       std::to_string(GetId());

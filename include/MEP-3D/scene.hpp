@@ -20,8 +20,8 @@
 class Scene;
 class SceneObserver : public Observer {
  public:
-  virtual void OnAttach(Scene* scene) = 0;
-  virtual void OnDetach() = 0;
+  virtual void OnSceneAttach(Scene* scene) = 0;
+  virtual void OnSceneDetach() = 0;
   virtual void OnModelAttached(Model* model) { DCHECK(model); };
   virtual void OnShaderAttached(Shader* shader) { DCHECK(shader); };
   virtual void OnMaterialAttached(Material* material) { DCHECK(material); };

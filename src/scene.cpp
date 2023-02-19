@@ -17,7 +17,7 @@ std::size_t DrawAllElements(ArrayT& elements, RenderTarget& render_target) {
 void Scene::AddObserver(SceneObserver* obs) {
   if (obs) {
     ObserverList<SceneObserver>::AddObserver(obs);
-    obs->OnAttach(this);
+    obs->OnSceneAttach(this);
   }
 }
 std::vector<std::unique_ptr<DirectionalLight>>& Scene::GetDirectionaLights() {
@@ -201,5 +201,5 @@ std::size_t Scene::UpdateAll(float time_delta,
 
 Scene::~Scene() {
   LOG(INFO) << __FUNCTION__;
-  ForAllObservers([](auto* obs) { obs->OnDetach(); });
+  ForAllObservers([](auto* obs) { obs->OnSceneDetach(); });
 }

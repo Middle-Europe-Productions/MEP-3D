@@ -10,7 +10,7 @@
 template <typename Context, typename Handler>
 inline int MakeHandlerInfo(int element) {
   static_assert(std::is_default_constructible<Handler>::value);
-  Context::Get().AddHandler(element, new Handler());
+  Context::Get().AddHandler(new Handler());
   return element;
 };
 
@@ -37,8 +37,7 @@ inline int MakeHandlerInfo(int element) {
   class UI_CONTEXT_NAME(context_class) : public NonCopyable {                \
    public:                                                                   \
     static UI_CONTEXT_NAME(context_class) & Get();                           \
-    void AddHandler(int element,                                             \
-                    scene_ui_handler_base_SceneUILayer* handler) {           \
+    void AddHandler(scene_ui_handler_base_SceneUILayer* handler) {           \
       handlers_.push_back(handler);                                          \
     }                                                                        \
     void Clear() {                                                           \

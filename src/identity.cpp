@@ -5,7 +5,7 @@ std::unordered_map<std::string_view, int> Identity::identity_ =
     std::unordered_map<std::string_view, int>();
 unsigned int Identity::global_id_provider_ = 0;
 
-Identity::Identity() : class_name_(), name_(), id_(-1), global_id_(-1) {}
+Identity::Identity() : class_name_(), name_(), global_id_(-1), id_(-1) {}
 
 Identity::Identity(std::string_view class_name) : Identity(class_name, "") {
   name_ = std::string(class_name_) + '_' + std::to_string(GetId());
@@ -25,8 +25,8 @@ Identity::Identity(std::string_view class_name, std::string_view name)
 }
 
 Identity::Identity(const Identity& id)
-    : name_(id.name_),
-      class_name_(id.class_name_),
+    : class_name_(id.class_name_),
+      name_(id.name_),
       global_id_(global_id_provider_),
       id_(id.id_) {}
 

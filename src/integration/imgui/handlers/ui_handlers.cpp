@@ -170,7 +170,7 @@ struct PointLightWrap {
 UI_HANDLER_D(UI::Element, PointLightPopup, SceneUILayer, PointLightWrap) {
   if (!GetData().point_light) {
     auto& cont = GetContext()->GetScenePtr()->GetPointLightController();
-    auto it = cont->MakeAndBind(std::move(PointLight::Create()));
+    auto it = cont->MakeAndBind(PointLight::Create());
     DCHECK(cont->IsValid(it));
     GetData().point_light = it->get();
   }
@@ -203,7 +203,7 @@ struct SpotLightWrap {
 UI_HANDLER_D(UI::Element, SpotLightPopup, SceneUILayer, SpotLightWrap) {
   if (!GetData().spot_light) {
     auto& cont = GetContext()->GetScenePtr()->GetSpotLightController();
-    auto it = cont->MakeAndBind(std::move(SpotLight::Create()));
+    auto it = cont->MakeAndBind(SpotLight::Create());
     DCHECK(cont->IsValid(it));
     GetData().spot_light = it->get();
   }
@@ -301,15 +301,15 @@ UI_HANDLER(UI::Element, SystemInfo, SceneUILayer) {
   constexpr std::size_t kDivider = 1024;
   PlatformDelegate::MemorySnapshot memory_snapsot =
       PlatformDelegate::Get()->GetMemorySnapshot();
-  ImGui::Text("RAM Avalible: %lli MB",
+  ImGui::Text("RAM Avalible: %li MB",
               memory_snapsot.avalible_ram_memory_kb / kDivider);
-  ImGui::Text("RAM Total: %lli MB",
+  ImGui::Text("RAM Total: %li MB",
               memory_snapsot.total_ram_memory_kb / kDivider);
   ImGui::Separator();
   ImGui::Text("CPU");
   ImGui::Text("Info: %s", memory_snapsot.cpu_info.c_str());
   ImGui::Text("Type: %s", ToString(memory_snapsot.processor_type).c_str());
-  ImGui::Text("Cores: %lli", memory_snapsot.number_of_avalible_cores);
+  ImGui::Text("Cores: %lu", memory_snapsot.number_of_avalible_cores);
   ImGui::Separator();
   ImGui::Text("GPU");
   ImGui::Text("Vendor: %s", memory_snapsot.gpu_vendor.c_str());

@@ -7,6 +7,7 @@
 class AssetObserver : public Observer {
  public:
   virtual void OnDelete(Identity& caller_identity) = 0;
+  virtual ~AssetObserver() = default;
 };
 
 #endif

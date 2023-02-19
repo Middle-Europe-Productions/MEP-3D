@@ -21,7 +21,7 @@ const std::unordered_set<std::string_view> kFalseValues = {"false", "FALSE",
                                                            "F", "False"};
 
 int RepeatingPrefixIndex(const std::string& name, const char prefix) {
-  for (int i = 0; i < name.size(); ++i) {
+  for (std::size_t i = 0; i < name.size(); ++i) {
     if (name[i] != prefix) {
       return i;
     }

@@ -61,10 +61,10 @@ void CameraBase::InitCameraControls(Actions terminate_action,
                                     const std::array<Key, SIZE>& controls) {
   DCHECK(!controls.empty());
   controls_.resize(controls.size());
-  for (int i = 0; i < controls.size(); i++) {
+  for (std::size_t i = 0; i < controls.size(); i++) {
     controls_[i] = controls[i];
   }
-  if (controls_.size() != static_cast<int>(terminate_action)) {
+  if (controls_.size() != static_cast<std::size_t>(terminate_action)) {
     LOG(WARNING) << "Not all camera controls match camera actions";
   }
   for (Actions it = static_cast<Actions>(0); it != terminate_action;

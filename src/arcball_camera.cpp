@@ -22,7 +22,7 @@ ArcballCamera::ArcballCamera(const ArcballCameraConfig& config,
   move_speed_ = config.move_speed;
 }
 
-void ArcballCamera::Update(float time_delta) {
+void ArcballCamera::Update(float) {
   UpdateInt([this]() {
     glm::vec4 position(Get(CameraVariables::Position), 1);
     glm::vec4 pivot(lookat_position_, 1);
@@ -85,7 +85,7 @@ void ArcballCamera::OnWindowResizeEvent(Vec2i size) {
   screen_size_ = size;
 }
 
-void ArcballCamera::OnEventStatusChanged(bool events_blocked) {}
+void ArcballCamera::OnEventStatusChanged(bool) {}
 
 glm::vec3 ArcballCamera::GetViewDir() const {
   return -glm::transpose(view_matrix_)[2];

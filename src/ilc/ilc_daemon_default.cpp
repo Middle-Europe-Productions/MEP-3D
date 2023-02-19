@@ -17,7 +17,8 @@ std::string ILCPackageToString(const ILCPackage& data) {
   output += " \"message\" : \"" + data.message_ + "\"\n}";
   return output;
 }
-ILCClient* FindById(std::map<const Identity, ILCClient*>& connections, int id) {
+ILCClient* FindById(std::map<const Identity, ILCClient*>& connections,
+                    unsigned int id) {
   for (auto& ele : connections) {
     if (ele.first.GetGlobalId() == id) {
       return ele.second;
@@ -51,6 +52,7 @@ bool ILCDaemon::SendToClient(std::unique_ptr<ILCPackage> data) {
   DCHECK(data);
   ILCDaemon::Instance().packages_.push(std::move(data));
   ILCDaemon::Instance().Update();
+  return true;
 }
 
 bool ILCDaemon::Connect(const Identity& id, ILCClient* client) {
@@ -65,6 +67,7 @@ bool ILCDaemon::Connect(const Identity& id, ILCClient* client) {
   }
   Instance().connections_[id] = client;
   client->OnConnectionOppened();
+  return true;
 }
 
 bool ILCDaemon::Disconnect(const Identity& id) {

@@ -332,7 +332,6 @@ class GLFWWindowController : public Window {
   bool block_events_;
   Key exception_;
   GLFWwindow* main_window_;
-  GLFWWindowController* shared_window_;
   WindowConfig config_;
   Vec2i buffer_size;
 
@@ -360,16 +359,16 @@ class GLFWWindowController : public Window {
 
 void GLFWWindowController::OnKeyEventHandler(GLFWwindow* window,
                                              int key,
-                                             int code,
+                                             int,
                                              int action,
-                                             int mode) {
+                                             int) {
   HandleKey(window, key, action);
 }
 
 void GLFWWindowController::OnMouseButtonEventHandler(GLFWwindow* window,
                                                      int button,
                                                      int action,
-                                                     int mods) {
+                                                     int) {
   HandleKey(window, button, action);
 }
 

@@ -72,7 +72,7 @@ void Volume::LoadFromFile(const std::string_view file_path,
 void Volume::Draw(RenderTarget& render_target) {
   if (GetStatus() != Status::Avalible) {
     if (GetStatus() == Status::Uninitialized) {
-      Init();
+      TransformToTexture();
     } else {
       return;
     }
@@ -106,7 +106,7 @@ long long Volume::GetSizeInKB() const {
   return size_bytes_.load() / kKiloByte;
 }
 
-const Texture3D::Type Volume::GetType() const {
+Texture3D::Type Volume::GetType() const {
   return type_;
 }
 
@@ -114,7 +114,7 @@ void Volume::ClearVolume() {
   data_.clear();
 }
 
-void Volume::Init() {
+void Volume::TransformToTexture() {
   DCHECK(GetStatus() == Status::Uninitialized);
   DCHECK(data_.size() > 0);
   texture_ = std::make_unique<Texture3D>();
