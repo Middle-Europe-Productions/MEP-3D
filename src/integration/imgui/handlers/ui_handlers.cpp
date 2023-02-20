@@ -229,7 +229,7 @@ UI_HANDLER(UI::Element, OpenModelPopup, SceneUILayer) {
   UI::Drawer::OpenPopup(UI::Element::ModelPopup);
 }
 
-struct ModelWrap {
+struct ResourceWrap {
   std::string path_;
   char buffer_name[64];
   char buffer_path[64];
@@ -239,24 +239,51 @@ struct ModelWrap {
   bool ValidData() const {
     return !(strcmp(buffer_name, "") == 0 || strcmp(buffer_path, "") == 0);
   }
+  template<typename Resource>
+  void DrawSelectable(Resource* resource) {
+    ImGui::Text("Shader");
+    selected_shader_ = UI::Drawer::DrawShaderComboMenu(
+        resource->GetScenePtr()->GetShaders(), selected_shader_);
+    ImGui::Text("Texture");
+    selected_texture_ = UI::Drawer::DrawTextureComboMenu(
+        resource->GetScenePtr()->GetTexture(), selected_texture_);
+    ImGui::Text("Material");
+    selected_material_ = UI::Drawer::DrawMaterialComboMenu(
+        resource->GetScenePtr()->GetMaterial(), selected_material_);
+  }
+  template<typename Resource, typename Context>
+  void EvalSelectable(Resource* resource, Context* context) {
+      DCHECK(resource);
+      DCHECK(context);
+      if (selected_shader_ != -1) {
+        resource->Bind(context
+                        ->GetScenePtr()
+                        ->GetShaders()[selected_shader_]
+                        .get());
+      }
+      if (selected_texture_ != -1) {
+        resource->Bind(context
+                        ->GetScenePtr()
+                        ->GetTexture()[selected_texture_]
+                        .get());
+      }
+      if (selected_material_ != -1) {
+        resource->Bind(context
+                        ->GetScenePtr()
+                        ->GetMaterial()[selected_material_]
+                        .get());
+      }
+  }
 };
 
-UI_HANDLER_D(UI::Element, ModelPopup, SceneUILayer, ModelWrap) {
+UI_HANDLER_D(UI::Element, ModelPopup, SceneUILayer, ResourceWrap) {
   ImGui::InputTextWithHint("##model_name", kInputModelName,
                            GetData().buffer_name, 64,
                            ImGuiInputTextFlags_CharsNoBlank);
   ImGui::InputTextWithHint("##model_path", kInputPathName,
                            GetData().buffer_path, 64,
                            ImGuiInputTextFlags_CharsNoBlank);
-  ImGui::Text("Shader");
-  GetData().selected_shader_ = UI::Drawer::DrawShaderComboMenu(
-      GetContext()->GetScenePtr()->GetShaders(), GetData().selected_shader_);
-  ImGui::Text("Texture");
-  GetData().selected_texture_ = UI::Drawer::DrawTextureComboMenu(
-      GetContext()->GetScenePtr()->GetTexture(), GetData().selected_texture_);
-  ImGui::Text("Material");
-  GetData().selected_material_ = UI::Drawer::DrawMaterialComboMenu(
-      GetContext()->GetScenePtr()->GetMaterial(), GetData().selected_material_);
+  GetData().DrawSelectable(GetContext());
   if (ImGui::Button("Open File")) {
     LOG(INFO) << "Open file";
   }
@@ -266,24 +293,7 @@ UI_HANDLER_D(UI::Element, ModelPopup, SceneUILayer, ModelWrap) {
   }
   if (ImGui::Button("Load")) {
     auto model = std::make_unique<Model>(std::string(GetData().buffer_name));
-    if (GetData().selected_shader_ != -1) {
-      model->Bind(GetContext()
-                      ->GetScenePtr()
-                      ->GetShaders()[GetData().selected_shader_]
-                      .get());
-    }
-    if (GetData().selected_texture_ != -1) {
-      model->Bind(GetContext()
-                      ->GetScenePtr()
-                      ->GetTexture()[GetData().selected_texture_]
-                      .get());
-    }
-    if (GetData().selected_material_ != -1) {
-      model->Bind(GetContext()
-                      ->GetScenePtr()
-                      ->GetMaterial()[GetData().selected_material_]
-                      .get());
-    }
+    GetData().EvalSelectable(model.get(), GetContext());
     model->Load(GetData().buffer_path);
     GetContext()->GetScenePtr()->GetModels().emplace_back(std::move(model));
     ImGui::CloseCurrentPopup();
@@ -295,6 +305,21 @@ UI_HANDLER_D(UI::Element, ModelPopup, SceneUILayer, ModelWrap) {
   if (ImGui::Button("Cancel")) {
     ImGui::CloseCurrentPopup();
   }
+}
+
+UI_HANDLER_D(UI::Element, VolumePopup, SceneUILayer, ResourceWrap) {
+  ImGui::InputTextWithHint("##volume_name", kInputModelName,
+                           GetData().buffer_name, 64,
+                           ImGuiInputTextFlags_CharsNoBlank);
+  ImGui::InputTextWithHint("##volume_path", kInputPathName,
+                           GetData().buffer_path, 64,
+                           ImGuiInputTextFlags_CharsNoBlank);
+  GetData().DrawSelectable(GetContext());
+}
+
+UI_HANDLER(UI::Element, OpenVolumePopup, SceneUILayer) {
+  LOG(INFO) << "Opening popup " << ToString(UI::Element::VolumePopup);
+  UI::Drawer::OpenPopup(UI::Element::VolumePopup);
 }
 
 UI_HANDLER(UI::Element, SystemInfo, SceneUILayer) {

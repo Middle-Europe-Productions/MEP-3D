@@ -32,7 +32,7 @@ bool ImguiPopupController::OpenAllOnCurrentStack() {
 SceneUIParserImGui::SceneUIParserImGui() : SceneUIParser() {}
 
 void SceneUIParserImGui::Parse(const std::string& json) {
-  LOG(INFO) << __func__;
+  VLOG(3) << __func__;
   try {
     root_ = nlohmann::json::parse(json);
   } catch (const std::exception& e) {
@@ -47,10 +47,8 @@ void SceneUIParserImGui::Parse(const std::string& json) {
         auto* node = new SceneUIParserNode();
         for (auto& [sub_key, sub_value] : window.items()) {
           if (sub_key == "name") {
-            LOG(INFO) << sub_key << __LINE__;
             node->node_name = sub_value;
           } else if (sub_key == "return") {
-            LOG(INFO) << sub_key << __LINE__;
             node->start_callback =
                 std::bind(ImGui::Begin, node->node_name.c_str(), (bool*)NULL,
                           ImGuiWindowFlags_MenuBar);
@@ -80,7 +78,7 @@ void SceneUIParserImGui::Parse(const std::string& json) {
 
 std::vector<SceneUIParser::SceneUIParserNode*> SceneUIParserImGui::ParseWindow(
     nlohmann::json& json_data) {
-  LOG(INFO) << __func__;
+  VLOG(3) << __func__;
   std::vector<SceneUIParserNode*> nodes;
   for (auto& [key, value] : json_data.items()) {
     auto ele = ElementFromString(key);
@@ -222,7 +220,7 @@ SceneUIParser::SceneUIParserNode* SceneUIParserImGui::ParsePopupItem(
     nlohmann::json& json_data,
     int depth) {
   if (depth > 1) {
-    LOG(INFO) << "Invalid scene element depth is " << depth;
+    LOG(WARNING) << "Invalid scene element depth is " << depth;
     return nullptr;
   }
   SceneUIParserNode* node = new SceneUIParserNode();

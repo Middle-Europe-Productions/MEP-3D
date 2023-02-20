@@ -52,6 +52,7 @@ void main()
 	vec3 geomDir = normalize((tex_coord-vec3(0.5)) - eye_position);
 	vec3 dirStep = geomDir * step_size;
 	bool stop = false;
+  vFragColor = vec4(0.0, 0.0, 0.0, 0.0);
 
 	for (int i = 0; i < MAX_SAMPLES; i++) {
 		dataPos = dataPos + dirStep;
@@ -78,6 +79,17 @@ constexpr char kMyRuntimeConfig[] = R"({
     {
       "name": "Volume Rendering",
       "return": {
+        "menu" : [
+          {
+            "name": "New",
+            "return": [
+              {
+                "name": "Add Volume",
+                "return": "open_volume_popup"
+              }
+            ]
+          }
+        ],
         "scene": [
           {
             "name": "Volumes",
@@ -106,9 +118,9 @@ constexpr char kMyRuntimeConfig[] = R"({
           }
         ],
         "popup": [
-          {
-            "return": "my_popup"
-          }
+            {
+              "return": "volume_popup"
+            }
         ]
       }
     }
@@ -150,8 +162,8 @@ class VolumeRenderer final : public Scene {
 
     // Volume setup
     volume_ = std::make_unique<Volume>();
-    volume_->LoadFromFile("skull_256x256x256_uint8.raw", {256, 256, 256},
-                          Texture3D::Type::BYTE_8);
+    volume_->LoadFromFile("head.raw", {256, 256, 256},
+                         Texture3D::Type::BYTE_8);
     volume_->Bind(shader.get());
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     Attach(std::move(camera), std::move(shader), std::move(volume_));
