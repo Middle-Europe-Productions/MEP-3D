@@ -163,6 +163,8 @@ set(LINK_TARGETS
     nlohmann_json::nlohmann_json
 )
 
+add_definitions(-DMEP_USES_GLFW -DMEP_USES_FLEW -DMEP_USES_GLM -DMEP_USES_GLOG -DMEP_USES_NLOHMANN_JSON)
+
 if (MEP_USE_STB)
   message(STATUS "MEP_USE_STB=true, including stb library for image loading")
   list(APPEND SOURCE 
@@ -171,6 +173,7 @@ if (MEP_USE_STB)
   list(APPEND INCLUDE_DIRECTORIES 
     ${CMAKE_SOURCE_DIR}/third-party/stb
   )
+  add_definitions(-DMEP_USES_STB)
 else()
 message(STATUS "Library for image processing is not included linking default implementation")
   list(APPEND SOURCE 
@@ -186,6 +189,7 @@ if (MEP_USE_ASSIMP)
   list(APPEND LINK_TARGETS
     assimp
   )
+  add_definitions(-DMEP_USES_ASSIMP)
 else()
   message(STATUS "Library for model processing is not included linking default implementation")
   list(APPEND SOURCE
@@ -225,6 +229,7 @@ if (MEP_USE_IMGUI)
   list(APPEND LINK_TARGETS
     imgui
   )
+  add_definitions(-DMEP_USES_IMGUI)
 endif () 
 
 source_group("Header Files" FILES ${HEADERS})

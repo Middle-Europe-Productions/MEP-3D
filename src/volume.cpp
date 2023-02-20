@@ -23,7 +23,7 @@ Volume::Volume() : Identity(kVolume) {
   Mesh::Init(vertices, cubeIndices, true);
 }
 
-void Volume::LoadFromFile(const std::string_view file_path,
+void Volume::LoadFromFile(std::filesystem::path file_path,
                           Vec3i size,
                           Texture3D::Type type) {
   type_ = type;
@@ -33,7 +33,7 @@ void Volume::LoadFromFile(const std::string_view file_path,
       Executors::Resource,
       std::make_unique<TaskWithCallback>(
           [this, file_path]() -> bool {
-            FileReaderWithProgress infile(file_path.data(), std::ios::binary);
+            FileReaderWithProgress infile(file_path, std::ios::binary);
             if (!infile.is_open()) {
               LOG(ERROR) << "Could not load the file " << file_path;
               return false;

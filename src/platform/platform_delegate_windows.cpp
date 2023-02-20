@@ -8,8 +8,15 @@
 #include <intrin.h>
 #include <windows.h>
 
+#ifdef MEP_USES_GLFW
+#include <GLFW/glfw3.h>
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include <GLFW/glfw3native.h>
+#endif
+
 namespace {
 constexpr std::size_t kDivisorKb = 1024;
+constexpr int kMaxFileNameSize = 256;
 PlatformDelegate::ProcessorType ToProcessType(WORD type) {
   switch (type) {
     case PROCESSOR_ARCHITECTURE_AMD64:
@@ -64,6 +71,16 @@ std::string GetCpuInfo() {
   }();
   return s_cpu_info;
 }
+
+HWND GetWindowHandle(void* native_window) {
+#ifdef MEP_USES_GLFW
+  VLOG(1) << __func__ << " requested WIN32 - GLFW instance";
+  return glfwGetWin32Window((GLFWwindow*)native_window);
+#endif
+  VLOG(1) << __func__ << " requested unknown instance";
+  return NULL;
+}
+
 };  // namespace
 
 class PlatformDelegateWindows : public PlatformDelegate {
@@ -76,6 +93,27 @@ class PlatformDelegateWindows : public PlatformDelegate {
     utils::FetchGpuInfo(&snapshot_);
   }
   MemorySnapshot GetMemorySnapshot() override;
+  std::filesystem::path OpenFile(Window* window, std::wstring filter) override {
+    DCHECK(window);
+    OPENFILENAMEW ofn;
+    WCHAR file[kMaxFileNameSize] = {0};
+    ZeroMemory(&ofn, sizeof(OPENFILENAME));
+    ofn.lStructSize = sizeof(OPENFILENAME);
+    ofn.hwndOwner = GetWindowHandle(window->GetNativeWindow());
+    ofn.lpstrFile = file;
+    ofn.nMaxFile = sizeof(file);
+    ofn.lpstrFilter = filter.data();
+    ofn.nFilterIndex = 1;
+    ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
+    if (GetOpenFileNameW(&ofn) == TRUE) {
+      return ofn.lpstrFile;
+    }
+    return std::filesystem::path();
+  }
+
+  std::filesystem::path SaveFile(Window* window, std::wstring filter) override {
+    return std::filesystem::path();
+  }
 
  private:
   MemorySnapshot snapshot_;

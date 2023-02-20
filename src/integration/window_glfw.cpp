@@ -316,6 +316,8 @@ class GLFWWindowController : public Window {
            static_cast<float>(buffer_size.y_);
   }
 
+  void* GetNativeWindow() override { return main_window_; }
+
   ~GLFWWindowController() override {
     LOG(INFO) << "Destroying window!";
 #ifdef MEP_ENGINE_USE_IMGUI

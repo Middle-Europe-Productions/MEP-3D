@@ -2,8 +2,9 @@
 #define PLATFORM_DELEGATE_HPP
 
 #include <MEP-3D/non_copyable.hpp>
+#include <MEP-3D/window.hpp>
 
-#include <cstddef>
+#include <filesystem>
 #include <string>
 
 class PlatformDelegate : public NonCopyable {
@@ -20,6 +21,10 @@ class PlatformDelegate : public NonCopyable {
     std::string gpu_driver;
   };
   virtual MemorySnapshot GetMemorySnapshot() = 0;
+  virtual std::filesystem::path OpenFile(Window* window,
+                                         std::wstring filter) = 0;
+  virtual std::filesystem::path SaveFile(Window* window,
+                                         std::wstring filter) = 0;
 
   static PlatformDelegate* Get();
 };

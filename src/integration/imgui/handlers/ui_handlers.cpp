@@ -9,6 +9,7 @@
 namespace {
 constexpr auto kInputModelName = "Model name";
 constexpr auto kInputPathName = "File path";
+constexpr int kMaxPathSize = 256;
 };  // namespace
 
 LINK_UI_CONTEXT_AND_HANDLERS(SceneUILayer)
@@ -230,16 +231,13 @@ UI_HANDLER(UI::Element, OpenModelPopup, SceneUILayer) {
 }
 
 struct ResourceWrap {
-  std::string path_;
-  char buffer_name[64];
-  char buffer_path[64];
+  char display_name[kMaxPathSize];
+  std::filesystem::path buffer_path;
   int selected_shader_ = -1;
   int selected_material_ = -1;
   int selected_texture_ = -1;
-  bool ValidData() const {
-    return !(strcmp(buffer_name, "") == 0 || strcmp(buffer_path, "") == 0);
-  }
-  template<typename Resource>
+  bool ValidData() const { return std::filesystem::exists(buffer_path); }
+  template <typename Resource>
   void DrawSelectable(Resource* resource) {
     ImGui::Text("Shader");
     selected_shader_ = UI::Drawer::DrawShaderComboMenu(
@@ -251,50 +249,50 @@ struct ResourceWrap {
     selected_material_ = UI::Drawer::DrawMaterialComboMenu(
         resource->GetScenePtr()->GetMaterial(), selected_material_);
   }
-  template<typename Resource, typename Context>
+  template <typename Resource, typename Context>
   void EvalSelectable(Resource* resource, Context* context) {
-      DCHECK(resource);
-      DCHECK(context);
-      if (selected_shader_ != -1) {
-        resource->Bind(context
-                        ->GetScenePtr()
-                        ->GetShaders()[selected_shader_]
-                        .get());
-      }
-      if (selected_texture_ != -1) {
-        resource->Bind(context
-                        ->GetScenePtr()
-                        ->GetTexture()[selected_texture_]
-                        .get());
-      }
-      if (selected_material_ != -1) {
-        resource->Bind(context
-                        ->GetScenePtr()
-                        ->GetMaterial()[selected_material_]
-                        .get());
-      }
+    DCHECK(resource);
+    DCHECK(context);
+    if (selected_shader_ != -1) {
+      resource->Bind(
+          context->GetScenePtr()->GetShaders()[selected_shader_].get());
+    }
+    if (selected_texture_ != -1) {
+      resource->Bind(
+          context->GetScenePtr()->GetTexture()[selected_texture_].get());
+    }
+    if (selected_material_ != -1) {
+      resource->Bind(
+          context->GetScenePtr()->GetMaterial()[selected_material_].get());
+    }
   }
 };
 
 UI_HANDLER_D(UI::Element, ModelPopup, SceneUILayer, ResourceWrap) {
   ImGui::InputTextWithHint("##model_name", kInputModelName,
-                           GetData().buffer_name, 64,
+                           GetData().display_name, kMaxPathSize,
                            ImGuiInputTextFlags_CharsNoBlank);
-  ImGui::InputTextWithHint("##model_path", kInputPathName,
-                           GetData().buffer_path, 64,
-                           ImGuiInputTextFlags_CharsNoBlank);
-  GetData().DrawSelectable(GetContext());
   if (ImGui::Button("Open File")) {
-    LOG(INFO) << "Open file";
+    std::filesystem::path file_path = PlatformDelegate::Get()->OpenFile(
+        GetContext()->GetEngine()->GetWindow().get(),
+        L"Model (*.obj)\0*.obj\0");
+    if (!file_path.empty()) {
+      LOG(INFO) << "File path " << file_path;
+      GetData().buffer_path = file_path;
+    }
   }
+  ImGui::Text((const char*)GetData().buffer_path.generic_u8string().c_str(),
+              ImGuiInputTextFlags_CharsNoBlank);
+  GetData().DrawSelectable(GetContext());
   ImGui::Separator();
   if (!GetData().ValidData()) {
     ImGui::BeginDisabled();
   }
   if (ImGui::Button("Load")) {
-    auto model = std::make_unique<Model>(std::string(GetData().buffer_name));
+    auto model = std::make_unique<Model>(std::string(GetData().display_name));
     GetData().EvalSelectable(model.get(), GetContext());
-    model->Load(GetData().buffer_path);
+    LOG(WARNING) << "Model class does not support utf-16";
+    model->Load(GetData().buffer_path.string());
     GetContext()->GetScenePtr()->GetModels().emplace_back(std::move(model));
     ImGui::CloseCurrentPopup();
   }
@@ -309,12 +307,30 @@ UI_HANDLER_D(UI::Element, ModelPopup, SceneUILayer, ResourceWrap) {
 
 UI_HANDLER_D(UI::Element, VolumePopup, SceneUILayer, ResourceWrap) {
   ImGui::InputTextWithHint("##volume_name", kInputModelName,
-                           GetData().buffer_name, 64,
+                           GetData().display_name, kMaxPathSize,
                            ImGuiInputTextFlags_CharsNoBlank);
-  ImGui::InputTextWithHint("##volume_path", kInputPathName,
-                           GetData().buffer_path, 64,
-                           ImGuiInputTextFlags_CharsNoBlank);
+  if (ImGui::Button("Open File")) {
+    std::filesystem::path file_path = PlatformDelegate::Get()->OpenFile(
+        GetContext()->GetEngine()->GetWindow().get(), L"");
+    if (!file_path.empty()) {
+      LOG(INFO) << "File path " << file_path;
+      DCHECK(std::filesystem::exists(file_path));
+      GetData().buffer_path = file_path;
+    }
+  }
+  ImGui::Text((const char*)GetData().buffer_path.generic_u8string().c_str(),
+              ImGuiInputTextFlags_CharsNoBlank);
   GetData().DrawSelectable(GetContext());
+  ImGui::Separator();
+  if (!GetData().ValidData()) {
+    ImGui::BeginDisabled();
+  }
+  if (ImGui::Button("Load")) {
+    // TODO
+  }
+  if (!GetData().ValidData()) {
+    ImGui::EndDisabled();
+  }
 }
 
 UI_HANDLER(UI::Element, OpenVolumePopup, SceneUILayer) {

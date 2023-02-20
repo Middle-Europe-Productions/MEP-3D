@@ -5,6 +5,6 @@
 
 namespace utils {
 void FetchGpuInfo(PlatformDelegate::MemorySnapshot* memory_snapshot);
-};
+};  // namespace utils
 
 #endif

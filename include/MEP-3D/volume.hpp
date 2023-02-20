@@ -9,13 +9,15 @@
 #include <MEP-3D/resource_base.hpp>
 #include <MEP-3D/texture_3d.hpp>
 
+#include <filesystem>
+
 class Volume : public Identity,
                public Mesh,
                public ResourceBase,
                public AsyncProgress {
  public:
   Volume();
-  void LoadFromFile(const std::string_view file_path,
+  void LoadFromFile(std::filesystem::path file_path,
                     Vec3i size,
                     Texture3D::Type type = Texture3D::Type::BYTE_8);
   void Draw(RenderTarget& render_target) override;
