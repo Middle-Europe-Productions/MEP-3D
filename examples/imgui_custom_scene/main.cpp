@@ -9,6 +9,7 @@ namespace {
 constexpr char kSceneName[] = "main-scene";
 }
 
+using namespace mep;
 class DefaultScene final : public Scene {
  public:
   DefaultScene() : Scene(kSceneName) {}

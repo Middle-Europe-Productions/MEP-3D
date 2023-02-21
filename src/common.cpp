@@ -1,5 +1,6 @@
 #include <MEP-3D/common.hpp>
 
+namespace mep {
 const char* kDefaultTexturePath = "textures/";
 
 std::string ToString(const Axis& axis) {
@@ -18,3 +19,4 @@ std::ostream& operator<<(std::ostream& out, const Axis& axis) {
   out << ToString(axis);
   return out;
 }
+}  // namespace mep

@@ -6,6 +6,7 @@
 #include <MEP-3D/perspective_camera.hpp>
 #include <MEP-3D/view_base.hpp>
 
+namespace mep {
 class RenderTarget {
  public:
   RenderTarget();
@@ -23,5 +24,6 @@ class RenderTarget {
   ViewBase* view_;
   CameraBase* camera_;
 };
+}  // namespace mep
 
 #endif

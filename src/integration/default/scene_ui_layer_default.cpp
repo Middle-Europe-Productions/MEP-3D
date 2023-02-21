@@ -1,5 +1,6 @@
 #include <MEP-3D/template/scene_ui_layer.hpp>
 
+namespace mep {
 class SceneUILayerDefault : public SceneUILayer {
  public:
   void OnAttach() override {}
@@ -17,3 +18,4 @@ std::unique_ptr<SceneUILayer> SceneUILayer::Create(
     SceneUIParser::Method handler_attach_method) {
   return std::make_unique<SceneUILayerDefault>();
 }
+}  // namespace mep

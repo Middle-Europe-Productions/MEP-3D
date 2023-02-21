@@ -9,6 +9,7 @@
 #include <imgui.h>
 #endif
 
+namespace mep {
 namespace {
 Key ToMepKey(int value) {
   switch (value) {
@@ -433,3 +434,4 @@ void GLFWWindowController::OnWindowResizeEventHandler(GLFWwindow* window,
 std::unique_ptr<Window> Window::GetInstance(WindowConfig config) {
   return std::make_unique<GLFWWindowController>(config);
 }
+}  // namespace mep

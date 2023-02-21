@@ -8,6 +8,7 @@
 
 #include <memory>
 
+namespace mep {
 class Texture : public TextureBase {
  public:
   Texture();
@@ -23,5 +24,6 @@ class Texture : public TextureBase {
 };
 
 using TexturePtr = std::unique_ptr<Texture>;
+}  // namespace mep
 
 #endif

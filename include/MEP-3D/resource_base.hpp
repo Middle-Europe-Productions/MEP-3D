@@ -4,6 +4,7 @@
 #include <atomic>
 #include <string>
 
+namespace mep {
 enum class Status {
   // When the resource handler is not implemented
   NotImplemented = -1,
@@ -35,5 +36,6 @@ class ResourceBase {
   std::atomic<Status> status_;
   std::atomic<bool> active_task_;
 };
+}  // namespace mep
 
 #endif

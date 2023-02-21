@@ -6,6 +6,7 @@
 
 #undef ADD_UI_ELEMENT
 
+namespace mep {
 namespace UI {
 std::string ToString(Element element) {
   switch (element) {
@@ -78,3 +79,4 @@ std::string ElementData::IdToString(int id) {
   return "Unknown";
 }
 };  // namespace UI
+}  // namespace mep

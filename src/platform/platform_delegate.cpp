@@ -1,5 +1,6 @@
 #include <MEP-3D/platform/platform_delegate.hpp>
 
+namespace mep {
 std::string ToString(PlatformDelegate::ProcessorType processor_type) {
   switch (processor_type) {
     case PlatformDelegate::ProcessorType::X86:
@@ -15,3 +16,4 @@ std::string ToString(PlatformDelegate::ProcessorType processor_type) {
       return "Unknown";
   }
 }
+}  // namespace mep

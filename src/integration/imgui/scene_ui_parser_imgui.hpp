@@ -5,6 +5,7 @@
 
 #include <queue>
 
+namespace mep {
 class ImguiPopupController {
  public:
   static ImguiPopupController& Get();
@@ -27,5 +28,6 @@ class SceneUIParserImGui : public SceneUIParser {
   SceneUIParserNode* ParseSceneItem(nlohmann::json& json_data, int depth);
   SceneUIParserNode* ParsePopupItem(nlohmann::json& json_data, int depth);
 };
+}  // namespace mep
 
 #endif

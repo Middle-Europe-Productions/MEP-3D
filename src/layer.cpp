@@ -1,6 +1,7 @@
 #include <MEP-3D/common_names.hpp>
 #include <MEP-3D/layer.hpp>
 
+namespace mep {
 Layer::Layer(const ILCConfig& config) : Identity(kLayer) {
   LOG(INFO) << kLayer << ", id: " << ToString();
   if (config.allow_ilc) {
@@ -72,3 +73,4 @@ void Layer::DisconnectFromILC() {
   DCHECK(connection_);
   connection_->Disconnect();
 }
+}  // namespace mep

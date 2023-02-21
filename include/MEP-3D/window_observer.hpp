@@ -5,6 +5,7 @@
 #include <MEP-3D/observer.hpp>
 #include <MEP-3D/vector.hpp>
 
+namespace mep {
 class WindowObserver : public Observer {
  public:
   virtual void OnKeyEvent(KeyEvent event) = 0;
@@ -13,5 +14,6 @@ class WindowObserver : public Observer {
   virtual void OnEventStatusChanged(bool events_blocked) = 0;
   virtual ~WindowObserver() = default;
 };
+}  // namespace mep
 
 #endif

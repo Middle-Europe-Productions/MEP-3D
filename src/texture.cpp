@@ -3,6 +3,7 @@
 #include <MEP-3D/common_names.hpp>
 #include <MEP-3D/texture.hpp>
 
+namespace mep {
 namespace {
 constexpr int kDefaultResolution = 16;
 }
@@ -81,3 +82,4 @@ Texture::~Texture() {
   LOG(INFO) << __FUNCTION__ << ", " << ToString();
   Clear();
 }
+}  // namespace mep

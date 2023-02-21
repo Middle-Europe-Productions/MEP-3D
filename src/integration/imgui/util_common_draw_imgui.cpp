@@ -10,6 +10,7 @@
 #include "imgui_addons.hpp"
 #include "scene_ui_parser_imgui.hpp"
 
+namespace mep {
 namespace {
 // Framerate
 static std::vector<float> framerate_cache = std::vector<float>();
@@ -449,3 +450,4 @@ void Drawer::OpenPopup(int id) {
   ImguiPopupController::Get().RequestPopupOpen(ElementData::IdToString(id));
 }
 }  // namespace UI
+}  // namespace mep

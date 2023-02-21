@@ -5,6 +5,7 @@
 #include <MEP-3D/identity.hpp>
 #include <MEP-3D/observer_list.hpp>
 
+namespace mep {
 class Asset : public Identity, public ObserverList<AssetObserver> {
  public:
   Asset(const char* identity) : Identity(identity) {}
@@ -13,5 +14,6 @@ class Asset : public Identity, public ObserverList<AssetObserver> {
   virtual void Stop() = 0;
   virtual ~Asset();
 };
+}  // namespace mep
 
 #endif

@@ -3,6 +3,7 @@
 
 #include <MEP-3D/asset.hpp>
 
+namespace mep {
 class TextureBase : public Asset {
  public:
   TextureBase(const char* identity) : Asset(identity) {}
@@ -12,5 +13,6 @@ class TextureBase : public Asset {
   virtual void Clear() = 0;
   virtual ~TextureBase() = default;
 };
+}  // namespace mep
 
 #endif

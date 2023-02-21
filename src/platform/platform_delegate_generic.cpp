@@ -4,6 +4,7 @@
 
 #include <glog/logging.h>
 
+namespace mep {
 class PlatformDelegateGeneric : public PlatformDelegate {
  public:
   PlatformDelegateGeneric() { LOG(INFO) << __func__ << " initialized"; }
@@ -18,3 +19,4 @@ PlatformDelegate* PlatformDelegate::Get() {
 PlatformDelegate::MemorySnapshot PlatformDelegateGeneric::GetMemorySnapshot() {
   return {"", 0, 0, 0, ProcessorType::Unknown};
 }
+}  // namespace mep

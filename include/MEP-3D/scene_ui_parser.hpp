@@ -4,6 +4,7 @@
 #include <nlohmann/json.hpp>
 #include <string>
 
+namespace mep {
 class SceneUIParser {
  public:
   using CallbackWithReplay = std::function<bool()>;
@@ -43,5 +44,6 @@ class SceneUIParser {
   std::unordered_map<Element, SceneUIParserNode*> nodes_;
   nlohmann::json root_;
 };
+}  // namespace mep
 
 #endif

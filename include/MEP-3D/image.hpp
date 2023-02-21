@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 
+namespace mep {
 class Image {
  public:
   enum class Type : int { RGBA = GL_RGBA, RGB = GL_RGB, Unknown = 0 };
@@ -23,4 +24,6 @@ class Image {
   int bit_depth_;
   Type image_type_;
 };
+}  // namespace mep
+
 #endif

@@ -1,5 +1,6 @@
 #include <MEP-3D/mesh_base.hpp>
 
+namespace mep {
 namespace {
 constexpr int kSizeOfVertice = sizeof(GLfloat);
 constexpr int kSizeOfIndice = sizeof(unsigned int);
@@ -100,3 +101,4 @@ MeshBasePtr MeshBaseFactory::Create() {
   obj->Init(vertices_, indices_);
   return obj;
 }
+}  // namespace mep

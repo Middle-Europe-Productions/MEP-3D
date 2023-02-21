@@ -3,6 +3,7 @@
 
 #include <string.h>
 
+namespace mep {
 template <typename T>
 class Vec2 {
  public:
@@ -36,6 +37,7 @@ class Vec3 : public Vec2<T> {
 using Vec3i = Vec3<int>;
 using Vec3f = Vec3<float>;
 using Vec3u = Vec3<unsigned int>;
+}  // namespace mep
 
 #include <MEP-3D/vector.inl>
 

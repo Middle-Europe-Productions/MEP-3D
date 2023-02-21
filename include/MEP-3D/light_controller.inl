@@ -1,3 +1,4 @@
+
 template <typename LightPtr>
 LightController<LightPtr>::LightController(
     unsigned int max_point_light,

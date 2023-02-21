@@ -14,6 +14,7 @@
 #include <unordered_map>
 #include <vector>
 
+namespace mep {
 enum class Executors : unsigned int { Resource = 0, Count };
 
 using TaskCallback = std::function<bool()>;
@@ -58,5 +59,6 @@ class Executor : public NonCopyable, public Identity {
   std::queue<TaskPtr> task_queue_;
 };
 using ExecutorPtr = std::unique_ptr<Executor>;
+}  // namespace mep
 
 #endif

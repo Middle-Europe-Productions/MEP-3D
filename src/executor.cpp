@@ -1,6 +1,7 @@
 #include <MEP-3D/common_names.hpp>
 #include <MEP-3D/executor.hpp>
 
+namespace mep {
 Task::Task(TaskCallback task) : task_(task) {}
 
 void Task::Execute() {
@@ -74,3 +75,4 @@ void Executor::RunThread() noexcept {
     next->Execute();
   }
 }
+}  // namespace mep

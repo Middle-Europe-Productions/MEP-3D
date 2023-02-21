@@ -4,6 +4,7 @@
 #include <MEP-3D/observer_list.hpp>
 #include <unordered_map>
 
+namespace mep {
 template <typename Type, typename Identity>
 class MapObserver {
  public:
@@ -53,5 +54,6 @@ class ObservableMap : public ObserverList<MapObserver<Type, Identity>> {
  private:
   std::unordered_map<Identity, Type> variable_map_;
 };
+}  // namespace mep
 
 #endif

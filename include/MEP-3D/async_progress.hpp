@@ -3,6 +3,7 @@
 
 #include <atomic>
 
+namespace mep {
 class AsyncProgress {
  public:
   AsyncProgress();
@@ -12,5 +13,6 @@ class AsyncProgress {
  private:
   std::atomic<float> progress_;
 };
+}  // namespace mep
 
 #endif

@@ -6,6 +6,7 @@
 #include <MEP-3D/scene_ui_parser.hpp>
 #include <MEP-3D/template/ui_element.hpp>
 
+namespace mep {
 class SceneUILayer : public Layer, public SceneObserver {
  public:
   void OnSceneAttach(Scene* scene) override;
@@ -22,5 +23,6 @@ class SceneUILayer : public Layer, public SceneObserver {
   Scene* scene_ptr_;
   SceneUILayer();
 };
+}  // namespace mep
 
 #endif

@@ -6,6 +6,7 @@
 #include <MEP-3D/render_target.hpp>
 #include <MEP-3D/time_delta.hpp>
 
+namespace mep {
 class Engine;
 class Layer : public Identity, public ILCClient {
  public:
@@ -35,5 +36,6 @@ class Layer : public Identity, public ILCClient {
   std::shared_ptr<Engine> engine_;
   std::unique_ptr<ILCConnector> connection_;
 };
+}  // namespace mep
 
 #endif

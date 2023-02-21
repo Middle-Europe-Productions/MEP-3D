@@ -1,6 +1,7 @@
 #include <MEP-3D/common_names.hpp>
 #include <MEP-3D/light.hpp>
 
+namespace mep {
 std::string ToString(LightUniforms uniform_type) {
   switch (uniform_type) {
     case LightUniforms::AmbientIntensity:
@@ -87,7 +88,7 @@ std::string Light::ToString() const {
   std::string output =
       "\"Light\": {\n" + Identity::ToString() + ",\n\"UniformCache\": {\n";
   for (auto it = uniform_cache_.begin(); it != uniform_cache_.end();) {
-    output += ::ToString(it->first) + ": " + std::to_string(it->second);
+    output += mep::ToString(it->first) + ": " + std::to_string(it->second);
     if (++it != uniform_cache_.end())
       output += ",\n";
   }
@@ -98,3 +99,4 @@ std::string Light::ToString() const {
 Light::~Light() {
   LOG(INFO) << __FUNCTION__;
 }
+}  // namespace mep

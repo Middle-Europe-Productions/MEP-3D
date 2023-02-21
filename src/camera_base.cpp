@@ -1,5 +1,6 @@
 #include <MEP-3D/camera_base.hpp>
 
+namespace mep {
 std::string ToString(CameraVariables camera_variable) {
   switch (camera_variable) {
     case CameraVariables::Position:
@@ -55,3 +56,4 @@ void CameraBase::ResetCameraControls() {
     it.second = false;
   }
 }
+}  // namespace mep

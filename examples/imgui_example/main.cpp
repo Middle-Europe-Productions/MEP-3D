@@ -3,6 +3,7 @@
 
 #include <MEP-3D/mep-3d.hpp>
 
+using namespace mep;
 const std::unordered_map<LightUniforms, std::string>
     kDirectionalLightUniformMap = {
         {LightUniforms::AmbientColor, "directional_light.base.color"},

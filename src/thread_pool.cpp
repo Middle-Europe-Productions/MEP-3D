@@ -1,5 +1,6 @@
 #include <MEP-3D/thread_pool.hpp>
 
+namespace mep {
 ThreadPool& ThreadPool::Get() {
   static ThreadPool thread_pool;
   return thread_pool;
@@ -21,3 +22,4 @@ ThreadPool::ThreadPool() {
         Executor::Type::NonBlocking, std::thread::hardware_concurrency());
   }
 }
+}  // namespace mep

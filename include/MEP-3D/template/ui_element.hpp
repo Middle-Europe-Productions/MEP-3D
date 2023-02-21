@@ -6,6 +6,7 @@
 
 #include <string>
 
+namespace mep {
 namespace UI {
 
 enum Element {
@@ -38,6 +39,7 @@ class ElementData : public NonCopyable {
 #define ADD_UI_ELEMENT(var_name, var_string) \
   UI::ElementData::Get().CreateElement(static_cast<int>(var_name), var_string)
 
-};  // namespace UI
+}  // namespace UI
+}  // namespace mep
 
 #endif

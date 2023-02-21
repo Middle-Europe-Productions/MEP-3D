@@ -1,6 +1,7 @@
 #include <MEP-3D/common_names.hpp>
 #include <MEP-3D/spot_light.hpp>
 
+namespace mep {
 SpotLight::SpotLight(const AmbientConfig& ambient_config,
                      const PointConfig& point_config,
                      float diffuse_intensity,
@@ -33,3 +34,4 @@ void SpotLight::CalcuateEdge() {
 SpotConfig& SpotLight::GetSpotConfigRef() {
   return spot_config_;
 }
+}  // namespace mep

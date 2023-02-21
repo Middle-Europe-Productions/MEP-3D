@@ -1,5 +1,6 @@
 #include <MEP-3D/key_event.hpp>
 
+namespace mep {
 std::string KeyToString(Key Key) {
   switch (Key) {
     case Key::A:
@@ -196,3 +197,4 @@ std::string KeyToString(Key Key) {
       return "UnknownKey";
   }
 }
+}  // namespace mep

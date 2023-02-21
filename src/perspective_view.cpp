@@ -2,7 +2,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-
+namespace mep {
 PerspectiveView::PerspectiveView(PerspectiveView::Config config)
     : config_(config) {
   Update();
@@ -29,3 +29,4 @@ void PerspectiveView::Update() {
       glm::perspective<GLfloat>(config_.field_of_view, config_.aspect_ration,
                                 config_.near_ignore, config_.far_ignore);
 }
+}  // namespace mep

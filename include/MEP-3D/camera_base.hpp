@@ -12,6 +12,7 @@
 
 #include <array>
 
+namespace mep {
 enum class CameraVariables { Position, Direction };
 
 std::string ToString(const CameraVariables& camera_variable);
@@ -72,5 +73,6 @@ void CameraBase::InitCameraControls(Actions terminate_action,
     key_status_[controls_[static_cast<int>(it)]] = false;
   }
 }
+}  // namespace mep
 
 #endif

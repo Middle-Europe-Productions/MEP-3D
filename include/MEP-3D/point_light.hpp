@@ -6,6 +6,7 @@
 
 #include <memory>
 
+namespace mep {
 struct PointConfig {
   Vec3f position;
   // https://wiki.ogre3d.org/tiki-index.php?page=-Point+Light+Attenuation
@@ -36,5 +37,6 @@ class PointLight : public Light {
  private:
   PointConfig point_config_;
 };
+}  // namespace mep
 
 #endif

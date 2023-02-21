@@ -7,6 +7,7 @@
 #include <assimp/scene.h>
 #include <assimp/Importer.hpp>
 
+namespace mep {
 namespace {
 constexpr bool kUseReversedNormals = true;
 
@@ -176,3 +177,4 @@ std::string Model::ToString() const {
   return Identity::ToString() + ", \n" + AssetController::ToString() + ", \n" +
          ModelController::ToString();
 }
+}  // namespace mep

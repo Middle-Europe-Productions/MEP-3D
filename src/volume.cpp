@@ -3,6 +3,7 @@
 #include <MEP-3D/file_reader_with_progress.hpp>
 #include <MEP-3D/thread_pool.hpp>
 
+namespace mep {
 namespace {
 constexpr int kChunkSize = 1024;
 constexpr long long kKiloByte = 1024;
@@ -128,3 +129,4 @@ Volume::~Volume() {
   active_.store(false, std::memory_order_release);
   WaitForResource();
 }
+}  // namespace mep

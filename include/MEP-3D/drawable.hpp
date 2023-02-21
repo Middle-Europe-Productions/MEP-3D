@@ -5,6 +5,7 @@
 
 #include <MEP-3D/render_target.hpp>
 
+namespace mep {
 class Drawable {
  public:
   Drawable();
@@ -17,5 +18,6 @@ class Drawable {
  private:
   bool should_draw_;
 };
+}  // namespace mep
 
 #endif

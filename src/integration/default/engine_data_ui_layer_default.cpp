@@ -2,6 +2,7 @@
 #include <MEP-3D/engine.hpp>
 #include <MEP-3D/template/engine_data_ui_layer.hpp>
 
+namespace mep {
 class EngineDataUILayerDefault : public EngineDataUILayer {
  public:
   EngineDataUILayerDefault() : EngineDataUILayer() {
@@ -27,3 +28,4 @@ EngineDataUILayer::EngineDataUILayer() : Layer(kEngineDataUILayer) {}
 std::unique_ptr<EngineDataUILayer> EngineDataUILayer::Create() {
   return std::make_unique<EngineDataUILayerDefault>();
 }
+}  // namespace mep

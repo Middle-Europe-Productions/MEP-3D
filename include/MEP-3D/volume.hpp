@@ -11,6 +11,7 @@
 
 #include <filesystem>
 
+namespace mep {
 class Volume : public Identity,
                public Mesh,
                public ResourceBase,
@@ -39,5 +40,6 @@ class Volume : public Identity,
   std::atomic<bool> active_;
   std::atomic<long long> size_bytes_;
 };
+}  // namespace mep
 
 #endif

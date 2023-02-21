@@ -3,6 +3,7 @@
 
 #include <glog/logging.h>
 
+namespace mep {
 namespace {
 bool IsILCEnabled() {
   return feature::IsFeatureEnabled(feature::kUseILCConnectivity);
@@ -121,3 +122,4 @@ ILCDaemon& ILCDaemon::Instance() {
   static ILCDaemon instance;
   return instance;
 }
+}  // namespace mep

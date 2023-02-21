@@ -2,6 +2,7 @@
 
 #include <vector>
 
+namespace mep {
 namespace feature {
 #define MEP_FEATURE(var_name, var_value, default_val) \
   const char* var_name = var_value;
@@ -58,3 +59,4 @@ bool GetFeatureDefaultState(std::string_view feature) {
 }
 
 };  // namespace feature
+};  // namespace mep

@@ -9,9 +9,8 @@
 #include <MEP-3D/mesh_base.hpp>
 #include <MEP-3D/model_controller.hpp>
 
-class Mesh : public MeshBase,
-             public AssetController,
-             public ModelController {
+namespace mep {
+class Mesh : public MeshBase, public AssetController, public ModelController {
  public:
   Mesh();
   virtual void Clear();
@@ -20,5 +19,6 @@ class Mesh : public MeshBase,
 };
 
 using MeshPtr = std::unique_ptr<Mesh>;
+}  // namespace mep
 
 #endif

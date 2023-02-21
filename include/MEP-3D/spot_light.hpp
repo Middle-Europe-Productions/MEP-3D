@@ -3,6 +3,7 @@
 
 #include <MEP-3D/point_light.hpp>
 
+namespace mep {
 struct SpotConfig {
   Vec3f direction;
   float edge_deg;
@@ -26,5 +27,6 @@ class SpotLight : public PointLight {
   GLfloat processed_edge_;
   float last_edge_;
 };
+}  // namespace mep
 
 #endif

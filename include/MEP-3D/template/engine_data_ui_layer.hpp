@@ -4,6 +4,7 @@
 #include <MEP-3D/layer.hpp>
 #include <MEP-3D/window_observer.hpp>
 
+namespace mep {
 class EngineDataUILayer : public Layer, public WindowObserver {
  public:
   static std::unique_ptr<EngineDataUILayer> Create();
@@ -12,5 +13,6 @@ class EngineDataUILayer : public Layer, public WindowObserver {
  protected:
   EngineDataUILayer();
 };
+}  // namespace mep
 
 #endif

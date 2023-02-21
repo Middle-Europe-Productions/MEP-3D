@@ -4,7 +4,7 @@
 #include <MEP-3D/ilc/ilc_client.hpp>
 
 #include <memory>
-
+namespace mep {
 class ILCConnector {
  public:
   ILCConnector(const Identity& id);
@@ -16,5 +16,5 @@ class ILCConnector {
  private:
   const Identity id_;
 };
-
+}  // namespace mep
 #endif

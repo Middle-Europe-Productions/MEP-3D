@@ -9,6 +9,7 @@
 // #include <sys/utsname.h>
 // #include <sys/sysctl.h>
 
+namespace mep {
 class PlatformDelegateMacos : public PlatformDelegate {
  public:
   PlatformDelegateMacos() {
@@ -17,7 +18,7 @@ class PlatformDelegateMacos : public PlatformDelegate {
   }
   MemorySnapshot GetMemorySnapshot() override;
 
-private:
+ private:
   MemorySnapshot snapshot_;
 };
 
@@ -29,3 +30,4 @@ PlatformDelegate* PlatformDelegate::Get() {
 PlatformDelegate::MemorySnapshot PlatformDelegateMacos::GetMemorySnapshot() {
   return snapshot_;
 }
+}  // namespace mep

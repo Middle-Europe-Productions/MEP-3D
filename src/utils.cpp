@@ -9,6 +9,7 @@
 
 #include <glog/logging.h>
 
+namespace mep {
 namespace {
 constexpr char kSeparator = '=';
 constexpr char kPrefix = '-';
@@ -155,3 +156,4 @@ std::string utils::LoadFromFile(const std::string& file_path) {
   return std::string((std::istreambuf_iterator<char>(input_file)),
                      std::istreambuf_iterator<char>());
 }
+}  // namespace mep

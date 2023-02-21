@@ -1,6 +1,7 @@
 #include <MEP-3D/common.hpp>
 #include <MEP-3D/template/shaders_preset.hpp>
 
+namespace mep {
 namespace shaders {
 const char* kBasicVertexShader = R"(
 #version 330
@@ -47,3 +48,4 @@ void CacheDefaultUnifroms(Shader& shader) {
                static_cast<unsigned int>(CommonUniform::Position));
 }
 }  // namespace shaders
+}  // namespace mep

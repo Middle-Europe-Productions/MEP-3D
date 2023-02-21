@@ -3,6 +3,7 @@
 
 #include <string>
 
+namespace mep {
 enum class Key {
   A = 0,
   B = 1,
@@ -114,5 +115,6 @@ struct MouseEvent {
   float x;
   float y;
 };
+}  // namespace mep
 
 #endif

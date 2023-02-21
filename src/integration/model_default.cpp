@@ -1,6 +1,7 @@
 #include <glog/logging.h>
 #include <MEP-3D/model.hpp>
 
+namespace mep {
 Model::Model() : Identity(__FUNCTION__) {
   UpdateStatus(Status::NotImplemented);
   LOG(WARNING) << __FUNCTION__ << ", not implemented!";
@@ -27,3 +28,4 @@ std::string Model::ToString() const {
   return Identity::ToString() + ", \n" + AssetController::ToString() + ", \n" +
          ModelController::ToString();
 }
+}  // namespace mep

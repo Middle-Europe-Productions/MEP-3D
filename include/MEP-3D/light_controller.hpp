@@ -8,6 +8,7 @@
 
 #include <unordered_map>
 
+namespace mep {
 template <typename LightPtr>
 class LightController : public AssetController {
  public:
@@ -39,5 +40,6 @@ using SpotLightPtr = std::unique_ptr<SpotLight>;
 using SpotLightController = LightController<std::unique_ptr<SpotLight>>;
 
 #include <MEP-3D/light_controller.inl>
+}  // namespace mep
 
 #endif

@@ -1,5 +1,6 @@
 #include <MEP-3D/mesh.hpp>
 
+namespace mep {
 Mesh::Mesh() {
   VLOG(3) << __FUNCTION__;
   vertices_count_ = 0;
@@ -41,3 +42,4 @@ std::string Mesh::ToString() const {
   return "\"Mesh\": {\n" + AssetController::ToString() + ",\n" +
          ModelController::ToString() + "\n}";
 }
+}  // namespace mep

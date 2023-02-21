@@ -1,6 +1,7 @@
 #include <GLFW/glfw3.h>
 #include <MEP-3D/time_delta.hpp>
 
+namespace mep {
 class GlfwTimeDelta : public TimeDelta {
  public:
   GlfwTimeDelta() { last_time_ = glfwGetTime(); }
@@ -19,3 +20,4 @@ class GlfwTimeDelta : public TimeDelta {
 std::unique_ptr<TimeDelta> TimeDelta::GetInstance() {
   return std::make_unique<GlfwTimeDelta>();
 }
+}  // namespace mep

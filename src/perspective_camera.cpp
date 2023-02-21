@@ -2,6 +2,7 @@
 #include <MEP-3D/perspective_camera.hpp>
 #include <MEP-3D/utils.hpp>
 
+namespace mep {
 std::string ToString(PerspectiveCameraActions pca) {
   switch (pca) {
     case PerspectiveCameraActions::Front:
@@ -151,3 +152,4 @@ void PerspectiveCamera::ValidateKeyInput(float time_delta) {
   if (pressed)
     Changed();
 }
+}  // namespace mep

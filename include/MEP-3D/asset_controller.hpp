@@ -6,6 +6,7 @@
 #include <MEP-3D/shader.hpp>
 #include <MEP-3D/texture_base.hpp>
 
+namespace mep {
 class AssetController : private AssetObserver {
  public:
   AssetController();
@@ -24,6 +25,7 @@ class AssetController : private AssetObserver {
   Shader* shader_;
   Material* material_;
 };
+}  // namespace mep
 
 #include <MEP-3D/asset_controller.inl>
 

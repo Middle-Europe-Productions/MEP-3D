@@ -1,5 +1,6 @@
 #include <MEP-3D/common_names.hpp>
 
+namespace mep {
 const char* kSceneUILayer = "scene_ui_layer";
 const char* kEngineDataUILayer = "engine_data_ui_layer";
 const char* kTexture = "texture";
@@ -24,3 +25,4 @@ const char* kMenuNodeName = "menu";
 const char* kSceneNodeName = "scene";
 const char* kPopupNodeName = "popup";
 const char* kDefaultImGuiName = "ImGui";
+}  // namespace mep

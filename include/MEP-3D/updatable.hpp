@@ -3,6 +3,7 @@
 
 #include <functional>
 
+namespace mep {
 class Updatable {
  public:
   using UpdateCallback = std::function<void()>;
@@ -19,5 +20,6 @@ class Updatable {
  private:
   bool changed_;
 };
+}  // namespace mep
 
 #endif

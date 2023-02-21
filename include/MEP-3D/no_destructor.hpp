@@ -5,6 +5,7 @@
 #include <type_traits>
 #include <utility>
 
+namespace mep {
 // Class from Chromium
 // Copyright 2018 The Chromium Authors.
 template <typename T>
@@ -43,5 +44,6 @@ class NoDestructor {
  private:
   alignas(T) char storage_[sizeof(T)];
 };
+}  // namespace mep
 
 #endif

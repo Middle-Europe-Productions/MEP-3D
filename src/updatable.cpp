@@ -1,5 +1,6 @@
 #include <MEP-3D/updatable.hpp>
 
+namespace mep {
 void Updatable::Updated() {
   changed_ = false;
 }
@@ -18,3 +19,4 @@ void Updatable::UpdateInt(UpdateCallback update) {
     Updated();
   }
 }
+}  // namespace mep

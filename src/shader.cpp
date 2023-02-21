@@ -6,6 +6,7 @@
 #include <fstream>
 #include <glm/gtc/type_ptr.hpp>
 
+namespace mep {
 Shader::Shader() : Asset(kShader) {
   LOG(INFO) << __FUNCTION__ << ", " << ToString();
   shader_id_ = 0;
@@ -301,3 +302,4 @@ bool Shader::GetUniformLocation(GLint& location, const std::string& name) {
   location = local_loc;
   return true;
 }
+}  // namespace mep

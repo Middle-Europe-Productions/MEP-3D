@@ -7,6 +7,7 @@
 #include <filesystem>
 #include <string>
 
+namespace mep {
 class PlatformDelegate : public NonCopyable {
  public:
   enum class ProcessorType { X86, X64, ARM, ARM64, Unknown };
@@ -30,5 +31,6 @@ class PlatformDelegate : public NonCopyable {
 };
 
 std::string ToString(PlatformDelegate::ProcessorType processor_type);
+};  // namespace mep
 
 #endif

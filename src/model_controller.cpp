@@ -6,6 +6,7 @@
 #include <glm/gtx/string_cast.hpp>
 #include <vector>
 
+namespace mep {
 ModelController::ModelController() {
   VLOG(3) << __FUNCTION__;
   ResetModel();
@@ -71,3 +72,4 @@ std::string ModelController::ToString() const {
   return "\"ObjectActionController\": {\n\"model_matrix\": " +
          glm::to_string(model_) + "\n}";
 }
+}  // namespace mep

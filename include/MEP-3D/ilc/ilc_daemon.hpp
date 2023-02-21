@@ -9,6 +9,7 @@
 #include <memory>
 #include <queue>
 
+namespace mep {
 class Engine;
 class ILCDaemon {
  public:
@@ -30,5 +31,5 @@ class ILCDaemon {
   std::queue<std::unique_ptr<ILCPackage>> packages_;
   std::map<const Identity, ILCClient*> connections_;
 };
-
+};  // namespace mep
 #endif

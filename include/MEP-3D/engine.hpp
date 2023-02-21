@@ -8,6 +8,7 @@
 
 #include <MEP-3D/layer.hpp>
 
+namespace mep {
 class EngineMonitorData {
  public:
   struct LayerData {
@@ -71,5 +72,6 @@ class Engine : public std::enable_shared_from_this<Engine>, public Identity {
 };
 
 using EnginePtr = std::shared_ptr<Engine>;
+}  // namespace mep
 
 #endif

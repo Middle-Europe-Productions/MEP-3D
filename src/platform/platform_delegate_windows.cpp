@@ -14,6 +14,7 @@
 #include <GLFW/glfw3native.h>
 #endif
 
+namespace mep {
 namespace {
 constexpr std::size_t kDivisorKb = 1024;
 constexpr int kMaxFileNameSize = 256;
@@ -132,3 +133,4 @@ PlatformDelegate::MemorySnapshot PlatformDelegateWindows::GetMemorySnapshot() {
   snapshot_.avalible_ram_memory_kb = statex.ullAvailPhys / kDivisorKb;
   return snapshot_;
 }
+}  // namespace mep

@@ -1,6 +1,7 @@
 #ifndef COMMON_NAMES_HPP
 #define COMMON_NAMES_HPP
 
+namespace mep {
 // Engine element
 extern const char* kSceneUILayer;
 extern const char* kEngineDataUILayer;
@@ -26,5 +27,6 @@ extern const char* kMenuNodeName;
 extern const char* kSceneNodeName;
 extern const char* kPopupNodeName;
 extern const char* kDefaultImGuiName;
+};  // namespace mep
 
 #endif

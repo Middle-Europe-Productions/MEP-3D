@@ -10,6 +10,7 @@
 #include "imgui_addons.hpp"
 #include "scene_ui_parser_imgui.hpp"
 
+namespace mep {
 namespace {
 
 constexpr char kDefaultSceneRuntimeConfig[] = R"({
@@ -170,3 +171,4 @@ std::unique_ptr<SceneUILayer> SceneUILayer::Create(
   return std::make_unique<SceneUILayerImGUI>(runtime_configuration.c_str(),
                                              handlers, handler_attach_method);
 }
+}  // namespace mep

@@ -3,6 +3,7 @@
 
 #include <glog/logging.h>
 
+namespace mep {
 std::string ToString(Status status) {
   switch (status) {
     case Status::NotImplemented:
@@ -61,3 +62,4 @@ void ResourceBase::EvaluateTask(Status new_status) {
       active_task_.notify_all();
   }
 }
+}  // namespace mep

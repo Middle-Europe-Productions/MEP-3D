@@ -3,6 +3,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/string_cast.hpp>
 
+namespace mep {
 namespace {
 constexpr float kPIval = 3.14159f;
 template <typename T>
@@ -93,3 +94,4 @@ glm::vec3 ArcballCamera::GetViewDir() const {
 glm::vec3 ArcballCamera::GetRightVector() const {
   return glm::transpose(view_matrix_)[0];
 }
+}  // namespace mep

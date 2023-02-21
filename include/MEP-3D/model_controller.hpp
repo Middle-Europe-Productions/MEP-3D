@@ -11,6 +11,7 @@
 #include <MEP-3D/common.hpp>
 #include <MEP-3D/vector.hpp>
 
+namespace mep {
 class ModelController {
  public:
   ModelController();
@@ -30,5 +31,6 @@ class ModelController {
   glm::mat4 model_;
   glm::vec3 rotation_tracker_deg_;
 };
+}  // namespace mep
 
 #endif

@@ -1,4 +1,4 @@
-
+namespace mep {
 template <typename T>
 constexpr Vec2<T>::Vec2() : x_(0), y_(0) {}
 
@@ -66,3 +66,4 @@ template <typename T>
 constexpr bool Vec3<T>::operator==(const Vec3& x) const {
   return Vec2<T>::x_ == x.x_ && Vec2<T>::y_ == x.y_ && z_ == x.z_;
 }
+}  // namespace mep

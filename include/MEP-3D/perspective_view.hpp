@@ -6,6 +6,7 @@
 #include <functional>
 #include <glm/glm.hpp>
 
+namespace mep {
 class PerspectiveView : public ViewBase {
  public:
   struct Config {
@@ -24,5 +25,6 @@ class PerspectiveView : public ViewBase {
   Config config_;
   glm::mat4 projection_model_;
 };
+}  // namespace mep
 
 #endif

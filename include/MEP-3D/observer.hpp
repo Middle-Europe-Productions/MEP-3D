@@ -1,6 +1,7 @@
 #ifndef OBSERVER_HPP
 #define OBSERVER_HPP
 
+namespace mep {
 class Observer {
  public:
   Observer();
@@ -11,5 +12,6 @@ class Observer {
   static int id_couter_;
   int id_;
 };
+}  // namespace mep
 
 #endif

@@ -10,6 +10,7 @@
 #include <MEP-3D/template/ui_element.hpp>
 #include <MEP-3D/volume.hpp>
 
+namespace mep {
 namespace UI {
 class Drawer {
  public:
@@ -58,5 +59,6 @@ class Drawer {
 };
 
 }  // namespace UI
+}  // namespace mep
 
 #endif

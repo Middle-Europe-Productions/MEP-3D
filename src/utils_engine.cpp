@@ -5,10 +5,10 @@
 #include <MEP-3D/user_interface.hpp>
 #include <MEP-3D/utils_engine.hpp>
 
+namespace mep {
 namespace utils {
-std::shared_ptr<Engine> CreateEngine(
-    std::unique_ptr<Window> window,
-    std::unique_ptr<Scene> scene) {
+std::shared_ptr<Engine> CreateEngine(std::unique_ptr<Window> window,
+                                     std::unique_ptr<Scene> scene) {
   DCHECK(window);
   DCHECK(scene);
   auto main_engine = std::make_shared<Engine>();
@@ -46,4 +46,5 @@ std::shared_ptr<Engine> CreateEngineWithSceneUI(
   return main_engine;
 }
 
-};  // namespace utils
+}  // namespace utils
+}  // namespace mep

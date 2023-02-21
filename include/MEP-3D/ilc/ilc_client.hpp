@@ -5,7 +5,7 @@
 
 #include <optional>
 #include <string>
-
+namespace mep {
 struct ILCConfig {
   bool allow_ilc = true;
 };
@@ -33,5 +33,5 @@ class ILCClient {
   virtual void OnConnectionClosed() = 0;
   virtual void OnConnectionOppened() = 0;
 };
-
+};  // namespace mep
 #endif

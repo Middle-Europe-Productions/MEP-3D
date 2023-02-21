@@ -6,6 +6,7 @@
 #include <MEP-3D/shader.hpp>
 #include <unordered_map>
 
+namespace mep {
 template <typename Type>
 class UniformContainer {
  public:
@@ -74,5 +75,6 @@ GLint UniformContainer<Type>::GetUniform(Type type) const {
     return -1;
   return uniform_cache_.find(type)->second;
 }
+}  // namespace mep
 
 #endif

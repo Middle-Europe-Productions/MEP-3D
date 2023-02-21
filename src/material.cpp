@@ -1,6 +1,7 @@
 #include <MEP-3D/common_names.hpp>
 #include <MEP-3D/material.hpp>
 
+namespace mep {
 std::string ToString(MaterialUniform material_uniform) {
   switch (material_uniform) {
     case MaterialUniform::SpecularIntensity:
@@ -47,3 +48,4 @@ void Material::Stop() {
 Material::~Material() {
   LOG(INFO) << __FUNCTION__;
 }
+}  // namespace mep

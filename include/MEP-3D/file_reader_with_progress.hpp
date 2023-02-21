@@ -3,6 +3,7 @@
 
 #include <fstream>
 
+namespace mep {
 class FileReaderWithProgress : public std::ifstream {
  public:
   template <class... Args>
@@ -28,5 +29,6 @@ class FileReaderWithProgress : public std::ifstream {
 
   void Init();
 };
+}  // namespace mep
 
 #endif

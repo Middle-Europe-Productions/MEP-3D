@@ -6,6 +6,7 @@
 
 #include <imgui.h>
 
+namespace mep {
 namespace {
 constexpr auto kInputModelName = "Model name";
 constexpr auto kInputPathName = "File path";
@@ -357,3 +358,4 @@ UI_HANDLER(UI::Element, SystemInfo, SceneUILayer) {
   ImGui::Text("Name: %s", memory_snapsot.gpu_name.c_str());
   ImGui::Text("Driver: %s", memory_snapsot.gpu_driver.c_str());
 }
+}  // namespace mep

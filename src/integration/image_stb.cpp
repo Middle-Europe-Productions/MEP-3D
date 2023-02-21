@@ -5,6 +5,7 @@
 #include <MEP-3D/common.hpp>
 #include <MEP-3D/image.hpp>
 
+namespace mep {
 Image::Image() {}
 
 bool Image::LoadFromFile(const std::string& name) {
@@ -46,3 +47,4 @@ void Image::Clear() {
 const Vec2i& Image::GetSize() const {
   return size_;
 }
+}  // namespace mep

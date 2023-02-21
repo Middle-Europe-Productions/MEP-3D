@@ -17,6 +17,7 @@
 #include <memory>
 #include <vector>
 
+namespace mep {
 class Scene;
 class SceneObserver : public Observer {
  public:
@@ -103,5 +104,6 @@ void Scene::Attach(First&& first, Args&&... args) {
   Attach(std::forward<First>(first));
   Attach(std::forward<Args>(args)...);
 }
+}  // namespace mep
 
 #endif

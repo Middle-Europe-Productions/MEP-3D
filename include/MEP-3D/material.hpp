@@ -9,6 +9,7 @@
 
 #include <GL/glew.h>
 
+namespace mep {
 struct MaterialConfig {
   float specular_intensity;
   float shininess;
@@ -30,5 +31,6 @@ class Material : public Asset, public UniformContainer<MaterialUniform> {
  private:
   std::optional<MaterialConfig> material_config_;
 };
+}  // namespace mep
 
 #endif

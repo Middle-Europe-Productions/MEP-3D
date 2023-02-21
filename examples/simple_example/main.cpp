@@ -23,6 +23,7 @@
 #include <MEP-3D/window.hpp>
 #include <MEP-3D/window_observer.hpp>
 
+using namespace mep;
 const std::unordered_map<LightUniforms, std::string>
     kDirectionalLightUniformMap = {
         {LightUniforms::AmbientColor, "directional_light.base.color"},

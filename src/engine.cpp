@@ -3,6 +3,7 @@
 #include <MEP-3D/features.hpp>
 #include <MEP-3D/ilc/ilc_daemon.hpp>
 
+namespace mep {
 Engine::Engine()
     : Identity(kEngine), window_(nullptr), scene_clear_color_(White) {
   LOG(INFO) << "Engine created: " << ToString();
@@ -251,3 +252,4 @@ bool Engine::StructureExists(int index) const {
 Engine::~Engine() {
   LOG(INFO) << "Engine destroyed, id: " << ToString();
 }
+}  // namespace mep

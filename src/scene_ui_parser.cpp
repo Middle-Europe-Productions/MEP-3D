@@ -3,6 +3,7 @@
 #include <MEP-3D/scene_ui_parser.hpp>
 #include <MEP-3D/utils.hpp>
 
+namespace mep {
 namespace {
 constexpr auto DoNothing = []() {};
 constexpr auto DoNothingWithReplay = []() -> bool { return true; };
@@ -122,3 +123,4 @@ void SceneUIParser::Init() {
 SceneUIParser::~SceneUIParser() {
   Clear();
 }
+}  // namespace mep

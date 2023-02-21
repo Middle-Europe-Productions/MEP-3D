@@ -9,6 +9,7 @@
 #include <optional>
 #include <string>
 
+namespace mep {
 struct ShaderStatus {
   bool created_from_file = false;
   std::optional<std::string> vertex_path;
@@ -72,5 +73,6 @@ class Shader : public Asset {
   bool GetUniformLocation(GLint& location, const std::string& name);
   ShaderStatus status_;
 };
+}  // namespace mep
 
 #endif

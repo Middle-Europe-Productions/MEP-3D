@@ -8,6 +8,7 @@
 #include <MEP-3D/resource_base.hpp>
 #include <MEP-3D/texture.hpp>
 
+namespace mep {
 class Model : public Identity,
               public Drawable,
               public ModelController,
@@ -31,5 +32,6 @@ class Model : public Identity,
 };
 
 using ModelPtr = std::unique_ptr<Model>;
+}  // namespace mep
 
 #endif

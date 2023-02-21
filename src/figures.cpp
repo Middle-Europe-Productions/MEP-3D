@@ -2,6 +2,7 @@
 #include <MEP-3D/figures.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+namespace mep {
 namespace {
 constexpr unsigned int kRowSize = 8;
 const std::vector<unsigned int> kPyramidIndicies = {0, 3, 1, 1, 3, 2,
@@ -132,3 +133,4 @@ Triangle::Triangle(Vec3f initial_position) {
   Mesh::Init(vertices, kTriangleIndices);
   Transform(initial_position);
 }
+}  // namespace mep

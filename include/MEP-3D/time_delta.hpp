@@ -3,6 +3,7 @@
 
 #include <memory>
 
+namespace mep {
 class TimeDelta {
  public:
   virtual float GetCurrentTime() = 0;
@@ -11,5 +12,6 @@ class TimeDelta {
   virtual ~TimeDelta() = default;
 };
 using TimeDeltaPtr = std::unique_ptr<TimeDelta>;
+}  // namespace mep
 
 #endif

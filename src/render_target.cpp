@@ -1,5 +1,6 @@
 #include <MEP-3D/render_target.hpp>
 
+namespace mep {
 RenderTarget::RenderTarget() : view_(nullptr), camera_(nullptr) {}
 
 void RenderTarget::AddCamera(CameraBase* camera) {
@@ -34,3 +35,4 @@ ViewBase* RenderTarget::GetView() {
 const ViewBase* RenderTarget::GetView() const {
   return view_;
 }
+}  // namespace mep

@@ -1,6 +1,7 @@
 #include <MEP-3D/common_names.hpp>
 #include <MEP-3D/directional_light.hpp>
 
+namespace mep {
 DirectionalLight::DirectionalLight(const AmbientConfig& ambient_config,
                                    const DiffuseConfig& diffuse_config)
     : Light(ambient_config, diffuse_config, kDirectionalLight) {
@@ -15,3 +16,4 @@ DiffuseConfig& DirectionalLight::GetDiffuseConfigRef() {
   assert(diffuse_config_.has_value());
   return diffuse_config_.value();
 }
+}  // namespace mep

@@ -9,6 +9,7 @@
 
 #define NOTREACHED() assert(false);
 
+namespace mep {
 namespace utils {
 void Init(int argc, char* argv[]);
 void InitLogging(int argc, char* argv[]);
@@ -27,5 +28,6 @@ inline bool Contains(Enum lval, Enum rval) {
   return static_cast<unsigned int>(lval) & static_cast<unsigned int>(rval);
 }
 }  // namespace utils
+}  // namespace mep
 
 #endif

@@ -3,6 +3,7 @@
 
 #include <MEP-3D/common.hpp>
 
+namespace mep {
 class Color {
  public:
   constexpr Color() : r_(0), g_(0), b_(0), a_(0) {}
@@ -30,5 +31,6 @@ constexpr Color White = Color(255, 255, 255, 255);
 constexpr Color Blue = Color(0, 255, 0, 255);
 constexpr Color Green = Color(0, 0, 255, 255);
 constexpr Color Red = Color(255, 0, 0, 255);
+};  // namespace mep
 
 #endif

@@ -1,6 +1,8 @@
 #include <MEP-3D/mep-3d.hpp>
 #include <MEP-3D/template/shaders_preset.hpp>
 
+using namespace mep;
+
 class CameraScene final : public Scene {
  public:
   CameraScene() {}

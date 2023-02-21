@@ -9,6 +9,7 @@
 #include <memory>
 #include <string>
 
+namespace mep {
 struct WindowConfig {
   Vec2u size;
   std::string name;
@@ -33,5 +34,6 @@ class Window : public ObserverList<WindowObserver>, public RenderTarget {
   static std::unique_ptr<Window> GetInstance(WindowConfig config);
 };
 using WindowPtr = std::unique_ptr<Window>;
+}  // namespace mep
 
 #endif

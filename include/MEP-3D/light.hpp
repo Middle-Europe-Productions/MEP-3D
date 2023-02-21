@@ -13,6 +13,7 @@
 #include <optional>
 #include <unordered_map>
 
+namespace mep {
 struct AmbientConfig {
   Color color;
   float intensity;
@@ -57,5 +58,6 @@ class Light : public Asset, public UniformContainer<LightUniforms> {
   std::optional<AmbientConfig> ambient_config_;
   std::optional<DiffuseConfig> diffuse_config_;
 };
+}  // namespace mep
 
 #endif

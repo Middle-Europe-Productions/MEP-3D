@@ -10,6 +10,7 @@
 
 #include <unordered_map>
 
+namespace mep {
 class ThreadPool : public NonCopyable {
  public:
   static ThreadPool& Get();
@@ -21,5 +22,6 @@ class ThreadPool : public NonCopyable {
   ThreadPool();
   std::unordered_map<Executors, ExecutorPtr> executor_pool_;
 };
+}  // namespace mep
 
 #endif

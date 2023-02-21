@@ -4,6 +4,8 @@
 #include <MEP-3D/template/scene_ui_layer.hpp>
 #include <MEP-3D/template/ui_handlers_impl.hpp>
 
+namespace mep {
 UI_CONTEXT(SceneUILayer)
+}
 
 #endif

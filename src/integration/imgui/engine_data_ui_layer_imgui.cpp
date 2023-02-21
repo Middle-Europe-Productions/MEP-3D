@@ -4,6 +4,7 @@
 #include <MEP-3D/template/engine_data_ui_layer.hpp>
 #include <MEP-3D/template/util_common_draw.hpp>
 
+namespace mep {
 class EngineDataUILayerImGUI : public EngineDataUILayer {
   void OnAttach() override {
     auto engine = GetEngine();
@@ -63,3 +64,4 @@ EngineDataUILayer::EngineDataUILayer() : Layer(kEngineDataUILayer) {}
 std::unique_ptr<EngineDataUILayer> EngineDataUILayer::Create() {
   return std::make_unique<EngineDataUILayerImGUI>();
 }
+}  // namespace mep

@@ -2,6 +2,7 @@
 
 #include <MEP-3D/common_names.hpp>
 
+namespace mep {
 Texture3D::Texture3D() : TextureBase(kTexture3d), texture_id_(0) {
   VLOG(4) << __func__;
 }
@@ -66,3 +67,4 @@ std::string ToString(Texture3D::Type type) {
   }
   return "Unkown";
 }
+}  // namespace mep

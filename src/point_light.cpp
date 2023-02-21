@@ -2,7 +2,7 @@
 #include <MEP-3D/common_names.hpp>
 #include <MEP-3D/point_light.hpp>
 
-
+namespace mep {
 PointLight::PointLight(const AmbientConfig& ambient_config,
                        const PointConfig& point_config,
                        float diffuse_intensity)
@@ -56,3 +56,4 @@ float& PointLight::GetDiffuseIntensityRef() {
   assert(diffuse_config_.has_value());
   return diffuse_config_.value().intensity;
 }
+}  // namespace mep

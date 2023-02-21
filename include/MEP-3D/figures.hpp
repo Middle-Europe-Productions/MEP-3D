@@ -6,6 +6,7 @@
 #include <MEP-3D/model_controller.hpp>
 #include <MEP-3D/vector.hpp>
 
+namespace mep {
 class Pyramid : public Mesh {
  public:
   Pyramid(Vec3f initial_position = {0.0f, 0.0f, 0.0f});
@@ -25,5 +26,6 @@ class Triangle : public Mesh {
  public:
   Triangle(Vec3f initial_position = {0.0f, 0.0f, 0.0f});
 };
+}  // namespace mep
 
 #endif

@@ -1,5 +1,6 @@
 #include <MEP-3D/file_reader_with_progress.hpp>
 
+namespace mep {
 float FileReaderWithProgress::GetProgress() {
   last_pos_ = std::ifstream::tellg();
   if (last_pos_ == -1 || last_pos_ == file_length_) {
@@ -17,3 +18,4 @@ void FileReaderWithProgress::Init() {
   file_length_ = std::ifstream::tellg();
   std::ifstream::seekg(0, beg);
 }
+}  // namespace mep

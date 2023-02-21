@@ -4,6 +4,7 @@
 #include <MEP-3D/point_light.hpp>
 #include <MEP-3D/spot_light.hpp>
 
+namespace mep {
 PointConfig PointConfig::Create() {
   return PointConfig{{0.0f, 0.0f, 0.0f}, 0.1f, 0.1f, 1.0f};
 }
@@ -47,3 +48,4 @@ ArcballCameraConfig ArcballCameraConfig::Create() {
           {1280, 720},
           1.5f};
 }
+}  // namespace mep

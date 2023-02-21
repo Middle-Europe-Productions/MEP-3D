@@ -3,6 +3,7 @@
 
 #include <MEP-3D/light.hpp>
 
+namespace mep {
 class DirectionalLight : public Light {
  public:
   DirectionalLight(const AmbientConfig& ambient_config,
@@ -10,5 +11,6 @@ class DirectionalLight : public Light {
   AmbientConfig& GetAmbientConfigRef();
   DiffuseConfig& GetDiffuseConfigRef();
 };
+}  // namespace mep
 
 #endif

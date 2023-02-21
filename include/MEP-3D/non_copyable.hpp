@@ -1,6 +1,7 @@
 #ifndef NON_COPYABLE_HPP
 #define NON_COPYABLE_HPP
 
+namespace mep {
 class NonCopyable {
  public:
   NonCopyable() = default;
@@ -9,5 +10,6 @@ class NonCopyable {
   auto operator=(const NonCopyable&) = delete;
   auto operator=(NonCopyable&&) = delete;
 };
+}  // namespace mep
 
 #endif

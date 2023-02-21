@@ -7,6 +7,7 @@
 
 #include <MEP-3D/common.hpp>
 
+using namespace mep;
 namespace {
 constexpr char kSceneName[] = "main-scene";
 
@@ -162,8 +163,7 @@ class VolumeRenderer final : public Scene {
 
     // Volume setup
     volume_ = std::make_unique<Volume>();
-    volume_->LoadFromFile("head.raw", {256, 256, 256},
-                         Texture3D::Type::BYTE_8);
+    volume_->LoadFromFile("head.raw", {256, 256, 256}, Texture3D::Type::BYTE_8);
     volume_->Bind(shader.get());
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     Attach(std::move(camera), std::move(shader), std::move(volume_));
@@ -178,7 +178,8 @@ class VolumeRenderer final : public Scene {
     glDisable(GL_BLEND);
   }
 
-  virtual void OnReceive(const Identity& id, const std::string& message) override {
+  virtual void OnReceive(const Identity& id,
+                         const std::string& message) override {
     LOG(INFO) << "Message received: " << id.ToString() << ", " << message;
   }
 

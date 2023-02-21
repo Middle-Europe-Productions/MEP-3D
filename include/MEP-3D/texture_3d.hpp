@@ -6,6 +6,7 @@
 #include <MEP-3D/texture_base.hpp>
 #include <MEP-3D/vector.hpp>
 
+namespace mep {
 class Texture3D : public TextureBase {
  public:
   enum class Type { BYTE_8, BYTE_16 };
@@ -22,5 +23,6 @@ class Texture3D : public TextureBase {
 };
 
 std::string ToString(Texture3D::Type type);
+}  // namespace mep
 
 #endif

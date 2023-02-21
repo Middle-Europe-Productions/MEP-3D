@@ -1,6 +1,7 @@
 #include <glog/logging.h>
 #include <MEP-3D/identity.hpp>
 
+namespace mep {
 std::unordered_map<std::string_view, int> Identity::identity_ =
     std::unordered_map<std::string_view, int>();
 unsigned int Identity::global_id_provider_ = 0;
@@ -82,3 +83,4 @@ const std::unordered_map<std::string_view, int>& Identity::GetIdentityMap() {
 Identity::~Identity() {
   identity_[class_name_]--;
 }
+}  // namespace mep

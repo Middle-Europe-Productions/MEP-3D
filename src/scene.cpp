@@ -1,5 +1,6 @@
 #include <MEP-3D/scene.hpp>
 
+namespace mep {
 namespace {
 template <typename ArrayT>
 std::size_t DrawAllElements(ArrayT& elements, RenderTarget& render_target) {
@@ -203,3 +204,4 @@ Scene::~Scene() {
   LOG(INFO) << __FUNCTION__;
   ForAllObservers([](auto* obs) { obs->OnSceneDetach(); });
 }
+}  // namespace mep

@@ -1,7 +1,7 @@
 #include <MEP-3D/mep-3d.hpp>
 #include <MEP-3D/template/shaders_preset.hpp>
 
-
+using namespace mep;
 const char* kVertexShader = R"(
 #version 330
 layout(location = 0) in vec3 pos;
@@ -47,7 +47,8 @@ class CameraScene final : public Scene {
     triangle.Draw(render_target);
     GetShaders()[0]->Stop();
   }
-private:
+
+ private:
   Triangle triangle;
 };
 
@@ -55,8 +56,8 @@ int main(int argc, char* argv[]) {
   utils::Init(argc, argv);
   auto window = Window::GetInstance({{1280, 720}, "Camera example"});
   window->Init();
-  auto engine = utils::CreateEngine(std::move(window),
-                                    std::make_unique<CameraScene>());
+  auto engine =
+      utils::CreateEngine(std::move(window), std::make_unique<CameraScene>());
   engine->SetClearColor(Color{0, 128, 0, 255});
   engine->Run();
 }

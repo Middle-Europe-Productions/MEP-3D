@@ -3,6 +3,7 @@
 
 #include <string>
 
+namespace mep {
 namespace feature {
 #define MEP_FEATURE(var_name, var_value, default_val) \
   extern const char* var_name;
@@ -11,6 +12,7 @@ namespace feature {
 
 bool IsFeatureEnabled(std::string_view feature);
 void ForceFeature(std::string_view feature, bool status);
-};  // namespace feature
+}  // namespace feature
+}  // namespace mep
 
 #endif

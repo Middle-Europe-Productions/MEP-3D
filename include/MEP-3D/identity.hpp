@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 
+namespace mep {
 class Identity {
  public:
   Identity();
@@ -30,5 +31,6 @@ class Identity {
   unsigned int global_id_;
   unsigned int id_;
 };
+}  // namespace mep
 
 #endif

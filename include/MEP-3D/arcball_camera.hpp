@@ -4,6 +4,7 @@
 #include <MEP-3D/camera_base.hpp>
 #include <glm/glm.hpp>
 
+namespace mep {
 enum class ArcballCameraActions : int {
   Left = 0,
   Right = 1,
@@ -61,5 +62,6 @@ class ArcballCamera : public CameraBase {
   bool initial_move_ = true;
   Vec2f last_mouse_position_ = {0.0, 0.0};
 };
+};  // namespace mep
 
 #endif

@@ -7,6 +7,7 @@
 #include <MEP-3D/template/ui_element.hpp>
 #include <MEP-3D/utils.hpp>
 
+namespace mep {
 namespace {
 constexpr char kTabBarId[] = "##tab_bar";
 }
@@ -257,3 +258,4 @@ SceneUIParser::SceneUIParserNode* SceneUIParserImGui::ParsePopupItem(
 
   return node;
 }
+}  // namespace mep

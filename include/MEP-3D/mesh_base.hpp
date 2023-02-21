@@ -5,6 +5,7 @@
 #include <MEP-3D/drawable.hpp>
 #include <memory>
 
+namespace mep {
 class MeshBase : public Drawable {
  public:
   MeshBase();
@@ -37,5 +38,6 @@ class MeshBaseFactory {
   std::vector<unsigned int> indices_;
 };
 using MeshBaseFactoryPtr = std::unique_ptr<MeshBaseFactory>;
+}  // namespace mep
 
 #endif

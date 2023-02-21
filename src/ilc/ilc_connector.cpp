@@ -1,6 +1,7 @@
 #include <MEP-3D/ilc/ilc_connector.hpp>
 #include <MEP-3D/ilc/ilc_daemon.hpp>
 
+namespace mep {
 ILCConnector::ILCConnector(const Identity& id) : id_(id) {}
 
 ILCConnector::~ILCConnector() {}
@@ -16,3 +17,4 @@ bool ILCConnector::Connect(ILCClient* client) {
 bool ILCConnector::Disconnect() {
   return ILCDaemon::Disconnect(id_);
 }
+}  // namespace mep

@@ -2,6 +2,7 @@
 
 #include <glog/logging.h>
 
+namespace mep {
 AsyncProgress::AsyncProgress() : progress_(0.f) {}
 
 float AsyncProgress::GetProgress() {
@@ -12,3 +13,4 @@ void AsyncProgress::SetProgress(float progress) {
   DCHECK(progress >= 0.f && progress <= 1.f);
   progress_.store(progress, std::memory_order_release);
 }
+}  // namespace mep

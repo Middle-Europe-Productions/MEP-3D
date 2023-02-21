@@ -1,6 +1,7 @@
 #include <glog/logging.h>
 #include <MEP-3D/asset_controller.hpp>
 
+namespace mep {
 AssetController::AssetController()
     : texture_(nullptr), shader_(nullptr), material_(nullptr) {}
 
@@ -63,3 +64,4 @@ std::string AssetController::ToString() const {
 AssetController::~AssetController() {
   RemoveAssets();
 }
+}  // namespace mep

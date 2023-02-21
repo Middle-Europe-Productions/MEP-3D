@@ -1,5 +1,6 @@
 #include <MEP-3D/template/util_common_draw.hpp>
 
+namespace mep {
 namespace UI {
 void Drawer::DrawWindowInterface(Window& window, Scene& scene) {}
 void Drawer::DrawAmbientConfig(AmbientConfig& config) {}
@@ -61,3 +62,4 @@ void Drawer::OpenPopup(UI::Element name) {}
 
 void Drawer::OpenPopup(int id) {}
 }  // namespace UI
+}  // namespace mep

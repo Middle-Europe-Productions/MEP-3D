@@ -5,6 +5,7 @@
 #include <functional>
 #include <list>
 
+namespace mep {
 template <typename ObserverType>
 class ObserverList {
  public:
@@ -32,7 +33,7 @@ void ObserverList<ObserverType>::RemoveObserver(ObserverType* obs) {
     if ((*it)->IsEqual(obs)) {
       if (it != observer_list_.end()) {
         VLOG(3) << __FUNCTION__ << ", " << __LINE__ << ", "
-                  << (*it)->GetObserverId();
+                << (*it)->GetObserverId();
         observer_list_.erase(it);
       }
       return;
@@ -46,5 +47,6 @@ void ObserverList<ObserverType>::ForAllObservers(ObserverCallback callback) {
     callback(obs);
   }
 }
+}  // namespace mep
 
 #endif

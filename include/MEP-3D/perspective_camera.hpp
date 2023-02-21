@@ -17,6 +17,7 @@
 #include <glm/gtx/string_cast.hpp>
 #include <string>
 
+namespace mep {
 enum class PerspectiveCameraActions : int {
   Front = 0,
   Back = 1,
@@ -85,5 +86,6 @@ class PerspectiveCamera : public CameraBase {
   bool reversed_x_axis_ = false;
   bool reversed_y_axis_ = false;
 };
+}  // namespace mep
 
 #endif

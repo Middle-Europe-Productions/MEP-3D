@@ -1,4 +1,5 @@
 
+namespace mep {
 template <typename What>
 What* AssetController::Get() const {
   if (std::is_same<TextureBase, What>::value) {
@@ -11,3 +12,4 @@ What* AssetController::Get() const {
   LOG(INFO) << "Unknown asset!";
   return nullptr;
 }
+}  // namespace mep
