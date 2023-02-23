@@ -66,7 +66,7 @@ list(APPEND SOURCE
 elseif(APPLE)
 list(APPEND SOURCE 
   # platform
-  ${SRC_ROOT}/platform/platform_delegate_macos.cpp
+  ${SRC_ROOT}/platform/platform_delegate_macos.mm
 )
 else()
 list(APPEND SOURCE 

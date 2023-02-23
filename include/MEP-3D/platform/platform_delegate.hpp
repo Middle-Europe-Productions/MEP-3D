@@ -5,9 +5,14 @@
 #include <MEP-3D/window.hpp>
 
 #include <filesystem>
-#include <string>
-
+#include <array>
+#include <string_view>
 namespace mep {
+struct FileFilter {
+  std::string title;
+  std::vector<std::string_view> extensions;
+};
+
 class PlatformDelegate : public NonCopyable {
  public:
   enum class ProcessorType { X86, X64, ARM, ARM64, Unknown };
@@ -23,9 +28,9 @@ class PlatformDelegate : public NonCopyable {
   };
   virtual MemorySnapshot GetMemorySnapshot() = 0;
   virtual std::filesystem::path OpenFile(Window* window,
-                                         std::wstring filter) = 0;
+                                         FileFilter filter) = 0;
   virtual std::filesystem::path SaveFile(Window* window,
-                                         std::wstring filter) = 0;
+                                         FileFilter filter) = 0;
 
   static PlatformDelegate* Get();
 };

@@ -24,6 +24,11 @@ Volume::Volume() : Identity(kVolume) {
   Mesh::Init(vertices, cubeIndices, true);
 }
 
+Volume::Volume(std::string_view name) : Identity(kVolume, name) {
+  active_.store(true, std::memory_order_release);
+  Mesh::Init(vertices, cubeIndices, true);
+}
+
 void Volume::LoadFromFile(std::filesystem::path file_path,
                           Vec3i size,
                           Texture3D::Type type) {

@@ -2,6 +2,7 @@
 #define PLATFORM_UTILS_HPP
 
 #include <MEP-3D/platform/platform_delegate.hpp>
+
 namespace mep {
 namespace utils {
 void FetchGpuInfo(PlatformDelegate::MemorySnapshot* memory_snapshot);

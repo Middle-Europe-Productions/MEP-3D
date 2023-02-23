@@ -14,6 +14,9 @@ namespace mep {
 namespace UI {
 class Drawer {
  public:
+  // Primitive
+  static void Draw(Vec3i& vec, int min, int max, std::string_view desc);
+  static void Draw(Vec2i& vec, int min, int max, std::string_view desc);
   // Interface elements
   static void DrawWindowInterface(Window& window, Scene& scene);
   // Editable elements

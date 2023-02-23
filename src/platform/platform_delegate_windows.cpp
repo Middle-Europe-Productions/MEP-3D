@@ -94,7 +94,7 @@ class PlatformDelegateWindows : public PlatformDelegate {
     utils::FetchGpuInfo(&snapshot_);
   }
   MemorySnapshot GetMemorySnapshot() override;
-  std::filesystem::path OpenFile(Window* window, std::wstring filter) override {
+  std::filesystem::path OpenFile(Window* window, FileFilter filter) override {
     DCHECK(window);
     OPENFILENAMEW ofn;
     WCHAR file[kMaxFileNameSize] = {0};
@@ -112,7 +112,7 @@ class PlatformDelegateWindows : public PlatformDelegate {
     return std::filesystem::path();
   }
 
-  std::filesystem::path SaveFile(Window* window, std::wstring filter) override {
+  std::filesystem::path SaveFile(Window* window, FileFilter filter) override {
     return std::filesystem::path();
   }
 

@@ -71,6 +71,14 @@ Element* DrawComboMenuFromMEP(std::vector<std::unique_ptr<Element>>& array,
 }  // namespace
 
 namespace UI {
+void Drawer::Draw(Vec3i& vec, int min, int max, std::string_view desc) {
+  ImGui::DragInt3(desc.data(), &vec.x_, kGlobalSlide, min, max);
+}
+
+void Drawer::Draw(Vec2i& vec, int min, int max, std::string_view desc) {
+  ImGui::DragInt3(desc.data(), &vec.x_, kGlobalSlide, min, max);
+}
+
 void Drawer::DrawWindowInterface(Window& window, Scene& scene) {
   ImGui::Text("Window resolution x: %i, y: %i", window.GetSize().x_,
               window.GetSize().y_);

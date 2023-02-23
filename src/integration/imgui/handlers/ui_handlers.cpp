@@ -9,8 +9,9 @@
 namespace mep {
 namespace {
 constexpr auto kInputModelName = "Model name";
-constexpr auto kInputPathName = "File path";
 constexpr int kMaxPathSize = 256;
+const FileFilter kVolumeFileFilter = {"Volume (*.raw)", {{"raw"}}};
+const FileFilter kModelFileFilter = {"Model (*.obj)", {{"obj"}}};
 };  // namespace
 
 LINK_UI_CONTEXT_AND_HANDLERS(SceneUILayer)
@@ -232,23 +233,74 @@ UI_HANDLER(UI::Element, OpenModelPopup, SceneUILayer) {
 }
 
 struct ResourceWrap {
+  enum Active : int { Shader = 1 << 0, Material = 1 << 1, Texture = 1 << 2 };
+  ResourceWrap()
+      : active_((int)Active::Material | (int)Active::Shader |
+                (int)Active::Texture) {}
+  ResourceWrap(int active) : active_(active) {}
   char display_name[kMaxPathSize];
   std::filesystem::path buffer_path;
   int selected_shader_ = -1;
   int selected_material_ = -1;
   int selected_texture_ = -1;
+  bool init_ = false;
+  int active_ = 0;
+  template <typename Context>
+  void Init(Context* context, const FileFilter& filter) noexcept {
+    if (IsInit()) {
+      return;
+    }
+    DCHECK(context);
+    SetFilePath(PlatformDelegate::Get()->OpenFile(
+        context->GetEngine()->GetWindow().get(), filter));
+    selected_shader_ = context->GetScenePtr()->GetShaders().empty() ? -1 : 0;
+    selected_material_ = context->GetScenePtr()->GetMaterial().empty() ? -1 : 0;
+    selected_texture_ = context->GetScenePtr()->GetTexture().empty() ? -1 : 0;
+    init_ = true;
+  }
+  bool IsInit() const { return init_; }
+  void Uninitialize() {
+    DCHECK(init_);
+    init_ = false;
+  }
+  bool SetFilePath(const std::filesystem::path& path) {
+    if (path.empty()) {
+      return false;
+    }
+    LOG(INFO) << __func__ << " file path " << path;
+    DCHECK(std::filesystem::exists(path));
+    buffer_path = path;
+    std::string file_string = path.filename().string();
+    for (std::size_t i = 0; i < file_string.size(); ++i) {
+      if (i >= kMaxPathSize) {
+        LOG(WARNING) << "File exceed mac file size";
+        return false;
+      }
+      if (file_string[i] == '.') {
+        break;
+      }
+      display_name[i] = file_string[i];
+    }
+    return true;
+  }
   bool ValidData() const { return std::filesystem::exists(buffer_path); }
   template <typename Resource>
   void DrawSelectable(Resource* resource) {
-    ImGui::Text("Shader");
-    selected_shader_ = UI::Drawer::DrawShaderComboMenu(
-        resource->GetScenePtr()->GetShaders(), selected_shader_);
-    ImGui::Text("Texture");
-    selected_texture_ = UI::Drawer::DrawTextureComboMenu(
-        resource->GetScenePtr()->GetTexture(), selected_texture_);
-    ImGui::Text("Material");
-    selected_material_ = UI::Drawer::DrawMaterialComboMenu(
-        resource->GetScenePtr()->GetMaterial(), selected_material_);
+    if (active_ & Active::Shader) {
+      ImGui::Text("Shader");
+      selected_shader_ = UI::Drawer::DrawShaderComboMenu(
+          resource->GetScenePtr()->GetShaders(), selected_shader_);
+    }
+    if (active_ & Active::Texture) {
+      ImGui::Text("Texture");
+      selected_texture_ = UI::Drawer::DrawTextureComboMenu(
+          resource->GetScenePtr()->GetTexture(), selected_texture_);
+    }
+    if (active_ & Active::Material) {
+      ImGui::Text("Material");
+      selected_material_ = UI::Drawer::DrawMaterialComboMenu(
+          resource->GetScenePtr()->GetMaterial(), selected_material_);
+    }
   }
   template <typename Resource, typename Context>
   void EvalSelectable(Resource* resource, Context* context) {
@@ -275,8 +327,7 @@ UI_HANDLER_D(UI::Element, ModelPopup, SceneUILayer, ResourceWrap) {
                            ImGuiInputTextFlags_CharsNoBlank);
   if (ImGui::Button("Open File")) {
     std::filesystem::path file_path = PlatformDelegate::Get()->OpenFile(
-        GetContext()->GetEngine()->GetWindow().get(),
-        L"Model (*.obj)\0*.obj\0");
+        GetContext()->GetEngine()->GetWindow().get(), kModelFileFilter);
     if (!file_path.empty()) {
       LOG(INFO) << "File path " << file_path;
       GetData().buffer_path = file_path;
@@ -306,31 +357,55 @@ UI_HANDLER_D(UI::Element, ModelPopup, SceneUILayer, ResourceWrap) {
   }
 }
 
-UI_HANDLER_D(UI::Element, VolumePopup, SceneUILayer, ResourceWrap) {
+class VolumeWrap : public ResourceWrap {
+ public:
+  VolumeWrap() : ResourceWrap((int)Active::Shader) {}
+  Vec3i size = {0, 0, 0};
+  template <typename Context>
+  std::unique_ptr<Volume> Create(Context* context) {
+    std::unique_ptr<Volume> volume = std::make_unique<Volume>(display_name);
+    volume->LoadFromFile(buffer_path, size, Texture3D::Type::BYTE_8);
+    if (selected_shader_ != -1) {
+      volume->Bind(
+          context->GetScenePtr()->GetShaders()[selected_shader_].get());
+    }
+    return volume;
+  }
+};
+
+UI_HANDLER_D(UI::Element, VolumePopup, SceneUILayer, VolumeWrap) {
   ImGui::InputTextWithHint("##volume_name", kInputModelName,
                            GetData().display_name, kMaxPathSize,
                            ImGuiInputTextFlags_CharsNoBlank);
-  if (ImGui::Button("Open File")) {
-    std::filesystem::path file_path = PlatformDelegate::Get()->OpenFile(
-        GetContext()->GetEngine()->GetWindow().get(), L"");
-    if (!file_path.empty()) {
-      LOG(INFO) << "File path " << file_path;
-      DCHECK(std::filesystem::exists(file_path));
-      GetData().buffer_path = file_path;
-    }
-  }
-  ImGui::Text((const char*)GetData().buffer_path.generic_u8string().c_str(),
-              ImGuiInputTextFlags_CharsNoBlank);
+  GetData().Init(GetContext(), kVolumeFileFilter);
+  ImGui::Text(
+      (const char*)GetData().buffer_path.filename().generic_u8string().c_str(),
+      ImGuiInputTextFlags_CharsNoBlank);
   GetData().DrawSelectable(GetContext());
+  ImGui::Text("Volume size");
+  UI::Drawer::Draw(GetData().size, 0, 1024, "##volume_size");
   ImGui::Separator();
   if (!GetData().ValidData()) {
     ImGui::BeginDisabled();
   }
   if (ImGui::Button("Load")) {
-    // TODO
+    GetContext()->GetScenePtr()->GetVolume().emplace_back(
+        GetData().Create(GetContext()));
+    GetData().Uninitialize();
+    ImGui::CloseCurrentPopup();
   }
   if (!GetData().ValidData()) {
     ImGui::EndDisabled();
+  }
+  ImGui::SameLine();
+  if (ImGui::Button("Open File")) {
+    GetData().SetFilePath(PlatformDelegate::Get()->OpenFile(
+        GetContext()->GetEngine()->GetWindow().get(), kVolumeFileFilter));
+  }
+  ImGui::SameLine();
+  if (ImGui::Button("Cancel")) {
+    GetData().Uninitialize();
+    ImGui::CloseCurrentPopup();
   }
 }
 
