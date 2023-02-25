@@ -7,6 +7,7 @@
 
 #include <intrin.h>
 #include <windows.h>
+#include <codecvt>
 
 #ifdef MEP_USES_GLFW
 #include <GLFW/glfw3.h>
@@ -82,6 +83,20 @@ HWND GetWindowHandle(void* native_window) {
   return NULL;
 }
 
+std::wstring GetRawFilter(const FileFilter filter) {
+  std::wstring wide_string =
+      std::wstring(filter.title.begin(), filter.title.end());
+  for (const auto& ext : filter.extensions) {
+    wide_string.push_back(L'\0');
+    wide_string.push_back(L'*');
+    wide_string.push_back(L'.');
+    for (char ele : ext) {
+      wide_string.push_back(static_cast<wchar_t>(ele));
+    }
+  }
+  wide_string.push_back(L'\0');
+  return wide_string;
+}
 };  // namespace
 
 class PlatformDelegateWindows : public PlatformDelegate {
@@ -98,12 +113,13 @@ class PlatformDelegateWindows : public PlatformDelegate {
     DCHECK(window);
     OPENFILENAMEW ofn;
     WCHAR file[kMaxFileNameSize] = {0};
+    auto raw_filter = GetRawFilter(filter);
     ZeroMemory(&ofn, sizeof(OPENFILENAME));
     ofn.lStructSize = sizeof(OPENFILENAME);
     ofn.hwndOwner = GetWindowHandle(window->GetNativeWindow());
     ofn.lpstrFile = file;
     ofn.nMaxFile = sizeof(file);
-    ofn.lpstrFilter = filter.data();
+    ofn.lpstrFilter = raw_filter.c_str();
     ofn.nFilterIndex = 1;
     ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
     if (GetOpenFileNameW(&ofn) == TRUE) {

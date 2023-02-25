@@ -9,6 +9,8 @@ class PlatformDelegateGeneric : public PlatformDelegate {
  public:
   PlatformDelegateGeneric() { LOG(INFO) << __func__ << " initialized"; }
   MemorySnapshot GetMemorySnapshot() override;
+  std::filesystem::path OpenFile(Window* window, FileFilter filter) override {}
+  std::filesystem::path SaveFile(Window* window, FileFilter filter) override {}
 };
 
 PlatformDelegate* PlatformDelegate::Get() {

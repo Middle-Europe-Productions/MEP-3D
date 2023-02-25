@@ -4,6 +4,8 @@
 #include <MEP-3D/template/ui_element.hpp>
 #include <MEP-3D/template/util_common_draw.hpp>
 
+#include "../enum_widget.hpp"
+
 #include <imgui.h>
 
 namespace mep {
@@ -359,12 +361,16 @@ UI_HANDLER_D(UI::Element, ModelPopup, SceneUILayer, ResourceWrap) {
 
 class VolumeWrap : public ResourceWrap {
  public:
-  VolumeWrap() : ResourceWrap((int)Active::Shader) {}
+  VolumeWrap()
+      : ResourceWrap((int)Active::Shader),
+        enum_widget(static_cast<int>(Texture3D::Type::BYTE_8),
+                    static_cast<int>(Texture3D::Type::BYTE_16) + 1) {}
   Vec3i size = {0, 0, 0};
+  ImGui::Widget::EnumWidget<Texture3D::Type> enum_widget;
   template <typename Context>
   std::unique_ptr<Volume> Create(Context* context) {
     std::unique_ptr<Volume> volume = std::make_unique<Volume>(display_name);
-    volume->LoadFromFile(buffer_path, size, Texture3D::Type::BYTE_8);
+    volume->LoadFromFile(buffer_path, size, enum_widget.GetCurrent());
     if (selected_shader_ != -1) {
       volume->Bind(
           context->GetScenePtr()->GetShaders()[selected_shader_].get());
@@ -384,6 +390,8 @@ UI_HANDLER_D(UI::Element, VolumePopup, SceneUILayer, VolumeWrap) {
   GetData().DrawSelectable(GetContext());
   ImGui::Text("Volume size");
   UI::Drawer::Draw(GetData().size, 0, 1024, "##volume_size");
+  ImGui::Text("Data type");
+  GetData().enum_widget.Draw();
   ImGui::Separator();
   if (!GetData().ValidData()) {
     ImGui::BeginDisabled();

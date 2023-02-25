@@ -9,7 +9,7 @@
 namespace mep {
 class Texture3D : public TextureBase {
  public:
-  enum class Type { BYTE_8, BYTE_16 };
+  enum class Type : int { BYTE_8, BYTE_16 };
   Texture3D();
   void Create(const Uint8* data, Vec3i size, Type type = Type::BYTE_8);
   void Use();

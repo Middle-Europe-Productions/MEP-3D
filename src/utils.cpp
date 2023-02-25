@@ -16,6 +16,10 @@ constexpr char kPrefix = '-';
 constexpr char kFeatureFlag[] = "feature";
 constexpr char kFeatureSeparator = ':';
 constexpr char kFeatureSign = '=';
+constexpr char kAlphanum[] =
+    "0123456789"
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    "abcdefghijklmnopqrstuvwxyz";
 const std::unordered_set<std::string_view> kTrueValues = {"true", "TRUE", "T",
                                                           "True"};
 const std::unordered_set<std::string_view> kFalseValues = {"false", "FALSE",
@@ -155,5 +159,14 @@ std::string utils::LoadFromFile(const std::string& file_path) {
   }
   return std::string((std::istreambuf_iterator<char>(input_file)),
                      std::istreambuf_iterator<char>());
+}
+
+std::string utils::RandomString(std::size_t size) {
+  std::string output;
+  output.reserve(size);
+  for (int i = 0; i < size; ++i) {
+    output += kAlphanum[rand() % (sizeof(kAlphanum) - 1)];
+  }
+  return output;
 }
 }  // namespace mep

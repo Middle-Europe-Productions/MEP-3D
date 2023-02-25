@@ -4,13 +4,14 @@
 #include <MEP-3D/non_copyable.hpp>
 #include <MEP-3D/window.hpp>
 
-#include <filesystem>
 #include <array>
-#include <string_view>
+#include <filesystem>
+#include <string>
+
 namespace mep {
 struct FileFilter {
   std::string title;
-  std::vector<std::string_view> extensions;
+  std::vector<std::string> extensions;
 };
 
 class PlatformDelegate : public NonCopyable {
@@ -27,10 +28,8 @@ class PlatformDelegate : public NonCopyable {
     std::string gpu_driver;
   };
   virtual MemorySnapshot GetMemorySnapshot() = 0;
-  virtual std::filesystem::path OpenFile(Window* window,
-                                         FileFilter filter) = 0;
-  virtual std::filesystem::path SaveFile(Window* window,
-                                         FileFilter filter) = 0;
+  virtual std::filesystem::path OpenFile(Window* window, FileFilter filter) = 0;
+  virtual std::filesystem::path SaveFile(Window* window, FileFilter filter) = 0;
 
   static PlatformDelegate* Get();
 };

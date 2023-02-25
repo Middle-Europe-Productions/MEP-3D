@@ -212,6 +212,7 @@ if (NOT MEP_STANDALONE_APP)
     ${SRC_ROOT}/integration/imgui/scene_ui_parser_imgui.hpp
     ${SRC_ROOT}/integration/imgui/scene_ui_layer_imgui.cpp
     ${SRC_ROOT}/integration/imgui/handlers/ui_handlers.cpp
+    ${SRC_ROOT}/integration/imgui/enum_widget.hpp
   )
 
 else()
