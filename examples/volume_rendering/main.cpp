@@ -147,11 +147,16 @@ class VolumeRenderer final : public Scene {
     config.start_yaw = 135;
     config.start_pitch = -17;
     auto camera = std::make_unique<PerspectiveCamera>(config);
+    // Arcball camera
+    auto arcball_config = ArcballCameraConfig::Create();
+    arcball_config.start_position = glm::vec3(1.0f, 1.0f, -5.0f);
+    auto arcball_camera = std::make_unique<ArcballCamera>(arcball_config);
 
     // Init window
     window->AddView(view_.get());
     window->AddCamera(camera.get());
     window->AddObserver(camera.get());
+    window->AddObserver(arcball_camera.get());
     // Shader setup
     auto shader = std::make_unique<Shader>("ray_casting");
     shader->CreateFromString(kVertexShader, kFragmentShader);
@@ -161,12 +166,8 @@ class VolumeRenderer final : public Scene {
                        glm::vec3(1.0f / 256, 1.0f / 256, 1.0f / 256));
     shader->Stop();
 
-    // Volume setup
-    volume_ = std::make_unique<Volume>();
-    volume_->LoadFromFile("head.raw", {256, 256, 256}, Texture3D::Type::BYTE_8);
-    volume_->Bind(shader.get());
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    Attach(std::move(camera), std::move(shader), std::move(volume_));
+    Attach(std::move(camera), std::move(shader), std::move(arcball_camera));
   }
   void OnDetach() override {}
   void OnUpdate(float time_delta) override { UpdateAll(time_delta); }
@@ -184,7 +185,6 @@ class VolumeRenderer final : public Scene {
   }
 
  private:
-  std::unique_ptr<Volume> volume_;
   std::unique_ptr<PerspectiveView> view_;
 };
 

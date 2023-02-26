@@ -15,6 +15,7 @@ class Identity {
   unsigned int GetId() const;
   unsigned int GetGlobalId() const;
   const std::string& GetName() const;
+  const std::string& GetUniqueName() const;
   std::string_view GetClass() const;
   virtual std::string ToString() const;
   Identity& operator=(const Identity& id);
@@ -28,6 +29,7 @@ class Identity {
   static unsigned int global_id_provider_;
   std::string_view class_name_;
   std::string name_;
+  std::string unique_name_;
   unsigned int global_id_;
   unsigned int id_;
 };

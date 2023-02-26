@@ -10,6 +10,7 @@ Identity::Identity() : class_name_(), name_(), global_id_(-1), id_(-1) {}
 
 Identity::Identity(std::string_view class_name) : Identity(class_name, "") {
   name_ = std::string(class_name_) + '_' + std::to_string(GetId());
+  unique_name_ = name_ + "##" + std::to_string(global_id_);
 }
 
 Identity::Identity(std::string_view class_name, std::string_view name)
@@ -21,6 +22,7 @@ Identity::Identity(std::string_view class_name, std::string_view name)
   } else {
     id_ = ++identity_[class_name];
   }
+  unique_name_ = name_ + "##" + std::to_string(global_id_);
   VLOG(3) << "Creating identity, class_name: " << class_name_
           << ", name: " << name_;
 }
@@ -47,12 +49,16 @@ const std::string& Identity::GetName() const {
   return name_;
 }
 
+const std::string& Identity::GetUniqueName() const {
+  return unique_name_;
+}
+
 std::string_view Identity::GetClass() const {
   return class_name_;
 }
 
 std::string Identity::ToString() const {
-  return "\"Identity\": { name: " + std::string(name_) +
+  return "\"Identity\": { \"name\": " + std::string(name_) +
          ", \"class_name\": " + std::string(class_name_) +
          ", \"id\": " + std::to_string(id_) +
          ", \"global_id\": " + std::to_string(global_id_) + "}";

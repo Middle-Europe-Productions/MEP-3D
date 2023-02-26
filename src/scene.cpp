@@ -58,22 +58,30 @@ std::vector<std::unique_ptr<Volume>>& Scene::GetVolume() {
 
 void Scene::Attach(std::unique_ptr<DirectionalLight> directional_light) {
   DCHECK(directional_light);
+  VLOG(6) << __func__ << ", of: " << directional_light->ToString()
+          << ", to: " << ToString();
   directional_lights_.emplace_back(std::move(directional_light));
 }
 
 void Scene::Attach(std::unique_ptr<SpotLightController> spot_light_controller) {
   DCHECK(spot_light_controller);
+  VLOG(6) << __func__ << ", of: " << spot_light_controller->ToString()
+          << ", to: " << ToString();
   spot_light_controller_ = std::move(spot_light_controller);
 }
 
 void Scene::Attach(
     std::unique_ptr<PointLightController> point_light_controller) {
   DCHECK(point_light_controller);
+  VLOG(6) << __func__ << ", of: " << point_light_controller->ToString()
+          << ", to: " << ToString();
   point_light_controller_ = std::move(point_light_controller);
 }
 
 void Scene::Attach(std::unique_ptr<Model> model) {
   DCHECK(model);
+  VLOG(6) << __func__ << ", of: " << model->ToString()
+          << ", to: " << ToString();
   models_.emplace_back(std::move(model));
   ForAllObservers([model = models_.back().get()](auto* obs) {
     obs->OnModelAttached(model);
@@ -82,6 +90,8 @@ void Scene::Attach(std::unique_ptr<Model> model) {
 
 void Scene::Attach(std::unique_ptr<Shader> shader) {
   DCHECK(shader);
+  VLOG(6) << __func__ << ", of: " << shader->ToString()
+          << ", to: " << ToString();
   shaders_.emplace_back(std::move(shader));
   ForAllObservers([shader = shaders_.back().get()](auto* obs) {
     obs->OnShaderAttached(shader);
@@ -90,6 +100,8 @@ void Scene::Attach(std::unique_ptr<Shader> shader) {
 
 void Scene::Attach(std::unique_ptr<Material> material) {
   DCHECK(material);
+  VLOG(6) << __func__ << ", of: " << material->ToString()
+          << ", to: " << ToString();
   materials_.emplace_back(std::move(material));
   ForAllObservers([material = materials_.back().get()](auto* obs) {
     obs->OnMaterialAttached(material);
@@ -97,6 +109,8 @@ void Scene::Attach(std::unique_ptr<Material> material) {
 }
 void Scene::Attach(std::unique_ptr<TextureBase> texture) {
   DCHECK(texture);
+  VLOG(6) << __func__ << ", of: " << texture->ToString()
+          << ", to: " << ToString();
   textures_.emplace_back(std::move(texture));
   ForAllObservers([texture = textures_.back().get()](auto* obs) {
     obs->OnTextureAttached(texture);
@@ -105,6 +119,8 @@ void Scene::Attach(std::unique_ptr<TextureBase> texture) {
 
 void Scene::Attach(std::unique_ptr<Texture> texture) {
   DCHECK(texture);
+  VLOG(6) << __func__ << ", of: " << texture->ToString()
+          << ", to: " << ToString();
   textures_.emplace_back(std::move(texture));
   ForAllObservers([texture = textures_.back().get()](auto* obs) {
     obs->OnTextureAttached(texture);
@@ -113,6 +129,8 @@ void Scene::Attach(std::unique_ptr<Texture> texture) {
 
 void Scene::Attach(std::unique_ptr<Texture3D> texture) {
   DCHECK(texture);
+  VLOG(6) << __func__ << ", of: " << texture->ToString()
+          << ", to: " << ToString();
   textures_.emplace_back(std::move(texture));
   ForAllObservers([texture = textures_.back().get()](auto* obs) {
     obs->OnTextureAttached(texture);
@@ -121,6 +139,8 @@ void Scene::Attach(std::unique_ptr<Texture3D> texture) {
 
 void Scene::Attach(std::unique_ptr<CameraBase> camera_base) {
   DCHECK(camera_base);
+  VLOG(6) << __func__ << ", of: " << camera_base->ToString()
+          << ", to: " << ToString();
   camera_.emplace_back(std::move(camera_base));
   ForAllObservers([camera_base = camera_.back().get()](auto* obs) {
     obs->OnCameraAttached(camera_base);
@@ -137,6 +157,8 @@ void Scene::Attach(std::unique_ptr<ArcballCamera> arcball_camera) {
 
 void Scene::Attach(std::unique_ptr<Volume> volume) {
   DCHECK(volume);
+  VLOG(6) << __func__ << ", of: " << volume->ToString()
+          << ", to: " << ToString();
   volumes_.emplace_back(std::move(volume));
 }
 

@@ -5,15 +5,14 @@
 #include <MEP-3D/template/util_common_draw.hpp>
 
 #include "../enum_widget.hpp"
+#include "resource_wrap.hpp"
+#include "volume_wrap.hpp"
 
 #include <imgui.h>
-#include <regex>
 
 namespace mep {
 namespace {
 constexpr auto kInputModelName = "Model name";
-constexpr auto kVolumeSizeRegex = "(\\d+)x(\\d+)x(\\d+)";
-constexpr int kMaxPathSize = 256;
 const FileFilter kVolumeFileFilter = {"Volume (*.raw)", {{"raw"}}};
 const FileFilter kModelFileFilter = {"Model (*.obj)", {{"obj"}}};
 };  // namespace
@@ -30,7 +29,7 @@ UI_HANDLER(UI::Element, DrawModelMenu, SceneUILayer) {
   auto& array = context->GetScenePtr()->GetModels();
   std::queue<std::vector<std::unique_ptr<Model>>::iterator> to_remove;
   for (auto it = array.begin(); it != array.end();) {
-    if (ImGui::TreeNode(it->get()->Identity::GetName().c_str())) {
+    if (ImGui::TreeNode(it->get()->Identity::GetUniqueName().c_str())) {
       if (!UI::Drawer::DrawModel(*it->get())) {
         to_remove.push(it);
       }
@@ -55,7 +54,7 @@ UI_HANDLER(UI::Element, DrawVolume, SceneUILayer) {
   auto& array = context->GetScenePtr()->GetVolume();
   std::queue<std::vector<std::unique_ptr<Volume>>::iterator> to_remove;
   for (auto it = array.begin(); it != array.end();) {
-    if (ImGui::TreeNode(it->get()->Identity::GetName().c_str())) {
+    if (ImGui::TreeNode(it->get()->Identity::GetUniqueName().c_str())) {
       if (!UI::Drawer::DrawVolume(*it->get())) {
         to_remove.push(it);
       }
@@ -78,7 +77,7 @@ UI_HANDLER(UI::Element, DrawPointLight, SceneUILayer) {
   }
   for (auto& pl_ptr :
        context->GetScenePtr()->GetPointLightController()->GetContainer()) {
-    if (ImGui::TreeNode(pl_ptr->Identity::GetName().c_str())) {
+    if (ImGui::TreeNode(pl_ptr->Identity::GetUniqueName().c_str())) {
       UI::Drawer::DrawPointLight(*pl_ptr.get());
       ImGui::Separator();
       ImGui::TreePop();
@@ -93,7 +92,7 @@ UI_HANDLER(UI::Element, DrawDirectionalLight, SceneUILayer) {
   auto* context = GetContext();
   DCHECK(context);
   for (auto& dl_ptr : context->GetScenePtr()->GetDirectionaLights()) {
-    if (ImGui::TreeNode(dl_ptr->Identity::GetName().c_str())) {
+    if (ImGui::TreeNode(dl_ptr->Identity::GetUniqueName().c_str())) {
       UI::Drawer::DrawDirectionalLight(*dl_ptr.get());
       ImGui::Separator();
       ImGui::TreePop();
@@ -109,7 +108,7 @@ UI_HANDLER(UI::Element, DrawSpotLight, SceneUILayer) {
   }
   for (auto& sl_ptr :
        context->GetScenePtr()->GetSpotLightController()->GetContainer()) {
-    if (ImGui::TreeNode(sl_ptr->Identity::GetName().c_str())) {
+    if (ImGui::TreeNode(sl_ptr->Identity::GetUniqueName().c_str())) {
       UI::Drawer::DrawSpotLight(*sl_ptr.get());
       ImGui::Separator();
       ImGui::TreePop();
@@ -124,7 +123,7 @@ UI_HANDLER(UI::Element, DrawShader, SceneUILayer) {
   auto* context = GetContext();
   DCHECK(context);
   for (auto& sh_ptr : context->GetScenePtr()->GetShaders()) {
-    if (ImGui::TreeNode(sh_ptr->Identity::GetName().c_str())) {
+    if (ImGui::TreeNode(sh_ptr->Identity::GetUniqueName().c_str())) {
       UI::Drawer::DrawShader(*sh_ptr.get());
       ImGui::Separator();
       ImGui::TreePop();
@@ -140,7 +139,7 @@ UI_HANDLER(UI::Element, DrawCamera, SceneUILayer) {
     return;
   }
   for (auto& pc : context->GetScenePtr()->GetCamera()) {
-    if (ImGui::TreeNode(pc->Identity::GetName().c_str())) {
+    if (ImGui::TreeNode(pc->Identity::GetUniqueName().c_str())) {
       UI::Drawer::DrawCamera(pc.get());
       if (pc.get() == context->GetEngine()->GetWindow()->GetCamera()) {
         ImGui::Text("This camera is currently used");
@@ -236,95 +235,6 @@ UI_HANDLER(UI::Element, OpenModelPopup, SceneUILayer) {
   UI::Drawer::OpenPopup(UI::Element::ModelPopup);
 }
 
-struct ResourceWrap {
-  enum Active : int { Shader = 1 << 0, Material = 1 << 1, Texture = 1 << 2 };
-  ResourceWrap()
-      : active_((int)Active::Material | (int)Active::Shader |
-                (int)Active::Texture) {}
-  ResourceWrap(int active) : active_(active) {}
-  char display_name[kMaxPathSize];
-  std::filesystem::path buffer_path;
-  int selected_shader_ = -1;
-  int selected_material_ = -1;
-  int selected_texture_ = -1;
-  bool init_ = false;
-  int active_ = 0;
-  template <typename Context>
-  void Init(Context* context, const FileFilter& filter) noexcept {
-    if (IsInit()) {
-      return;
-    }
-    DCHECK(context);
-    SetFilePath(PlatformDelegate::Get()->OpenFile(
-        context->GetEngine()->GetWindow().get(), filter));
-    selected_shader_ = context->GetScenePtr()->GetShaders().empty() ? -1 : 0;
-    selected_material_ = context->GetScenePtr()->GetMaterial().empty() ? -1 : 0;
-    selected_texture_ = context->GetScenePtr()->GetTexture().empty() ? -1 : 0;
-    init_ = true;
-  }
-  bool IsInit() const { return init_; }
-  void Uninitialize() {
-    DCHECK(init_);
-    init_ = false;
-  }
-  virtual bool SetFilePath(const std::filesystem::path& path) {
-    if (path.empty()) {
-      return false;
-    }
-    LOG(INFO) << __func__ << " file path " << path;
-    DCHECK(std::filesystem::exists(path));
-    buffer_path = path;
-    std::string file_string = path.filename().string();
-    for (std::size_t i = 0; i < file_string.size(); ++i) {
-      if (i >= kMaxPathSize) {
-        LOG(WARNING) << "File exceed mac file size";
-        return false;
-      }
-      if (file_string[i] == '.') {
-        break;
-      }
-      display_name[i] = file_string[i];
-    }
-    return true;
-  }
-  bool ValidData() const { return std::filesystem::exists(buffer_path); }
-  template <typename Resource>
-  void DrawSelectable(Resource* resource) {
-    if (active_ & Active::Shader) {
-      ImGui::Text("Shader");
-      selected_shader_ = UI::Drawer::DrawShaderComboMenu(
-          resource->GetScenePtr()->GetShaders(), selected_shader_);
-    }
-    if (active_ & Active::Texture) {
-      ImGui::Text("Texture");
-      selected_texture_ = UI::Drawer::DrawTextureComboMenu(
-          resource->GetScenePtr()->GetTexture(), selected_texture_);
-    }
-    if (active_ & Active::Material) {
-      ImGui::Text("Material");
-      selected_material_ = UI::Drawer::DrawMaterialComboMenu(
-          resource->GetScenePtr()->GetMaterial(), selected_material_);
-    }
-  }
-  template <typename Resource, typename Context>
-  void EvalSelectable(Resource* resource, Context* context) {
-    DCHECK(resource);
-    DCHECK(context);
-    if (selected_shader_ != -1) {
-      resource->Bind(
-          context->GetScenePtr()->GetShaders()[selected_shader_].get());
-    }
-    if (selected_texture_ != -1) {
-      resource->Bind(
-          context->GetScenePtr()->GetTexture()[selected_texture_].get());
-    }
-    if (selected_material_ != -1) {
-      resource->Bind(
-          context->GetScenePtr()->GetMaterial()[selected_material_].get());
-    }
-  }
-};
-
 UI_HANDLER_D(UI::Element, ModelPopup, SceneUILayer, ResourceWrap) {
   ImGui::InputTextWithHint("##model_name", kInputModelName,
                            GetData().display_name, kMaxPathSize,
@@ -361,65 +271,6 @@ UI_HANDLER_D(UI::Element, ModelPopup, SceneUILayer, ResourceWrap) {
   }
 }
 
-class VolumeWrap : public ResourceWrap {
- public:
-  VolumeWrap()
-      : ResourceWrap((int)Active::Shader),
-        enum_widget(static_cast<int>(Texture3D::Type::BYTE_8),
-                    static_cast<int>(Texture3D::Type::BYTE_16) + 1) {}
-  Vec3i size = {0, 0, 0};
-  ImGui::Widget::EnumWidget<Texture3D::Type> enum_widget;
-  template <typename Context>
-  std::unique_ptr<Volume> Create(Context* context) {
-    std::unique_ptr<Volume> volume = std::make_unique<Volume>(display_name);
-    volume->LoadFromFile(buffer_path, size, enum_widget.GetCurrent());
-    if (selected_shader_ != -1) {
-      volume->Bind(
-          context->GetScenePtr()->GetShaders()[selected_shader_].get());
-    }
-    return volume;
-  }
-  bool FindSize(const std::string& text) {
-    std::regex text_regex(kVolumeSizeRegex);
-    auto words_begin =
-        std::sregex_iterator(text.begin(), text.end(), text_regex);
-    auto words_end = std::sregex_iterator();
-    int counter = 0;
-    for (std::sregex_iterator i = words_begin; i != words_end; ++i) {
-      if (counter >= 3) {
-        VLOG(3) << "Found more than 3 regex matches someting assuming first 3";
-        return false;
-      }
-      try {
-        std::smatch match = *i;
-        LOG_IF(WARNING, match.size() != 3)
-            << "Found invalid number of elements";
-        bool is_group = true;
-        for (auto x : match) {
-          if (is_group) {
-            is_group = false;
-            continue;
-          }
-          VLOG(6) << "Size match found " << x.str();
-          reinterpret_cast<unsigned int*>(&size.x_)[counter++] =
-              std::stoi(x.str());
-        }
-      } catch (std::invalid_argument error) {
-        VLOG(3) << "Invalid regex " << error.what();
-        return false;
-      }
-    }
-    return counter == 2;
-  }
-  bool SetFilePath(const std::filesystem::path& path) override {
-    if (!FindSize(path.filename().string())) {
-      VLOG(3) << "Cound not match regex " << kVolumeSizeRegex << " in "
-              << path.filename();
-    }
-    return ResourceWrap::SetFilePath(path);
-  }
-};
-
 UI_HANDLER_D(UI::Element, VolumePopup, SceneUILayer, VolumeWrap) {
   ImGui::InputTextWithHint("##volume_name", kInputModelName,
                            GetData().display_name, kMaxPathSize,
@@ -430,7 +281,7 @@ UI_HANDLER_D(UI::Element, VolumePopup, SceneUILayer, VolumeWrap) {
       ImGuiInputTextFlags_CharsNoBlank);
   GetData().DrawSelectable(GetContext());
   ImGui::Text("Volume size");
-  UI::Drawer::Draw(GetData().size, 0, 1024, "##volume_size");
+  UI::Drawer::Draw(GetData().size, 0, 10240, "##volume_size");
   ImGui::Text("Data type");
   GetData().enum_widget.Draw();
   ImGui::Separator();

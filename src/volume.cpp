@@ -116,6 +116,12 @@ Texture3D::Type Volume::GetType() const {
   return type_;
 }
 
+std::string Volume::ToString() const {
+  return "\"volume\": {" + Identity::ToString() + ", \n" +
+         AssetController::ToString() + ", \n" + ModelController::ToString() +
+         "}";
+}
+
 void Volume::ClearVolume() {
   data_.clear();
 }

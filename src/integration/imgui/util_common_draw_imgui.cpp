@@ -54,19 +54,26 @@ Element* DrawComboMenuFromMEP(std::vector<std::unique_ptr<Element>>& array,
   if (array.empty()) {
     return nullptr;
   }
-  std::vector<const char*> ele;
-  int selected_index = -1;
-  for (std::size_t i = 0; i < array.size(); i++) {
-    if (selected == array[i].get()) {
-      selected_index = static_cast<int>(i);
+  bool match_found = false;
+  for (auto& node : array) {
+    if (node.get() == selected) {
+      match_found = true;
+      break;
     }
-    ele.push_back(array[i]->GetName().c_str());
   }
-  if (selected_index == -1) {
-    LOG(INFO) << "Could not find selected element";
+  if (!match_found) {
+    selected = nullptr;
   }
-  ImGui::Combo(type, &selected_index, ele.data(), static_cast<int>(ele.size()));
-  return array[selected_index].get();
+  if (ImGui::BeginCombo(type, selected ? selected->GetName().c_str() : "")) {
+    for (std::size_t i = 0; i < array.size(); i++) {
+      if (ImGui::Selectable(array[i]->GetName().c_str(),
+                            selected == array[i].get())) {
+        selected = array[i].get();
+      }
+    }
+    ImGui::EndCombo();
+  }
+  return selected;
 }
 }  // namespace
 
@@ -86,9 +93,9 @@ void Drawer::DrawWindowInterface(Window& window, Scene& scene) {
               window.GetBufferSize().y_);
   ImGui::Text("Aspect ratio: %.3f", window.GetAspectRation());
   ImGui::Separator();
-  ImGui::Text("Render Target");
+  ImGui::Text("Camera");
   auto* selected_camera =
-      DrawComboMenuFromMEP(scene.GetCamera(), window.GetCamera(), "Cameras");
+      DrawComboMenuFromMEP(scene.GetCamera(), window.GetCamera(), "##cameras");
   if (selected_camera) {
     window.AddCamera(selected_camera);
   }

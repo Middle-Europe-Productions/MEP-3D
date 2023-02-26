@@ -25,7 +25,8 @@ void Model::Clear() {
 }
 
 std::string Model::ToString() const {
-  return Identity::ToString() + ", \n" + AssetController::ToString() + ", \n" +
-         ModelController::ToString();
+  return "\"model\": {" + Identity::ToString() + ", \n" +
+         AssetController::ToString() + ", \n" + ModelController::ToString() +
+         "}";
 }
 }  // namespace mep

@@ -29,6 +29,7 @@ class Volume : public Identity,
   const Vec3i& GetDimensions() const;
   long long GetSizeInKB() const;
   Texture3D::Type GetType() const;
+  virtual std::string ToString() const override;
   void ClearVolume();
   ~Volume();
 
