@@ -7,10 +7,12 @@
 #include "../enum_widget.hpp"
 
 #include <imgui.h>
+#include <regex>
 
 namespace mep {
 namespace {
 constexpr auto kInputModelName = "Model name";
+constexpr auto kVolumeSizeRegex = "(\\d+)x(\\d+)x(\\d+)";
 constexpr int kMaxPathSize = 256;
 const FileFilter kVolumeFileFilter = {"Volume (*.raw)", {{"raw"}}};
 const FileFilter kModelFileFilter = {"Model (*.obj)", {{"obj"}}};
@@ -265,7 +267,7 @@ struct ResourceWrap {
     DCHECK(init_);
     init_ = false;
   }
-  bool SetFilePath(const std::filesystem::path& path) {
+  virtual bool SetFilePath(const std::filesystem::path& path) {
     if (path.empty()) {
       return false;
     }
@@ -376,6 +378,45 @@ class VolumeWrap : public ResourceWrap {
           context->GetScenePtr()->GetShaders()[selected_shader_].get());
     }
     return volume;
+  }
+  bool FindSize(const std::string& text) {
+    std::regex text_regex(kVolumeSizeRegex);
+    auto words_begin =
+        std::sregex_iterator(text.begin(), text.end(), text_regex);
+    auto words_end = std::sregex_iterator();
+    int counter = 0;
+    for (std::sregex_iterator i = words_begin; i != words_end; ++i) {
+      if (counter >= 3) {
+        VLOG(3) << "Found more than 3 regex matches someting assuming first 3";
+        return false;
+      }
+      try {
+        std::smatch match = *i;
+        LOG_IF(WARNING, match.size() != 3)
+            << "Found invalid number of elements";
+        bool is_group = true;
+        for (auto x : match) {
+          if (is_group) {
+            is_group = false;
+            continue;
+          }
+          VLOG(6) << "Size match found " << x.str();
+          reinterpret_cast<unsigned int*>(&size.x_)[counter++] =
+              std::stoi(x.str());
+        }
+      } catch (std::invalid_argument error) {
+        VLOG(3) << "Invalid regex " << error.what();
+        return false;
+      }
+    }
+    return counter == 2;
+  }
+  bool SetFilePath(const std::filesystem::path& path) override {
+    if (!FindSize(path.filename().string())) {
+      VLOG(3) << "Cound not match regex " << kVolumeSizeRegex << " in "
+              << path.filename();
+    }
+    return ResourceWrap::SetFilePath(path);
   }
 };
 
