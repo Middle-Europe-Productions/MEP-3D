@@ -1,6 +1,7 @@
 #include <MEP-3D/arcball_camera.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/string_cast.hpp>
 
 namespace mep {
@@ -91,7 +92,13 @@ void ArcballCamera::OnEventStatusChanged(bool) {}
 glm::vec3 ArcballCamera::GetViewDir() const {
   return -glm::transpose(view_matrix_)[2];
 }
+
 glm::vec3 ArcballCamera::GetRightVector() const {
   return glm::transpose(view_matrix_)[0];
 }
+
+float ArcballCamera::GetDistance() const {
+  return glm::length(world_up_ - lookat_position_);
+}
+
 }  // namespace mep

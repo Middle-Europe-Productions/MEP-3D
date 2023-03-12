@@ -1,0 +1,45 @@
+{
+  "menu" : [
+    {
+      "name": "New",
+      "return": [
+        {
+          "name": "Add Volume",
+          "return": "open_volume_popup"
+        }
+      ]
+    }
+  ],
+  "scene": [
+    {
+      "name": "Volumes",
+      "return": [
+        {
+        "name": "Volumes",
+        "return": "draw_volume"
+        },
+        {
+        "name": "Volume Controller",
+        "return": "test"
+        },
+        {
+        "name": "System Info",
+        "return": "system_info"
+        },
+        {
+        "name": "Cameras",
+        "return": "draw_camera"
+        },
+        {
+        "name":"Window info",
+        "return": "draw_window"
+        }
+      ]
+    }
+  ],
+  "popup": [
+      {
+        "return": "volume_popup"
+      }
+  ]
+}

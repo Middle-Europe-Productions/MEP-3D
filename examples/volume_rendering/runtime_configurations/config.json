@@ -1,0 +1,8 @@
+{
+  "window": [
+    {
+      "name": "Volume Rendering",
+      "file": "runtime_configurations/volume_rendering.json" 
+    }
+  ]
+}

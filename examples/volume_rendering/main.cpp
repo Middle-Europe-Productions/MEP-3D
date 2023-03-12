@@ -214,6 +214,7 @@ int main(int argc, char* argv[]) {
   window->Init();
   auto engine = utils::CreateEngineWithSceneUI(
       std::move(window), std::make_unique<VolumeRenderer>(),
-      SceneUILayer::Create(kMyRuntimeConfig));
+      SceneUILayer::Create(
+          utils::LoadFromFile("runtime_configurations/config.json")));
   engine->Run();
 }

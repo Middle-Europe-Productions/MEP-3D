@@ -1,5 +1,4 @@
 #include <glog/logging.h>
-#include <stb_image.h>
 #include <MEP-3D/common_names.hpp>
 #include <MEP-3D/texture.hpp>
 

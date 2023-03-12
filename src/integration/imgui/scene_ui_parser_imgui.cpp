@@ -48,18 +48,13 @@ void SceneUIParserImGui::Parse(const std::string& json) {
         auto* node = new SceneUIParserNode();
         for (auto& [sub_key, sub_value] : window.items()) {
           if (sub_key == "name") {
+            VLOG(3) << "Detected key \"name\":" << sub_value;
             node->node_name = sub_value;
           } else if (sub_key == "return") {
-            node->start_callback =
-                std::bind(ImGui::Begin, node->node_name.c_str(), (bool*)NULL,
-                          ImGuiWindowFlags_MenuBar);
-            node->finish_callback = std::bind(ImGui::End);
+            VLOG(3) << "Detected key \"return\"";
             node->next = ParseWindow(sub_value);
           } else if (sub_key == "file") {
-            node->start_callback =
-                std::bind(ImGui::Begin, node->node_name.c_str(), (bool*)NULL,
-                          ImGuiWindowFlags_MenuBar);
-            node->finish_callback = std::bind(ImGui::End);
+            VLOG(3) << "Detected key \"file\"";
             auto sub_config = utils::LoadFromFile(sub_value);
             DCHECK(sub_config != "");
             try {
@@ -69,8 +64,14 @@ void SceneUIParserImGui::Parse(const std::string& json) {
               LOG(FATAL) << "Could not parse! Error: " << e.what();
               continue;
             }
+          } else {
+            LOG(WARNING) << "Unkown item, key: " << sub_key
+                         << ", value: " << sub_value;
           }
         }
+        node->start_callback = std::bind(ImGui::Begin, node->node_name.c_str(),
+                                         (bool*)NULL, ImGuiWindowFlags_MenuBar);
+        node->finish_callback = std::bind(ImGui::End);
         windows_root_.push_back(node);
       }
     }
