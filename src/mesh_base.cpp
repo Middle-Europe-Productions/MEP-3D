@@ -45,7 +45,7 @@ void MeshBase::Init(const std::vector<GLfloat>& vertices,
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, kSizeOfVertice * kRowSize,
                           (void*)(kSizeOfVertice * 5));
     glEnableVertexAttribArray(2);
-    vertices_count_ = vertices.size() / 3;
+    vertices_count_ = vertices.size();
   } else {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(0);

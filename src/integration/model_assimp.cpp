@@ -152,8 +152,8 @@ void Model::Draw(RenderTarget& render_target) {
   Shader* shader = Get<Shader>();
   shader->SetUniform(static_cast<unsigned int>(CommonUniform::Model),
                      GetModel());
-  Texture* texture = nullptr;
-  if ((texture = Get<Texture>()))
+  TextureBase* texture = nullptr;
+  if ((texture = Get<TextureBase>()))
     texture->Use();
   for (std::size_t i = 0; i < mesh_container_.size(); i++) {
     if (mesh_to_texture_[i] < textures_container_.size() &&
