@@ -121,13 +121,23 @@ void VolumeRenderer::OnUpdate(float time_delta) {
 
 void VolumeRenderer::OnDraw(RenderTarget& render_target) {
   glEnable(GL_BLEND);
+  transfer_function_texture_.Use(1);
   GetShaders()[0]->Use();
   DrawAll(render_target);
   GetShaders()[0]->Stop();
+  transfer_function_texture_.Stop();
   glDisable(GL_BLEND);
 }
 
 void VolumeRenderer::OnReceive(const IdentityView& id,
-                               const std::string& message) {
+                               const nlohmann::json& message) {
   LOG(INFO) << "Message received: " << id.ToString() << ", " << message;
+  if (message.contains(vr::kTextureNode) &&
+      message.contains(vr::kTextureAction)) {
+    if (message[vr::kTextureAction] == vr::kTextureCreate) {
+      transfer_function_texture_.SetHandler(message[vr::kTextureNode]);
+    } else {
+      transfer_function_texture_.Clear();
+    }
+  }
 }

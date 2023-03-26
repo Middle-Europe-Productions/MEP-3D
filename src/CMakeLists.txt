@@ -45,6 +45,8 @@ set(SOURCE
   ${SRC_ROOT}/file_reader_with_progress.cpp
   ${SRC_ROOT}/texture_3d.cpp
   ${SRC_ROOT}/volume.cpp
+  ${SRC_ROOT}/texture_utils.cpp
+  ${SRC_ROOT}/texture_view.cpp
 # template/
   ${SRC_ROOT}/template/scene_ui_layer.cpp
   ${SRC_ROOT}/template/shaders_preset.cpp
@@ -135,6 +137,8 @@ set(HEADERS
   ${INC_ROOT}/file_reader_with_progress.hpp
   ${INC_ROOT}/texture_3d.hpp
   ${INC_ROOT}/volume.hpp
+  ${INC_ROOT}/texture_utils.hpp
+  ${INC_ROOT}/texture_view.hpp
 # template/
   ${INC_ROOT}/template/engine_data_ui_layer.hpp
   ${INC_ROOT}/template/scene_ui_layer.hpp

@@ -12,7 +12,7 @@ std::string ILCPackageToString(const ILCPackage& data) {
   std::string output = "\"ILCPackage\" : {";
   output += " \"source\" : " + data.id_.ToString() + ",\n";
   output += " \"target\" : " + data.target_.ToString() + ",\n";
-  output += " \"message\" : \"" + data.message_ + "\"\n}";
+  output += " \"message\" : \"" + data.message_.dump() + "\"\n}";
   return output;
 }
 }  // namespace

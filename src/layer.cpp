@@ -41,7 +41,7 @@ void Layer::UnregisterEngine() {
   engine_ = nullptr;
 }
 
-void Layer::OnReceive(const IdentityView& id, const std::string& message) {
+void Layer::OnReceive(const IdentityView& id, const nlohmann::json& message) {
   VLOG(1) << "Received data from: " << id.ToString()
           << ", message: " << message;
 }

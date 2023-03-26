@@ -17,7 +17,7 @@ class Layer : public Identity, public ILCClient {
   virtual void OnDetach() = 0;
   virtual void OnUpdate(float time_delta) = 0;
   virtual void OnDraw(RenderTarget& render_target) = 0;
-  virtual void OnReceive(const IdentityView& id, const std::string& message);
+  virtual void OnReceive(const IdentityView& id, const nlohmann::json& message);
   virtual void OnConnectionClosed();
   virtual void OnConnectionOppened();
   void Send(const IdentityView& target, const std::string& message);

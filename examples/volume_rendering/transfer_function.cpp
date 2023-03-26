@@ -227,15 +227,18 @@ class TransferFunctionController : public mep::Identity, public mep::ILCClient {
     handler_.Update(color_maps_[selected_image]);
   }
   virtual void OnReceive(const mep::IdentityView& id,
-                         const std::string& message) {
+                         const nlohmann::json& message) {
     LOG(INFO) << "Received message " << id.ToString() << ", " << message;
   }
   virtual void OnConnectionClosed() { LOG(INFO) << "Closing connection"; }
   virtual void OnConnectionOppened() {
+    nlohmann::json message;
+    message[vr::kTextureNode] = handler_.GetHandler();
+    message[vr::kTextureAction] = vr::kTextureCreate;
     connector_->Send(std::make_unique<mep::ILCPackage>(
         *this,
         mep::IdentityView(std::nullopt, vr::kVolumeRenderer, std::nullopt),
-        "handler:" + std::to_string(handler_.GetHandler())));
+        message));
   }
 
  private:

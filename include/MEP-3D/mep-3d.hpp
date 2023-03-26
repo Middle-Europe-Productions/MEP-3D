@@ -29,6 +29,7 @@
 #include <MEP-3D/template/ui_element.hpp>
 #include <MEP-3D/template/util_common_draw.hpp>
 #include <MEP-3D/texture.hpp>
+#include <MEP-3D/texture_view.hpp>
 #include <MEP-3D/user_interface.hpp>
 #include <MEP-3D/utils.hpp>
 #include <MEP-3D/utils_engine.hpp>

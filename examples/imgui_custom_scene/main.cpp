@@ -17,7 +17,8 @@ class DefaultScene final : public Scene {
   void OnDetach() override {}
   void OnUpdate(float time_delta) override {}
   void OnDraw(RenderTarget& render_target) override {}
-  virtual void OnReceive(const IdentityView& id, const std::string& message) {
+  virtual void OnReceive(const IdentityView& id,
+                         const nlohmann::json& message) {
     LOG(INFO) << "Message received: " << id.ToString() << ", " << message;
   }
 };

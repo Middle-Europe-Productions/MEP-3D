@@ -14,10 +14,11 @@ class VolumeRenderer final : public Scene {
   void OnDraw(RenderTarget& render_target) override;
 
   virtual void OnReceive(const IdentityView& id,
-                         const std::string& message) override;
+                         const nlohmann::json& message) override;
 
  private:
   std::unique_ptr<PerspectiveView> view_;
+  mep::TextureView transfer_function_texture_;
 };
 
 #endif
