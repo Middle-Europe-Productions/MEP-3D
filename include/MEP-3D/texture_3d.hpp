@@ -16,6 +16,7 @@ class Texture3D : public TextureBase {
   void Stop();
   void Clear();
   bool IsValid() const;
+  unsigned int GetHandler();
   virtual ~Texture3D();
 
  private:

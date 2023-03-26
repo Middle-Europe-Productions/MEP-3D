@@ -239,8 +239,7 @@ bool Drawer::DrawModel(Model& model) {
   } else {
     ImGui::Text("Draw ");
     ImGui::SameLine();
-    std::string id =
-        "##should_render_model" + std::to_string(model.GetGlobalId());
+    std::string id = "##should_render_model" + std::to_string(model.GetId());
     ImGui::Checkbox(id.c_str(), &model.GetShouldDraw());
     ImGui::Text("Model Status ");
     ImGui::SameLine();

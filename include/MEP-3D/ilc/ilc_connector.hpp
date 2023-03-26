@@ -7,14 +7,14 @@
 namespace mep {
 class ILCConnector {
  public:
-  ILCConnector(const Identity& id);
+  ILCConnector(const IdentityView& id);
   virtual ~ILCConnector();
   bool Send(std::unique_ptr<ILCPackage> data);
   bool Connect(ILCClient* client);
   bool Disconnect();
 
  private:
-  const Identity id_;
+  const IdentityView id_;
 };
 }  // namespace mep
 #endif

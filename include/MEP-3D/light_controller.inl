@@ -37,13 +37,11 @@ bool LightController<LightPtr>::IsValid(
 template <typename LightPtr>
 void LightController<LightPtr>::Remove(const Identity& id) {
   LOG(INFO) << __FUNCTION__ << ", " << id.ToString();
-  point_light_container_.erase(std::remove_if(point_light_container_.begin(),
-                                              point_light_container_.end(),
-                                              [&id](const auto& in) {
-                                                return in->GetGlobalId() ==
-                                                       id.GetGlobalId();
-                                              }),
-                               point_light_container_.end());
+  point_light_container_.erase(
+      std::remove_if(
+          point_light_container_.begin(), point_light_container_.end(),
+          [&id](const auto& in) { return in->GetId() == id.GetId(); }),
+      point_light_container_.end());
 }
 
 template <typename LightPtr>

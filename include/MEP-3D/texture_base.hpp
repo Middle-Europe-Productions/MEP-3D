@@ -11,6 +11,7 @@ class TextureBase : public Asset {
   virtual void Use() = 0;
   virtual void Stop() = 0;
   virtual void Clear() = 0;
+  virtual unsigned int GetHandler() = 0;
   virtual ~TextureBase() = default;
 };
 }  // namespace mep

@@ -4,6 +4,7 @@
 #include <iostream>
 
 using Uint8 = unsigned char;
+using Uint32 = unsigned int;
 
 namespace mep {
 extern const char* kDefaultTexturePath;

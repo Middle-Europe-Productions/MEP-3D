@@ -53,6 +53,10 @@ bool Texture3D::IsValid() const {
   return texture_id_ != 0;
 }
 
+unsigned int Texture3D::GetHandler() {
+  return texture_id_;
+}
+
 Texture3D::~Texture3D() {
   VLOG(4) << __func__;
   Clear();

@@ -21,6 +21,7 @@ extern const char* kLayer;
 extern const char* kExecutor;
 extern const char* kEngine;
 extern const char* kVolume;
+extern const char* kImage;
 // Json parser
 extern const char* kWindowNodeName;
 extern const char* kMenuNodeName;

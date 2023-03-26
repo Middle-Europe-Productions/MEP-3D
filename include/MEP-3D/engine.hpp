@@ -12,13 +12,13 @@ namespace mep {
 class EngineMonitorData {
  public:
   struct LayerData {
-    Identity identity;
+    IdentityView identity;
     std::string layer_name;
     float layer_update_time_ms = 0.0;
     float layer_draw_time_ms = 0.0;
   };
   struct Structure {
-    Identity identity;
+    IdentityView identity;
     std::string structure_name;
     std::vector<LayerData> layer_array;
     float total_update_time;

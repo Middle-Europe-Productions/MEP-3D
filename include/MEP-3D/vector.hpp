@@ -5,15 +5,17 @@
 
 namespace mep {
 template <typename T>
-class Vec2 {
- public:
+struct Vec2 {
   constexpr Vec2();
   constexpr Vec2(const T& x, const T& y);
   template <typename U>
   constexpr Vec2(const Vec2<U>& u);
-  constexpr Vec2<T>& operator-(const Vec2& x) const;
-  constexpr Vec2<T>& operator+(const Vec2& x) const;
+  constexpr Vec2<T>& operator-(const Vec2& x);
+  constexpr Vec2<T>& operator+(const Vec2& x);
+  constexpr Vec2<T>& operator*(const Vec2& x);
+  constexpr Vec2<T>& operator/(const Vec2& x);
   constexpr bool operator==(const Vec2& x) const;
+  constexpr T Length() const;
   T x_;
   T y_;
 };
@@ -22,15 +24,19 @@ using Vec2f = Vec2<float>;
 using Vec2u = Vec2<unsigned int>;
 
 template <typename T>
-class Vec3 : public Vec2<T> {
- public:
+struct Vec3 {
   constexpr Vec3();
   constexpr Vec3(const T& x, const T& y, const T& z);
   template <typename U>
   constexpr Vec3(const Vec3<U>& u);
-  constexpr Vec3<T>& operator-(const Vec3& x) const;
-  constexpr Vec3<T>& operator+(const Vec3& x) const;
+  constexpr Vec3<T>& operator-(const Vec3& x);
+  constexpr Vec3<T>& operator+(const Vec3& x);
+  constexpr Vec3<T>& operator*(const Vec3& x);
+  constexpr Vec3<T>& operator/(const Vec3& x);
   constexpr bool operator==(const Vec3& x) const;
+  constexpr T Length() const;
+  T x_;
+  T y_;
   T z_;
 };
 

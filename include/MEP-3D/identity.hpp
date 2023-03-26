@@ -1,6 +1,7 @@
 #ifndef IDENTITY_HPP
 #define IDENTITY_HPP
 
+#include <optional>
 #include <string>
 #include <unordered_map>
 
@@ -11,9 +12,9 @@ class Identity {
   Identity(std::string_view class_name);
   Identity(std::string_view class_name, std::string_view name);
   Identity(const Identity& id);
-  bool IsValid();
+  Identity(Identity&& id);
+  bool IsValid() const;
   unsigned int GetId() const;
-  unsigned int GetGlobalId() const;
   const std::string& GetName() const;
   const std::string& GetUniqueName() const;
   std::string_view GetClass() const;
@@ -21,18 +22,46 @@ class Identity {
   Identity& operator=(const Identity& id);
   bool operator==(const Identity& x) const;
   bool operator<(const Identity& x) const;
-  static const std::unordered_map<std::string_view, int>& GetIdentityMap();
-  virtual ~Identity();
+  virtual ~Identity() = default;
 
  private:
-  static std::unordered_map<std::string_view, int> identity_;
   static unsigned int global_id_provider_;
   std::string_view class_name_;
   std::string name_;
   std::string unique_name_;
-  unsigned int global_id_;
   unsigned int id_;
 };
+
+class IdentityView {
+ public:
+  IdentityView(const Identity& id);
+  IdentityView(std::optional<std::string_view> class_name = std::nullopt,
+               std::optional<std::string> name = std::nullopt,
+               std::optional<unsigned int> id = std::nullopt);
+  IdentityView& operator=(const Identity& id);
+  bool IsValid() const;
+  bool HasId() const;
+  unsigned int GetId() const;
+  bool HasName() const;
+  std::string GetName() const;
+  bool HasClassName() const;
+  bool operator==(const IdentityView& x) const;
+  std::string_view GetClass() const;
+
+  virtual std::string ToString() const;
+
+ private:
+  std::optional<std::string_view> class_name_;
+  std::optional<std::string> name_;
+  std::optional<unsigned int> id_;
+};
+
+class IdentityHashFunction {
+ public:
+  unsigned int operator()(const Identity& id) const;
+  unsigned int operator()(const IdentityView& id) const;
+};
+
 }  // namespace mep
 
 #endif

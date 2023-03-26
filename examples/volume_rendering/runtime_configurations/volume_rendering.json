@@ -1,5 +1,5 @@
 {
-  "menu" : [
+  "menu": [
     {
       "name": "New",
       "return": [
@@ -15,31 +15,31 @@
       "name": "Volumes",
       "return": [
         {
-        "name": "Volumes",
-        "return": "draw_volume"
+          "name": "Volumes",
+          "return": "draw_volume"
         },
         {
-        "name": "Volume Controller",
-        "return": "test"
+          "name": "System Info",
+          "return": "system_info"
         },
         {
-        "name": "System Info",
-        "return": "system_info"
+          "name": "Cameras",
+          "return": "draw_camera"
         },
         {
-        "name": "Cameras",
-        "return": "draw_camera"
+          "name": "Window info",
+          "return": "draw_window"
         },
         {
-        "name":"Window info",
-        "return": "draw_window"
+          "name": "Transfer Function",
+          "return": "transfer_function"
         }
       ]
     }
   ],
   "popup": [
-      {
-        "return": "volume_popup"
-      }
+    {
+      "return": "volume_popup"
+    }
   ]
 }

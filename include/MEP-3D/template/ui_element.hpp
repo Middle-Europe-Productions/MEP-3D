@@ -18,7 +18,7 @@ enum Element {
   Count
 };
 
-#define UI_ELEMENT_COUNT static_cast<int>(UI::Element::Count)
+#define UI_ELEMENT_COUNT static_cast<int>(mep::UI::Element::Count)
 
 std::string ToString(Element element);
 
@@ -36,8 +36,9 @@ class ElementData : public NonCopyable {
   std::unordered_map<std::string, int> elements_;
 };
 
-#define ADD_UI_ELEMENT(var_name, var_string) \
-  UI::ElementData::Get().CreateElement(static_cast<int>(var_name), var_string)
+#define ADD_UI_ELEMENT(var_name, var_string)                            \
+  mep::UI::ElementData::Get().CreateElement(static_cast<int>(var_name), \
+                                            var_string)
 
 }  // namespace UI
 }  // namespace mep

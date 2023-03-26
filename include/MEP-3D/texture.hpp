@@ -12,11 +12,15 @@ namespace mep {
 class Texture : public TextureBase {
  public:
   Texture();
-  void Create(Color color);
-  void Create(Image& image);
+  bool Create();
+  bool Create(Color color);
+  bool Update(Color color);
+  bool Create(const Image& image);
+  bool Update(const Image& image);
   void Use();
   void Stop();
   void Clear();
+  unsigned int GetHandler();
   virtual ~Texture();
 
  private:

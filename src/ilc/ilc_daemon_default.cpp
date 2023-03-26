@@ -10,40 +10,19 @@ bool IsILCEnabled() {
 }
 std::string ILCPackageToString(const ILCPackage& data) {
   std::string output = "\"ILCPackage\" : {";
-  output +=
-      " \"layer_id\" : " + std::to_string(data.layer_id_.value_or(-1)) + ",\n";
-  output += " \"layer_name\" : \"" +
-            std::string(data.layer_name_.value_or("null")) + "\",\n";
-  output += " \"id\" : " + data.id_.ToString() + ",\n";
+  output += " \"source\" : " + data.id_.ToString() + ",\n";
+  output += " \"target\" : " + data.target_.ToString() + ",\n";
   output += " \"message\" : \"" + data.message_ + "\"\n}";
   return output;
-}
-ILCClient* FindById(std::map<const Identity, ILCClient*>& connections,
-                    unsigned int id) {
-  for (auto& ele : connections) {
-    if (ele.first.GetGlobalId() == id) {
-      return ele.second;
-    }
-  }
-  return nullptr;
-}
-ILCClient* FindByName(std::map<const Identity, ILCClient*>& connections,
-                      std::string_view id) {
-  for (auto& ele : connections) {
-    if (ele.first.GetName() == std::string(id)) {
-      return ele.second;
-    }
-  }
-  return nullptr;
 }
 }  // namespace
 
 ILCDaemon::ILCDaemon() {
-  LOG(INFO) << "ILC Daemon created";
+  LOG(INFO) << "[ILC] Daemon created";
 }
 
 ILCDaemon::~ILCDaemon() {
-  LOG(INFO) << "Exiting ILC Daemon";
+  LOG(INFO) << "[ILC] Exiting Daemon";
 }
 
 bool ILCDaemon::SendToClient(std::unique_ptr<ILCPackage> data) {
@@ -56,30 +35,33 @@ bool ILCDaemon::SendToClient(std::unique_ptr<ILCPackage> data) {
   return true;
 }
 
-bool ILCDaemon::Connect(const Identity& id, ILCClient* client) {
+bool ILCDaemon::Connect(const IdentityView& id, ILCClient* client) {
   if (!IsILCEnabled()) {
     return false;
   }
-  DCHECK(client);
+  DCHECK(client && id.IsValid());
   auto con_eval = Instance().connections_.find(id);
   if (con_eval != Instance().connections_.end()) {
-    VLOG(3) << "Connection with " << id.ToString() << " already exists!";
+    VLOG(3) << "[ILC] Connection with " << id.ToString() << " already exists!";
     return false;
   }
+  VLOG(3) << "[ILC] New connection " << id.ToString();
   Instance().connections_[id] = client;
   client->OnConnectionOppened();
   return true;
 }
 
-bool ILCDaemon::Disconnect(const Identity& id) {
+bool ILCDaemon::Disconnect(const IdentityView& id) {
   if (!IsILCEnabled()) {
     return false;
   }
   auto con_eval = Instance().connections_.find(id);
-  if (con_eval != Instance().connections_.end()) {
-    VLOG(3) << "Could not find " << id.ToString() << " in active connections!";
+  if (con_eval == Instance().connections_.end()) {
+    VLOG(3) << "[ILC] Could not find " << id.ToString()
+            << " in active connections!";
     return false;
   }
+  VLOG(3) << "[ILC] Connection lost " << id.ToString();
   con_eval->second->OnConnectionClosed();
   Instance().connections_.erase(con_eval);
   return true;
@@ -92,29 +74,54 @@ bool ILCDaemon::IsActive() {
   return Instance().active_;
 }
 
-void ILCDaemon::Update(std::size_t packages_) {
-  while (!Instance().packages_.empty() && packages_ > 0) {
+void ILCDaemon::Update(std::size_t packages) {
+  while (!Instance().packages_.empty() && packages-- > 0) {
     auto package = std::move(Instance().packages_.back());
     Instance().packages_.pop();
-    VLOG(9) << ILCPackageToString(*package);
-    ILCClient* client = nullptr;
-    if (package->layer_id_.has_value()) {
-      client = FindById(connections_, package->layer_id_.value());
-    } else if (package->layer_name_.has_value()) {
-      client = FindByName(connections_, package->layer_name_.value());
-    }
-    if (!client) {
-      LOG(WARNING) << "Unkown package target, dropping";
+    VLOG(5) << "[ILC] Sending " << ILCPackageToString(*package);
+    if (!package->target_.HasId() && !package->target_.HasClassName() &&
+        !package->target_.HasName()) {
+      VLOG(3) << "[ILC] Detected broadcast package";
+      for (auto& con : Instance().connections_) {
+        con.second->OnReceive(package->id_, package->message_);
+      }
       continue;
     }
-    client->OnReceive(package->id_, package->message_);
+    if (package->target_.HasId()) {
+      auto client = connections_.find(package->target_);
+      if (client == connections_.end()) {
+        LOG(WARNING) << "[ILC] Unkown package target, dropping";
+        continue;
+      }
+      client->second->OnReceive(package->id_, package->message_);
+      continue;
+    } else {
+      for (auto& con : Instance().connections_) {
+        if (package->target_.HasName() &&
+            con.first.GetName() == package->target_.GetName()) {
+          VLOG(5) << "Target found, target: " << con.first.GetName()
+                  << ", source: " << package->target_.GetName();
+          con.second->OnReceive(package->id_, package->message_);
+          continue;
+        }
+        if (package->target_.HasClassName() &&
+            con.first.GetClass() == package->target_.GetClass()) {
+          VLOG(5) << "Target found, target: " << package->target_.ToString()
+                  << ", source: " << con.first.ToString();
+          con.second->OnReceive(package->id_, package->message_);
+          continue;
+        }
+      }
+      continue;
+    }
+    LOG(WARNING) << "[ILC] Could not find a package target, unhandled package";
   }
 }
 
 void ILCDaemon::Init() {
   if (IsILCEnabled()) {
     Instance().active_ = true;
-    LOG(INFO) << "ILC Daemon initialized";
+    LOG(INFO) << "[ILC] Daemon initialized";
   }
 }
 

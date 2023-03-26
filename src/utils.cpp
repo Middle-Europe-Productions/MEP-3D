@@ -78,6 +78,20 @@ bool InitGlogFlag(const std::string& l_val, const std::string& r_val) {
   }
   return false;
 }
+
+void GLAPIENTRY MessageCallback(GLenum source,
+                                GLenum type,
+                                GLuint id,
+                                GLenum severity,
+                                GLsizei length,
+                                const GLchar* message,
+                                const void* userParam) {
+  if (type == GL_DEBUG_TYPE_ERROR) {
+    LOG(ERROR) << "[OpenGL] " << message;
+  } else {
+    VLOG(9) << "[OpenGL] " << message;
+  }
+}
 }  // namespace
 
 void utils::Init(int argc, char* argv[]) {
@@ -99,6 +113,11 @@ void utils::InitLogging(int argc, char* argv[]) {
     InitGlogFlag(temp.substr(0, separator_index),
                  temp.substr(separator_index + 1, temp.size() - 1));
   }
+}
+
+void utils::InitOpenGLogging() {
+  glEnable(GL_DEBUG_OUTPUT);
+  glDebugMessageCallback(MessageCallback, 0);
 }
 
 void utils::InitFeatures(int argc, char* argv[]) {

@@ -55,7 +55,7 @@ For more info please check this link [link](https://github.com/google/glog).
 The engine allows runtime features. They can be toggled by defines in the build system, during the program runtime, or through the command line.
 Example:
 ```sh
---feature:use_engine_data_monitor=true
+--feature:use-engine-data-monitor=true
 ```
 
 #### Available tools

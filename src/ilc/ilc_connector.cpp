@@ -2,7 +2,7 @@
 #include <MEP-3D/ilc/ilc_daemon.hpp>
 
 namespace mep {
-ILCConnector::ILCConnector(const Identity& id) : id_(id) {}
+ILCConnector::ILCConnector(const IdentityView& id) : id_(id) {}
 
 ILCConnector::~ILCConnector() {}
 

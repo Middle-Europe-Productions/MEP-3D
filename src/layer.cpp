@@ -40,7 +40,8 @@ void Layer::UnregisterEngine() {
   LOG(INFO) << __FUNCTION__ << ", Layer: " << ToString();
   engine_ = nullptr;
 }
-void Layer::OnReceive(const Identity& id, const std::string& message) {
+
+void Layer::OnReceive(const IdentityView& id, const std::string& message) {
   VLOG(1) << "Received data from: " << id.ToString()
           << ", message: " << message;
 }
@@ -53,14 +54,8 @@ void Layer::OnConnectionOppened() {
   VLOG(1) << "Successfully connected to ILC " << ToString();
 }
 
-void Layer::Send(int id, const std::string& message) {
-  connection_->Send(
-      std::make_unique<ILCPackage>(id, std::nullopt, *this, message));
-}
-
-void Layer::Send(std::string_view layer_name, const std::string& message) {
-  connection_->Send(
-      std::make_unique<ILCPackage>(std::nullopt, layer_name, *this, message));
+void Layer::Send(const IdentityView& target, const std::string& message) {
+  connection_->Send(std::make_unique<ILCPackage>(*this, target, message));
 }
 
 void Layer::ConnectorToILC() {

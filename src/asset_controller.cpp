@@ -31,10 +31,9 @@ void AssetController::Bind(Material* object) {
 
 void AssetController::OnDelete(Identity& caller_identity) {
   VLOG(3) << __FUNCTION__ << ", caller_id: " << caller_identity.ToString();
-  if (texture_ && texture_->GetGlobalId() == caller_identity.GetGlobalId()) {
+  if (texture_ && texture_->GetId() == caller_identity.GetId()) {
     texture_ = nullptr;
-  } else if (shader_ &&
-             shader_->GetGlobalId() == caller_identity.GetGlobalId()) {
+  } else if (shader_ && shader_->GetId() == caller_identity.GetId()) {
     shader_ = nullptr;
   }
 }
