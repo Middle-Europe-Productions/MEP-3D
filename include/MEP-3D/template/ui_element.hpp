@@ -2,7 +2,7 @@
 #define UI_ELEMENT_HPP
 
 #include <MEP-3D/non_copyable.hpp>
-#include <MEP-3D/scene_ui_parser.hpp>
+#include <MEP-3D/parser.hpp>
 
 #include <string>
 

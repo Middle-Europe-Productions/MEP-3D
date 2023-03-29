@@ -1,6 +1,6 @@
 #include <glog/logging.h>
 #include <MEP-3D/common_names.hpp>
-#include <MEP-3D/scene_ui_parser.hpp>
+#include <MEP-3D/parser.hpp>
 #include <MEP-3D/utils.hpp>
 
 namespace mep {
@@ -9,25 +9,23 @@ constexpr auto DoNothing = []() {};
 constexpr auto DoNothingWithReplay = []() -> bool { return true; };
 };  // namespace
 
-SceneUIParser::SceneUIParserNode::SceneUIParserNode()
+Parser::ParserNode::ParserNode()
     : start_callback(DoNothingWithReplay),
       finish_callback(DoNothing),
       node_name(""),
       return_code(-1) {}
 
-SceneUIParser::SceneUIParser() : handler_map_() {
+Parser::Parser() : handler_map_() {
   Init();
 }
 
-void SceneUIParser::SetHandler(
-    const std::unordered_map<int, Callback>& handler_map) {
+void Parser::SetHandler(const std::unordered_map<int, Callback>& handler_map) {
   DCHECK(handler_map.size() != 0);
   handler_map_ = handler_map;
 }
 
-void SceneUIParser::MergeHandler(
-    const std::unordered_map<int, Callback>& handler_map,
-    Method method) {
+void Parser::MergeHandler(const std::unordered_map<int, Callback>& handler_map,
+                          Method method) {
   for (auto& node : handler_map) {
     auto it = handler_map_.find(node.first);
     if (it != handler_map_.end()) {
@@ -42,13 +40,13 @@ void SceneUIParser::MergeHandler(
   }
 }
 
-void SceneUIParser::Draw() {
+void Parser::Draw() {
   for (auto* node : windows_root_) {
     DrawRecursive(node);
   }
 }
 
-void SceneUIParser::DrawRecursive(SceneUIParserNode* current) {
+void Parser::DrawRecursive(ParserNode* current) {
   if (!current) {
     return;
   }
@@ -70,11 +68,11 @@ void SceneUIParser::DrawRecursive(SceneUIParserNode* current) {
     current->finish_callback();
   }
 }
-void SceneUIParser::Clear() {
+void Parser::Clear() {
   ClearElement(Element::Count);
 }
 
-void SceneUIParser::ClearElement(Element what) {
+void Parser::ClearElement(Element what) {
   for (Element it = Element::Menu; it != Element::Count;
        it = utils::IncEnum(it)) {
     if (what == Element::Count || what == it) {
@@ -88,8 +86,7 @@ void SceneUIParser::ClearElement(Element what) {
   }
 }
 
-SceneUIParser::Element SceneUIParser::ElementFromString(
-    const std::string& element_name) {
+Parser::Element Parser::ElementFromString(const std::string& element_name) {
   if (element_name == std::string(kMenuNodeName)) {
     return Element::Menu;
   } else if (element_name == std::string(kSceneNodeName)) {
@@ -100,7 +97,7 @@ SceneUIParser::Element SceneUIParser::ElementFromString(
   return Element::Count;
 }
 
-void SceneUIParser::ClearChildren(SceneUIParserNode* current) {
+void Parser::ClearChildren(ParserNode* current) {
   if (!current) {
     return;
   }
@@ -112,7 +109,7 @@ void SceneUIParser::ClearChildren(SceneUIParserNode* current) {
   }
 }
 
-void SceneUIParser::Init() {
+void Parser::Init() {
   VLOG(3) << __FUNCTION__;
   for (Element it = Element::Menu; it != Element::Count;
        it = utils::IncEnum(it)) {
@@ -120,7 +117,7 @@ void SceneUIParser::Init() {
   }
 }
 
-SceneUIParser::~SceneUIParser() {
+Parser::~Parser() {
   Clear();
 }
 }  // namespace mep

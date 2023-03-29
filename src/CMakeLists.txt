@@ -37,7 +37,7 @@ set(SOURCE
   ${SRC_ROOT}/scene.cpp
   ${SRC_ROOT}/common_names.cpp
   ${SRC_ROOT}/config_create_impl.cpp
-  ${SRC_ROOT}/scene_ui_parser.cpp
+  ${SRC_ROOT}/parser.cpp
   ${SRC_ROOT}/key_event.cpp
   ${SRC_ROOT}/camera_base.cpp
   ${SRC_ROOT}/features.cpp
@@ -131,7 +131,7 @@ set(HEADERS
   ${INC_ROOT}/user_interface.hpp
   ${INC_ROOT}/scene.hpp
   ${INC_ROOT}/common_names.hpp
-  ${INC_ROOT}/scene_ui_parser.hpp
+  ${INC_ROOT}/parser.hpp
   ${INC_ROOT}/features.hpp
   ${INC_ROOT}/async_progress.hpp
   ${INC_ROOT}/file_reader_with_progress.hpp
@@ -212,8 +212,8 @@ if (NOT MEP_STANDALONE_APP)
     ${SRC_ROOT}/integration/imgui/util_common_draw_imgui.cpp
     ${SRC_ROOT}/integration/imgui/imgui_addons.cpp
     ${SRC_ROOT}/integration/imgui/imgui_addons.hpp
-    ${SRC_ROOT}/integration/imgui/scene_ui_parser_imgui.cpp
-    ${SRC_ROOT}/integration/imgui/scene_ui_parser_imgui.hpp
+    ${SRC_ROOT}/integration/imgui/parser_imgui.cpp
+    ${SRC_ROOT}/integration/imgui/parser_imgui.hpp
     ${SRC_ROOT}/integration/imgui/scene_ui_layer_imgui.cpp
     ${SRC_ROOT}/integration/imgui/enum_widget.hpp
     # handlers

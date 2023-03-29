@@ -1,14 +1,14 @@
 #include <imgui.h>
 #include <functional>
 
-#include <MEP-3D/scene_ui_parser.hpp>
+#include <MEP-3D/parser.hpp>
 #include <MEP-3D/template/scene_ui_layer.hpp>
 #include <MEP-3D/template/scene_ui_layer_handler_context.hpp>
 #include <MEP-3D/template/util_common_draw.hpp>
 #include <MEP-3D/utils.hpp>
 
 #include "imgui_addons.hpp"
-#include "scene_ui_parser_imgui.hpp"
+#include "parser_imgui.hpp"
 
 namespace mep {
 namespace {
@@ -110,11 +110,10 @@ class SceneUILayerImGUI : public SceneUILayer {
  public:
   SceneUILayerImGUI(
       const std::string& runtime_configuration,
-      std::unordered_map<int, SceneUIParser::Callback> handlers = {},
-      SceneUIParser::Method handler_attach_method =
-          SceneUIParser::Method::FillAndOverride) {
+      std::unordered_map<int, Parser::Callback> handlers = {},
+      Parser::Method handler_attach_method = Parser::Method::FillAndOverride) {
     if (!utils::Contains(handler_attach_method,
-                         SceneUIParser::Method::DoNotUseDefault)) {
+                         Parser::Method::DoNotUseDefault)) {
       InitDefaultHandler();
       menu_.MergeHandler(handlers, handler_attach_method);
     } else {
@@ -157,13 +156,13 @@ class SceneUILayerImGUI : public SceneUILayer {
 
  private:
   virtual bool ShouldIgnoreLayer() const override { return false; }
-  SceneUIParserImGui menu_;
+  ParserImGui menu_;
 };
 
 std::unique_ptr<SceneUILayer> SceneUILayer::Create(
     const std::string& runtime_configuration,
-    std::unordered_map<int, SceneUIParser::Callback> handlers,
-    SceneUIParser::Method handler_attach_method) {
+    std::unordered_map<int, Parser::Callback> handlers,
+    Parser::Method handler_attach_method) {
   if (runtime_configuration.empty()) {
     return std::make_unique<SceneUILayerImGUI>(kDefaultSceneRuntimeConfig,
                                                handlers, handler_attach_method);

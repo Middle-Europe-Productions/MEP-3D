@@ -1,5 +1,5 @@
 
-#include "scene_ui_parser_imgui.hpp"
+#include "parser_imgui.hpp"
 #include <glog/logging.h>
 #include <imgui.h>
 
@@ -30,9 +30,9 @@ bool ImguiPopupController::OpenAllOnCurrentStack() {
   return true;
 }
 
-SceneUIParserImGui::SceneUIParserImGui() : SceneUIParser() {}
+ParserImGui::ParserImGui() : Parser() {}
 
-void SceneUIParserImGui::Parse(const std::string& json) {
+void ParserImGui::Parse(const std::string& json) {
   VLOG(3) << __func__;
   try {
     root_ = nlohmann::json::parse(json);
@@ -45,7 +45,7 @@ void SceneUIParserImGui::Parse(const std::string& json) {
       DCHECK(value.is_array())
           << "Invalid window node, list of elements is expected";
       for (auto& window : value) {
-        auto* node = new SceneUIParserNode();
+        auto* node = new ParserNode();
         for (auto& [sub_key, sub_value] : window.items()) {
           if (sub_key == "name") {
             VLOG(3) << "Detected key \"name\":" << sub_value;
@@ -78,10 +78,10 @@ void SceneUIParserImGui::Parse(const std::string& json) {
   }
 }
 
-std::vector<SceneUIParser::SceneUIParserNode*> SceneUIParserImGui::ParseWindow(
+std::vector<Parser::ParserNode*> ParserImGui::ParseWindow(
     nlohmann::json& json_data) {
   VLOG(3) << __func__;
-  std::vector<SceneUIParserNode*> nodes;
+  std::vector<ParserNode*> nodes;
   for (auto& [key, value] : json_data.items()) {
     auto ele = ElementFromString(key);
     if (ele == Element::Count) {
@@ -92,7 +92,7 @@ std::vector<SceneUIParser::SceneUIParserNode*> SceneUIParserImGui::ParseWindow(
     VLOG(2) << "Parsing: " << key << ", value: " << static_cast<int>(ele);
     if (ele == Element::Menu) {
       if (value.is_array()) {
-        auto* node = new SceneUIParserNode();
+        auto* node = new ParserNode();
         node->start_callback = std::bind(&ImGui::BeginMenuBar);
         node->finish_callback = std::bind(&ImGui::EndMenuBar);
         for (auto& ele : value) {
@@ -104,7 +104,7 @@ std::vector<SceneUIParser::SceneUIParserNode*> SceneUIParserImGui::ParseWindow(
       }
     } else if (ele == Element::Scene) {
       if (value.is_array()) {
-        auto* node = new SceneUIParserNode();
+        auto* node = new ParserNode();
         node->start_callback =
             std::bind(ImGui::BeginTabBar, kTabBarId, ImGuiTabBarFlags_None);
         node->finish_callback = std::bind(ImGui::EndTabBar);
@@ -117,7 +117,7 @@ std::vector<SceneUIParser::SceneUIParserNode*> SceneUIParserImGui::ParseWindow(
       }
     } else if (ele == Element::Popup) {
       if (value.is_array()) {
-        auto* node = new SceneUIParserNode();
+        auto* node = new ParserNode();
         node->start_callback =
             std::bind(&ImguiPopupController::OpenAllOnCurrentStack,
                       ImguiPopupController::Get());
@@ -133,9 +133,8 @@ std::vector<SceneUIParser::SceneUIParserNode*> SceneUIParserImGui::ParseWindow(
   return nodes;
 }
 
-SceneUIParser::SceneUIParserNode* SceneUIParserImGui::ParseMenuItem(
-    nlohmann::json& json_data) {
-  SceneUIParserNode* node = new SceneUIParserNode();
+Parser::ParserNode* ParserImGui::ParseMenuItem(nlohmann::json& json_data) {
+  ParserNode* node = new ParserNode();
   for (auto& [key, value] : json_data.items()) {
     if (key == "return" && value.is_array()) {
       for (auto& ele : value) {
@@ -178,10 +177,9 @@ SceneUIParser::SceneUIParserNode* SceneUIParserImGui::ParseMenuItem(
   return node;
 }
 
-SceneUIParser::SceneUIParserNode* SceneUIParserImGui::ParseSceneItem(
-    nlohmann::json& json_data,
-    int depth) {
-  SceneUIParserNode* node = new SceneUIParserNode();
+Parser::ParserNode* ParserImGui::ParseSceneItem(nlohmann::json& json_data,
+                                                int depth) {
+  ParserNode* node = new ParserNode();
   for (auto& [key, value] : json_data.items()) {
     if (key == "return" && value.is_array()) {
       for (auto& ele : value) {
@@ -218,14 +216,13 @@ SceneUIParser::SceneUIParserNode* SceneUIParserImGui::ParseSceneItem(
   return node;
 }
 
-SceneUIParser::SceneUIParserNode* SceneUIParserImGui::ParsePopupItem(
-    nlohmann::json& json_data,
-    int depth) {
+Parser::ParserNode* ParserImGui::ParsePopupItem(nlohmann::json& json_data,
+                                                int depth) {
   if (depth > 1) {
     LOG(WARNING) << "Invalid scene element depth is " << depth;
     return nullptr;
   }
-  SceneUIParserNode* node = new SceneUIParserNode();
+  ParserNode* node = new ParserNode();
   for (auto& [key, value] : json_data.items()) {
     if (key == "return" && value.is_array()) {
       for (auto& ele : value) {

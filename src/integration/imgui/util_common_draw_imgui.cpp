@@ -8,7 +8,7 @@
 #include <numeric>
 
 #include "imgui_addons.hpp"
-#include "scene_ui_parser_imgui.hpp"
+#include "parser_imgui.hpp"
 
 namespace mep {
 namespace {

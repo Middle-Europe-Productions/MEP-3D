@@ -14,8 +14,8 @@ class SceneUILayerDefault : public SceneUILayer {
 
 std::unique_ptr<SceneUILayer> SceneUILayer::Create(
     const std::string& runtime_configuration,
-    std::unordered_map<int, SceneUIParser::Callback> handlers,
-    SceneUIParser::Method handler_attach_method) {
+    std::unordered_map<int, Parser::Callback> handlers,
+    Parser::Method handler_attach_method) {
   return std::make_unique<SceneUILayerDefault>();
 }
 }  // namespace mep
