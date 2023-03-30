@@ -49,7 +49,7 @@ constexpr char kMyRuntimeConfig[] = R"({
 
 enum MyOwnEnum { Test = UI_ELEMENT_COUNT + 1, Popup };
 
-struct Data {
+struct Data : public UI_HANDLER_BASE(SceneUILayer) {
   int data = 0;
   void Reset() { data = 0; }
 };
@@ -57,13 +57,15 @@ struct Data {
 UI_HANDLER_D(MyOwnEnum, Test, SceneUILayer, Data) {
   ImGui::Text("Hello");
   if (ImGui::Button("Button")) {
-    GetContext()->Send(kSceneName, std::to_string(GetData().data++));
+    GetContext()->Send(
+        mep::IdentityView(std::nullopt, kSceneName, std::nullopt),
+        std::to_string(data++));
   }
   if (ImGui::Button("Open popup")) {
     UI::Drawer::OpenPopup(MyOwnEnum::Popup);
   }
   if (ImGui::Button("Reset")) {
-    GetData().Reset();
+    Reset();
   }
 };
 

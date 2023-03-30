@@ -174,25 +174,25 @@ struct PointLightWrap : public UI_HANDLER_BASE(SceneUILayer) {
 };
 
 UI_HANDLER_D(UI::Element, PointLightPopup, SceneUILayer, PointLightWrap) {
-  if (!GetData().point_light) {
+  if (!point_light) {
     auto& cont = GetContext()->GetScenePtr()->GetPointLightController();
     auto it = cont->MakeAndBind(PointLight::Create());
     DCHECK(cont->IsValid(it));
-    GetData().point_light = it->get();
+    point_light = it->get();
   }
-  UI::Drawer::DrawPointLight(*GetData().point_light);
+  UI::Drawer::DrawPointLight(*point_light);
   if (ImGui::Button("Add")) {
-    GetData().point_light = nullptr;
+    point_light = nullptr;
     ImGui::CloseCurrentPopup();
   }
   ImGui::SameLine();
   if (ImGui::Button("Cancel")) {
-    DCHECK(GetData().point_light);
+    DCHECK(point_light);
     auto& cont = GetContext()->GetScenePtr()->GetPointLightController();
     if (!cont)
       return;
-    cont->Remove(*GetData().point_light);
-    GetData().point_light = nullptr;
+    cont->Remove(*point_light);
+    point_light = nullptr;
     ImGui::CloseCurrentPopup();
   }
 }
@@ -207,25 +207,25 @@ struct SpotLightWrap : public UI_HANDLER_BASE(SceneUILayer) {
 };
 
 UI_HANDLER_D(UI::Element, SpotLightPopup, SceneUILayer, SpotLightWrap) {
-  if (!GetData().spot_light) {
+  if (!spot_light) {
     auto& cont = GetContext()->GetScenePtr()->GetSpotLightController();
     auto it = cont->MakeAndBind(SpotLight::Create());
     DCHECK(cont->IsValid(it));
-    GetData().spot_light = it->get();
+    spot_light = it->get();
   }
-  UI::Drawer::DrawSpotLight(*GetData().spot_light);
+  UI::Drawer::DrawSpotLight(*spot_light);
   if (ImGui::Button("Add")) {
-    GetData().spot_light = nullptr;
+    spot_light = nullptr;
     ImGui::CloseCurrentPopup();
   }
   ImGui::SameLine();
   if (ImGui::Button("Cancel")) {
-    DCHECK(GetData().spot_light);
+    DCHECK(spot_light);
     auto& cont = GetContext()->GetScenePtr()->GetSpotLightController();
     if (!cont)
       return;
-    cont->Remove(*GetData().spot_light);
-    GetData().spot_light = nullptr;
+    cont->Remove(*spot_light);
+    spot_light = nullptr;
     ImGui::CloseCurrentPopup();
   }
 }
@@ -236,34 +236,33 @@ UI_HANDLER(UI::Element, OpenModelPopup, SceneUILayer) {
 }
 
 UI_HANDLER_D(UI::Element, ModelPopup, SceneUILayer, ResourceWrap) {
-  ImGui::InputTextWithHint("##model_name", kInputModelName,
-                           GetData().display_name, kMaxPathSize,
-                           ImGuiInputTextFlags_CharsNoBlank);
+  ImGui::InputTextWithHint("##model_name", kInputModelName, display_name,
+                           kMaxPathSize, ImGuiInputTextFlags_CharsNoBlank);
   if (ImGui::Button("Open File")) {
     std::filesystem::path file_path = PlatformDelegate::Get()->OpenFile(
         GetContext()->GetEngine()->GetWindow().get(), kModelFileFilter);
     if (!file_path.empty()) {
       LOG(INFO) << "File path " << file_path;
-      GetData().buffer_path = file_path;
+      buffer_path = file_path;
     }
   }
-  ImGui::Text((const char*)GetData().buffer_path.generic_u8string().c_str(),
+  ImGui::Text((const char*)buffer_path.generic_u8string().c_str(),
               ImGuiInputTextFlags_CharsNoBlank);
-  GetData().DrawSelectable(GetContext());
+  DrawSelectable(GetContext());
   ImGui::Separator();
-  if (!GetData().ValidData()) {
+  if (!ValidData()) {
     ImGui::BeginDisabled();
   }
   if (ImGui::Button("Load")) {
-    auto model = std::make_unique<Model>(std::string(GetData().display_name));
-    GetData().EvalSelectable(model.get(), GetContext());
+    auto model = std::make_unique<Model>(std::string(display_name));
+    EvalSelectable(model.get(), GetContext());
     LOG(WARNING) << "Model class does not support utf-16";
-    model->Load(GetData().buffer_path.string());
+    model->Load(buffer_path.string());
     GetContext()->GetScenePtr()->GetModels().emplace_back(std::move(model));
     ImGui::CloseCurrentPopup();
   }
   ImGui::SameLine();
-  if (!GetData().ValidData()) {
+  if (!ValidData()) {
     ImGui::EndDisabled();
   }
   if (ImGui::Button("Cancel")) {
@@ -272,39 +271,36 @@ UI_HANDLER_D(UI::Element, ModelPopup, SceneUILayer, ResourceWrap) {
 }
 
 UI_HANDLER_D(UI::Element, VolumePopup, SceneUILayer, VolumeWrap) {
-  ImGui::InputTextWithHint("##volume_name", kInputModelName,
-                           GetData().display_name, kMaxPathSize,
-                           ImGuiInputTextFlags_CharsNoBlank);
-  GetData().Init(GetContext(), kVolumeFileFilter);
-  ImGui::Text(
-      (const char*)GetData().buffer_path.filename().generic_u8string().c_str(),
-      ImGuiInputTextFlags_CharsNoBlank);
-  GetData().DrawSelectable(GetContext());
+  ImGui::InputTextWithHint("##volume_name", kInputModelName, display_name,
+                           kMaxPathSize, ImGuiInputTextFlags_CharsNoBlank);
+  Init(GetContext(), kVolumeFileFilter);
+  ImGui::Text((const char*)buffer_path.filename().generic_u8string().c_str(),
+              ImGuiInputTextFlags_CharsNoBlank);
+  DrawSelectable(GetContext());
   ImGui::Text("Volume size");
-  UI::Drawer::Draw(GetData().size, 0, 10240, "##volume_size");
+  UI::Drawer::Draw(size, 0, 10240, "##volume_size");
   ImGui::Text("Data type");
-  GetData().enum_widget.Draw();
+  enum_widget.Draw();
   ImGui::Separator();
-  if (!GetData().ValidData()) {
+  if (!ValidData()) {
     ImGui::BeginDisabled();
   }
   if (ImGui::Button("Load")) {
-    GetContext()->GetScenePtr()->GetVolume().emplace_back(
-        GetData().Create(GetContext()));
-    GetData().Uninitialize();
+    GetContext()->GetScenePtr()->GetVolume().emplace_back(Create(GetContext()));
+    Uninitialize();
     ImGui::CloseCurrentPopup();
   }
-  if (!GetData().ValidData()) {
+  if (!ValidData()) {
     ImGui::EndDisabled();
   }
   ImGui::SameLine();
   if (ImGui::Button("Open File")) {
-    GetData().SetFilePath(PlatformDelegate::Get()->OpenFile(
+    SetFilePath(PlatformDelegate::Get()->OpenFile(
         GetContext()->GetEngine()->GetWindow().get(), kVolumeFileFilter));
   }
   ImGui::SameLine();
   if (ImGui::Button("Cancel")) {
-    GetData().Uninitialize();
+    Uninitialize();
     ImGui::CloseCurrentPopup();
   }
 }

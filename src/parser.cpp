@@ -22,10 +22,6 @@ Parser::Parser() : handler_map_() {
 void Parser::SetHandler(ParserHandlerMap handler_map) {
   DCHECK(handler_map.size() != 0);
   handler_map_ = std::move(handler_map);
-  for (auto& node : handler_map_) {
-    DCHECK(node.second);
-    node.second->SetUp();
-  }
 }
 
 void Parser::MergeHandler(ParserHandlerMap handler_map, Method method) {
@@ -73,6 +69,22 @@ void Parser::DrawRecursive(ParserNode* current) {
 }
 void Parser::Clear() {
   ClearElement(Element::Count);
+  for (auto& node : handler_map_) {
+    DCHECK(node.second);
+    node.second->TearDown();
+  }
+}
+
+void Parser::SetUpHandlers() {
+  VLOG(3) << __func__ << ", number of handlers: " << handler_map_.size();
+  for (auto& node : handler_map_) {
+    DCHECK(node.second);
+    node.second->SetUp();
+  }
+}
+
+void Parser::TearDownHandlers() {
+  VLOG(3) << __func__ << ", number of handlers: " << handler_map_.size();
   for (auto& node : handler_map_) {
     DCHECK(node.second);
     node.second->TearDown();

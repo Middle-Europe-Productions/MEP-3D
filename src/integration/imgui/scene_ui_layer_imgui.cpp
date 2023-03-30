@@ -125,8 +125,9 @@ class SceneUILayerImGUI : public SceneUILayer {
   void OnAttach() override {
     ImGui::ApplyMepSceneStyle();
     ImGui::ApplyMepStyle();
+    menu_.SetUpHandlers();
   }
-  void OnDetach() override {}
+  void OnDetach() override { menu_.TearDownHandlers(); }
   void OnUpdate(float) override {}
 
   void OnDraw(RenderTarget&) override {
@@ -149,7 +150,7 @@ class SceneUILayerImGUI : public SceneUILayer {
   }
   void InitDefaultHandler() {
     menu_.SetHandler(
-        GET_UI_CONTEXT(SceneUILayer).GetHandlerMapWithContext(this));
+        GET_UI_CONTEXT(SceneUILayer).TakeHandlerMapWithContext(this));
   }
 
   ~SceneUILayerImGUI() { LOG(INFO) << __FUNCTION__; }

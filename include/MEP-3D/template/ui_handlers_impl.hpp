@@ -8,6 +8,7 @@
 #include <functional>
 #include <vector>
 
+namespace mep {
 template <typename Context, typename Handler>
 inline int MakeHandlerInfo(int element) {
   static_assert(std::is_default_constructible<Handler>::value);
@@ -24,12 +25,6 @@ inline int MakeHandlerInfo(int element) {
     void SetUp() override {}                                                   \
     void TearDown() override {}                                                \
     virtual void Draw() {}                                                     \
-    mep::Scene* Scene() { return scene_; }                                     \
-    const mep::Scene* Scene() const { return scene_; }                         \
-    void RegisterContext(mep::Scene* context) {                                \
-      DCHECK(context);                                                         \
-      scene_ = context;                                                        \
-    }                                                                          \
     context_class* GetContext() { return context_; }                           \
     void RegisterContext(context_class* context) {                             \
       DCHECK(context);                                                         \
@@ -37,7 +32,6 @@ inline int MakeHandlerInfo(int element) {
     }                                                                          \
                                                                                \
    public:                                                                     \
-    mep::Scene* scene_ = nullptr;                                              \
     context_class* context_ = nullptr;                                         \
   };                                                                           \
   class UI_CONTEXT_NAME(context_class) : public NonCopyable {                  \
@@ -49,7 +43,8 @@ inline int MakeHandlerInfo(int element) {
     }                                                                          \
                                                                                \
     std::unordered_map<int, std::unique_ptr<ParserHandler>>                    \
-    GetHandlerMapWithContext(context_class* context) {                         \
+    TakeHandlerMapWithContext(context_class* context) {                        \
+      VLOG(3) << __func__;                                                     \
       std::unordered_map<int, std::unique_ptr<ParserHandler>> parser_map;      \
       for (auto& node : handlers_) {                                           \
         node.second->RegisterContext(context);                                 \
@@ -83,11 +78,9 @@ inline int MakeHandlerInfo(int element) {
     SCENE_UI_HANDLER_NAME(element_id, context_class)() = default;              \
     ~SCENE_UI_HANDLER_NAME(element_id, context_class)() = default;             \
     void Draw() override;                                                      \
-    data_structure& GetData() { return data_; }                                \
                                                                                \
    private:                                                                    \
     static int element_id_;                                                    \
-    data_structure data_;                                                      \
   };                                                                           \
                                                                                \
   int SCENE_UI_HANDLER_NAME(element_id, context_class)::element_id_ =          \
@@ -100,5 +93,6 @@ inline int MakeHandlerInfo(int element) {
 #define UI_HANDLER(element_class, element_id, context_class) \
   UI_HANDLER_D(element_class, element_id, context_class,     \
                UI_HANDLER_BASE(context_class))
+};  // namespace mep
 
 #endif
