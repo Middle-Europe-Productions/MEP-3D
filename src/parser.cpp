@@ -19,22 +19,25 @@ Parser::Parser() : handler_map_() {
   Init();
 }
 
-void Parser::SetHandler(const std::unordered_map<int, Callback>& handler_map) {
+void Parser::SetHandler(ParserHandlerMap handler_map) {
   DCHECK(handler_map.size() != 0);
-  handler_map_ = handler_map;
+  handler_map_ = std::move(handler_map);
+  for (auto& node : handler_map_) {
+    DCHECK(node.second);
+    node.second->SetUp();
+  }
 }
 
-void Parser::MergeHandler(const std::unordered_map<int, Callback>& handler_map,
-                          Method method) {
+void Parser::MergeHandler(ParserHandlerMap handler_map, Method method) {
   for (auto& node : handler_map) {
     auto it = handler_map_.find(node.first);
     if (it != handler_map_.end()) {
       if (utils::Contains(method, Method::Override)) {
-        it->second = node.second;
+        it->second = std::move(node.second);
       }
     } else {
       if (utils::Contains(method, Method::FillMissing)) {
-        handler_map_[node.first] = node.second;
+        handler_map_[node.first] = std::move(node.second);
       }
     }
   }
@@ -60,7 +63,7 @@ void Parser::DrawRecursive(ParserNode* current) {
         current->finish_callback();
         return;
       }
-      callback->second();
+      callback->second->Draw();
     }
     for (auto* node : current->next) {
       DrawRecursive(node);
@@ -70,6 +73,10 @@ void Parser::DrawRecursive(ParserNode* current) {
 }
 void Parser::Clear() {
   ClearElement(Element::Count);
+  for (auto& node : handler_map_) {
+    DCHECK(node.second);
+    node.second->TearDown();
+  }
 }
 
 void Parser::ClearElement(Element what) {

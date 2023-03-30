@@ -169,7 +169,7 @@ UI_HANDLER(UI::Element, OpenPointLightPopup, SceneUILayer) {
   UI::Drawer::OpenPopup(UI::Element::PointLightPopup);
 }
 
-struct PointLightWrap {
+struct PointLightWrap : public UI_HANDLER_BASE(SceneUILayer) {
   PointLight* point_light = nullptr;
 };
 
@@ -202,7 +202,7 @@ UI_HANDLER(UI::Element, OpenSpotLightPopup, SceneUILayer) {
   UI::Drawer::OpenPopup(UI::Element::SpotLightPopup);
 }
 
-struct SpotLightWrap {
+struct SpotLightWrap : public UI_HANDLER_BASE(SceneUILayer) {
   SpotLight* spot_light = nullptr;
 };
 

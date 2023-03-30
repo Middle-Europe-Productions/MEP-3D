@@ -139,6 +139,7 @@ set(HEADERS
   ${INC_ROOT}/volume.hpp
   ${INC_ROOT}/texture_utils.hpp
   ${INC_ROOT}/texture_view.hpp
+  ${INC_ROOT}/parser_handler.hpp
 # template/
   ${INC_ROOT}/template/engine_data_ui_layer.hpp
   ${INC_ROOT}/template/scene_ui_layer.hpp

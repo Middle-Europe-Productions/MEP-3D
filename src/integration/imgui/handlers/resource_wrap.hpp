@@ -2,6 +2,7 @@
 #define RESOURCE_WRAP_HPP
 
 #include <MEP-3D/platform/platform_delegate.hpp>
+#include <MEP-3D/template/scene_ui_layer_handler_context.hpp>
 #include <filesystem>
 
 namespace {
@@ -9,7 +10,7 @@ constexpr int kMaxPathSize = 256;
 };
 
 namespace mep {
-struct ResourceWrap {
+struct ResourceWrap : public UI_HANDLER_BASE(SceneUILayer) {
   enum Active : int { Shader = 1 << 0, Material = 1 << 1, Texture = 1 << 2 };
   char display_name[kMaxPathSize];
   std::filesystem::path buffer_path;

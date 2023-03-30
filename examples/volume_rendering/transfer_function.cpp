@@ -126,11 +126,13 @@ constexpr uint8_t kBlackBody[] = {
     0x45, 0x4e, 0x44, 0xae, 0x42, 0x60, 0x82};
 
 constexpr char kTransferFunction[] = "transfer_function";
-
-class TransferFunctionController : public mep::Identity, public mep::ILCClient {
+using namespace mep;
+class TransferFunctionController : public UI_HANDLER_BASE(SceneUILayer),
+                                   public Identity,
+                                   public ILCClient {
  public:
   TransferFunctionController()
-      : mep::Identity(kTransferFunction, kTransferFunction) {
+      : Identity(kTransferFunction, kTransferFunction) {
     LOG(INFO) << __func__;
   }
   void Init() {
@@ -145,7 +147,7 @@ class TransferFunctionController : public mep::Identity, public mep::ILCClient {
     handler_.Create();
     selected_color_map_ = 0;
     UpdateColorMap();
-    connector_ = std::make_unique<mep::ILCConnector>(*this);
+    connector_ = std::make_unique<ILCConnector>(*this);
     if (!connector_->Connect(this)) {
       LOG(ERROR) << "Unable to connect to ILC";
     }
@@ -160,8 +162,8 @@ class TransferFunctionController : public mep::Identity, public mep::ILCClient {
     uint8_t* img_data = stbi_load_from_memory(data, size, &w, &h, &n, 4);
     auto img = std::vector<uint8_t>(img_data, img_data + w * 1 * 4);
     stbi_image_free(img_data);
-    auto image = mep::Image(name.c_str());
-    image.LoadFromMemory(img, {(int)img.size() / 4, 1}, mep::Image::Type::RGBA);
+    auto image = Image(name.c_str());
+    image.LoadFromMemory(img, {(int)img.size() / 4, 1}, Image::Type::RGBA);
     color_maps_.emplace_back(std::move(image));
   }
 
@@ -226,7 +228,7 @@ class TransferFunctionController : public mep::Identity, public mep::ILCClient {
     DCHECK(selected_image < color_maps_.size());
     handler_.Update(color_maps_[selected_image]);
   }
-  virtual void OnReceive(const mep::IdentityView& id,
+  virtual void OnReceive(const IdentityView& id,
                          const nlohmann::json& message) {
     LOG(INFO) << "Received message " << id.ToString() << ", " << message;
   }
@@ -235,19 +237,18 @@ class TransferFunctionController : public mep::Identity, public mep::ILCClient {
     nlohmann::json message;
     message[vr::kTextureNode] = handler_.GetHandler();
     message[vr::kTextureAction] = vr::kTextureCreate;
-    connector_->Send(std::make_unique<mep::ILCPackage>(
-        *this,
-        mep::IdentityView(std::nullopt, vr::kVolumeRenderer, std::nullopt),
+    connector_->Send(std::make_unique<ILCPackage>(
+        *this, IdentityView(std::nullopt, vr::kVolumeRenderer, std::nullopt),
         message));
   }
 
  private:
-  std::unique_ptr<mep::ILCConnector> connector_;
+  std::unique_ptr<ILCConnector> connector_;
   std::size_t selected_color_map_;
-  std::vector<mep::Image> color_maps_;
+  std::vector<Image> color_maps_;
   std::vector<ImVec2> alpha_points_;
-  mep::Texture handler_;
-  mep::PointCanvas canvas_;
+  Texture handler_;
+  PointCanvas canvas_;
   bool is_init_ = false;
 };
 

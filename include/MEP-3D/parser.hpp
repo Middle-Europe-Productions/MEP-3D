@@ -1,6 +1,8 @@
 #ifndef PARSER_HPP
 #define PARSER_HPP
 
+#include <MEP-3D/parser_handler.hpp>
+
 #include <nlohmann/json.hpp>
 #include <string>
 
@@ -9,6 +11,8 @@ class Parser {
  public:
   using CallbackWithReplay = std::function<bool()>;
   using Callback = std::function<void()>;
+  using ParserHandlerMap =
+      std::unordered_map<int, std::unique_ptr<ParserHandler>>;
   struct ParserNode {
     CallbackWithReplay start_callback;
     Callback finish_callback;
@@ -25,8 +29,8 @@ class Parser {
     FillAndOverride = Override | FillMissing
   };
   Parser();
-  void SetHandler(const std::unordered_map<int, Callback>& handler_map);
-  void MergeHandler(const std::unordered_map<int, Callback>& handler_map,
+  void SetHandler(ParserHandlerMap handler_map);
+  void MergeHandler(ParserHandlerMap handler_map,
                     Method method = Method::FillAndOverride);
   virtual void Draw();
   virtual void Parse(const std::string& json) = 0;
@@ -35,7 +39,7 @@ class Parser {
   virtual ~Parser();
 
  protected:
-  std::unordered_map<int, Callback> handler_map_;
+  ParserHandlerMap handler_map_;
   void DrawRecursive(ParserNode* current);
   void ClearChildren(ParserNode* current);
   void ClearElement(Element what);

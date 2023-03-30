@@ -115,9 +115,9 @@ class SceneUILayerImGUI : public SceneUILayer {
     if (!utils::Contains(handler_attach_method,
                          Parser::Method::DoNotUseDefault)) {
       InitDefaultHandler();
-      menu_.MergeHandler(handlers, handler_attach_method);
+      // menu_.MergeHandler(handlers, handler_attach_method);
     } else {
-      menu_.SetHandler(handlers);
+      // menu_.SetHandler(handlers);
     }
     menu_.Parse(runtime_configuration.c_str());
     LOG(INFO) << __FUNCTION__;
