@@ -44,3 +44,5 @@ ADD_UI_ELEMENT(VolumePopup, "volume_popup")
 ADD_UI_ELEMENT(OpenVolumePopup, "open_volume_popup")
 
 ADD_UI_ELEMENT(SystemInfo, "system_info")
+
+ADD_UI_ELEMENT(ShaderEditor, "shader_editor")

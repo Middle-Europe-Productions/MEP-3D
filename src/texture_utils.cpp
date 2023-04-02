@@ -1,13 +1,12 @@
 #include <MEP-3D/texture_utils.hpp>
 
-#include <GL/glew.h>
 #include <glog/logging.h>
 
 namespace mep {
 namespace utils {
-unsigned int ToTextureSlot(unsigned int slot) {
+GLenum ToTextureSlot(unsigned int slot) {
   DCHECK(slot < GetMaxSlots());
-  return GL_TEXTURE0 + slot;
+  return static_cast<GLenum>(static_cast<unsigned int>(GL_TEXTURE0) + slot);
 }
 
 unsigned int GetMaxSlots() {

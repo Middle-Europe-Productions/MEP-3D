@@ -23,6 +23,13 @@ struct ShaderStatus {
   bool shader_status = false;
 };
 
+struct ShaderError {
+  bool error_occured = false;
+  std::string error_message = "";
+  std::string fragment_error = "";
+  std::string vertex_error = "";
+};
+
 class Shader : public Asset {
  public:
   Shader();
@@ -30,6 +37,9 @@ class Shader : public Asset {
   bool Compile(const std::string& vertex_code);
   bool Compile(const std::string& vertex_code,
                const std::string& fragment_code);
+  ShaderError ReCompile(const std::string& vertex_code);
+  ShaderError ReCompile(const std::string& vertex_code,
+                        const std::string& fragment_code);
   bool IsCompiled() const;
   void Use() override;
   void Stop() override;
@@ -61,15 +71,15 @@ class Shader : public Asset {
   GLuint shader_id_;
 
  private:
-  bool CompileImpl(const std::string& vertex_code,
-                   const std::string& fragment_code);
+  ShaderError CompileImpl(const std::string& vertex_code,
+                          const std::string& fragment_code);
   bool SetUniformExt(GLuint uniform_location, const glm::mat4& matrix);
   bool SetUniformExt(GLuint uniform_location, const glm::vec3& matrix);
   bool SetUniformExt(GLuint uniform_location, float value);
   bool SetUniformExt(GLuint uniform_location, int value);
-  bool AddShader(GLuint program,
-                 const std::string& shader_code,
-                 GLenum shader_type);
+  ShaderError AddShader(GLuint program,
+                        const std::string& shader_code,
+                        GLenum shader_type);
   bool GetUniformLocation(GLint& location, const std::string& name);
   ShaderStatus status_;
 };

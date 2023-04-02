@@ -10,7 +10,7 @@ TextureView::TextureView() : handler_(0) {}
 TextureView::TextureView(unsigned int handler) : handler_(handler) {}
 
 void TextureView::Use(unsigned int slot) {
-  glActiveTexture(utils::ToTextureSlot(slot));
+  glActiveTexture(GL_TEXTURE1);
   glBindTexture(GL_TEXTURE_2D, handler_);
 }
 void TextureView::Stop() {

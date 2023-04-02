@@ -35,6 +35,10 @@
           "return": "transfer_function"
         }
       ]
+    },
+    {
+      "name": "Shader Editor",
+      "return": "shader_editor"
     }
   ],
   "popup": [

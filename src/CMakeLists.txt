@@ -223,6 +223,8 @@ if (NOT MEP_STANDALONE_APP)
     ${SRC_ROOT}/integration/imgui/handlers/resource_wrap.cpp
     ${SRC_ROOT}/integration/imgui/handlers/volume_wrap.hpp
     ${SRC_ROOT}/integration/imgui/handlers/volume_wrap.cpp
+    ${SRC_ROOT}/integration/imgui/handlers/shader_editor_context.hpp
+    ${SRC_ROOT}/integration/imgui/handlers/shader_editor_context.cpp
   )
 
 else()
@@ -239,6 +241,7 @@ if (MEP_USE_IMGUI)
   message(STATUS "MEP_USE_IMGUI=true, including imgui library")
   list(APPEND LINK_TARGETS
     imgui
+    imgui-widget
   )
   add_definitions(-DMEP_USES_IMGUI)
 endif () 

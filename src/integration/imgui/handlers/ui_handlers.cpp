@@ -6,6 +6,7 @@
 
 #include "../enum_widget.hpp"
 #include "resource_wrap.hpp"
+#include "shader_editor_context.hpp"
 #include "volume_wrap.hpp"
 
 #include <imgui.h>
@@ -329,4 +330,13 @@ UI_HANDLER(UI::Element, SystemInfo, SceneUILayer) {
   ImGui::Text("Name: %s", memory_snapsot.gpu_name.c_str());
   ImGui::Text("Driver: %s", memory_snapsot.gpu_driver.c_str());
 }
+
+UI_HANDLER_D(UI::Element, ShaderEditor, SceneUILayer, ShaderEditorContext) {
+  auto& shaders = GetContext()->GetScenePtr()->GetShaders();
+  SelectShader(UI::Drawer::DrawShaderComboMenu(shaders, selected_shader_),
+               shaders);
+  DrawUtilityMenu();
+  DrawShader();
+}
+
 }  // namespace mep

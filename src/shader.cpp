@@ -18,10 +18,30 @@ Shader::Shader(const std::string& name) : Asset(kShader, name.c_str()) {
 }
 
 bool Shader::Compile(const std::string& vertex_code) {
-  return CompileImpl(vertex_code, "");
+  auto error = CompileImpl(vertex_code, "");
+  if (error.error_occured) {
+    LOG(ERROR) << "[GLSL] Error occured: " << error.error_message;
+  }
+  return error.error_occured;
 }
+
 bool Shader::Compile(const std::string& vertex_code,
                      const std::string& fragment_code) {
+  auto error = CompileImpl(vertex_code, fragment_code);
+  if (error.error_occured) {
+    LOG(ERROR) << "[GLSL] Error occured: " << error.error_message;
+  }
+  return error.error_occured;
+}
+
+ShaderError Shader::ReCompile(const std::string& vertex_code) {
+  Clear();
+  return CompileImpl(vertex_code, "");
+}
+
+ShaderError Shader::ReCompile(const std::string& vertex_code,
+                              const std::string& fragment_code) {
+  Clear();
   return CompileImpl(vertex_code, fragment_code);
 }
 
@@ -197,29 +217,32 @@ bool Shader::IsCompiled() const {
   return true;
 }
 
-bool Shader::CompileImpl(const std::string& vertex_code,
-                         const std::string& fragment_code) {
+ShaderError Shader::CompileImpl(const std::string& vertex_code,
+                                const std::string& fragment_code) {
   LOG(INFO) << __FUNCTION__ << ", " << ToString();
   status_.shader_status = false;
   shader_id_ = glCreateProgram();
 
   if (!shader_id_) {
-    LOG(ERROR) << "Could not create a program!";
-    return false;
+    return {true, "Could not create a program!"};
   }
 
-  if (!AddShader(shader_id_, vertex_code, GL_VERTEX_SHADER)) {
-    LOG(ERROR) << "Could not compile vertex shader";
-    return false;
+  auto error = AddShader(shader_id_, vertex_code, GL_VERTEX_SHADER);
+  if (error.error_occured) {
+    error.vertex_error = std::move(error.error_message);
+    error.error_message = "Compilation error";
+    return error;
   } else {
     status_.is_vertex_compiled = true;
     status_.vertex_code = vertex_code;
   }
 
   if (fragment_code != "") {
-    if (!AddShader(shader_id_, fragment_code, GL_FRAGMENT_SHADER)) {
-      LOG(ERROR) << "Could not compile fragment shader";
-      return false;
+    auto error = AddShader(shader_id_, fragment_code, GL_FRAGMENT_SHADER);
+    if (error.error_occured) {
+      error.fragment_error = std::move(error.error_message);
+      error.error_message = "Compilation error";
+      return error;
     } else {
       status_.is_fragment_compiled = true;
       status_.fragment_code = fragment_code;
@@ -233,20 +256,18 @@ bool Shader::CompileImpl(const std::string& vertex_code,
   glGetProgramiv(shader_id_, GL_LINK_STATUS, &result);
   if (!result) {
     glGetProgramInfoLog(shader_id_, sizeof(log), NULL, log);
-    LOG(ERROR) << __FUNCTION__ << "]: " << log;
-    return false;
+    return {true, log};
   }
 
   glValidateProgram(shader_id_);
   glGetProgramiv(shader_id_, GL_VALIDATE_STATUS, &result);
   if (!result) {
     glGetProgramInfoLog(shader_id_, sizeof(log), NULL, log);
-    LOG(ERROR) << "[ERROR: " << __FUNCTION__ << "]: " << log;
-    return false;
+    return {true, log};
   }
   status_.shader_status = true;
   LOG(INFO) << __FUNCTION__ << ", " << ToString() << ", compilation finished!";
-  return true;
+  return {false};
 }
 
 bool Shader::SetUniformExt(GLuint uniform_location, const glm::mat4& matrix) {
@@ -269,9 +290,9 @@ bool Shader::SetUniformExt(GLuint uniform_location, int value) {
   return true;
 }
 
-bool Shader::AddShader(GLuint program,
-                       const std::string& shader_code,
-                       GLenum shader_type) {
+ShaderError Shader::AddShader(GLuint program,
+                              const std::string& shader_code,
+                              GLenum shader_type) {
   GLuint gl_shader = glCreateShader(shader_type);
 
   const GLchar* code[1] = {shader_code.c_str()};
@@ -286,10 +307,10 @@ bool Shader::AddShader(GLuint program,
   if (!result) {
     glGetShaderInfoLog(gl_shader, 1024, NULL, log.data());
     LOG(ERROR) << __FUNCTION__ << log.data();
-    return false;
+    return {true, log.data()};
   }
   glAttachShader(program, gl_shader);
-  return true;
+  return {false};
 }
 
 bool Shader::GetUniformLocation(GLint& location, const std::string& name) {

@@ -30,4 +30,6 @@ if (MEP_USE_IMGUI)
                 PUBLIC ${IMGUI_DIR}/backends)
 
     target_link_libraries(imgui PUBLIC glfw)
+
+    add_subdirectory(imgui-widget)
 endif (MEP_USE_IMGUI)

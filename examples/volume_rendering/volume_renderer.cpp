@@ -31,9 +31,10 @@ smooth in vec3 tex_coord;				//3D texture coordinates form vertex shader
 								                //interpolated by rasterizer
 
 //uniforms
-uniform sampler3D	volume;		  //volume dataset
-uniform vec3		eye_position;	//camera position
-uniform vec3		step_size;	  //ray step size
+uniform sampler3D	volume;		              //volume dataset
+uniform sampler2D	transfer_function;		  //transfer function
+uniform vec3		eye_position;	            //camera position
+uniform vec3		step_size;	              //ray step size
 
 //constants
 const int MAX_SAMPLES = 200;	//total samples for each ray march step
@@ -51,8 +52,6 @@ void main()
 	for (int i = 0; i < MAX_SAMPLES; i++) {
 		dataPos = dataPos + dirStep;
 
-
-  
     // Ray termination: Test if outside volume ...
     vec3 temp1 = sign(dataPos - texMin);
     vec3 temp2 = sign(texMax - dataPos);
@@ -63,9 +62,9 @@ void main()
 
 		float sample = texture(volume, dataPos).r;
 
-		float prev_alpha = sample - (sample * FragColor.a);
-		FragColor.rgb = prev_alpha * vec3(sample) + FragColor.rgb;
-		FragColor.a += prev_alpha;
+    vec4 src = texture(transfer_function, vec2(sample, 0));
+
+    FragColor = (1.0 - FragColor.a) * src + FragColor;
 
 		if(FragColor.a>0.95)
 			break;
@@ -104,10 +103,6 @@ void VolumeRenderer::OnAttach() {
   auto shader = std::make_unique<Shader>("ray_casting");
   shader->CreateFromString(kVertexShader, kFragmentShader);
   shaders::CacheDefaultUnifroms(*shader);
-  shader->Use();
-  shader->SetUniform("step_size",
-                     glm::vec3(1.0f / 256, 1.0f / 256, 1.0f / 256));
-  shader->Stop();
 
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   Attach(std::move(camera), std::move(shader), std::move(arcball_camera));
@@ -121,11 +116,16 @@ void VolumeRenderer::OnUpdate(float time_delta) {
 
 void VolumeRenderer::OnDraw(RenderTarget& render_target) {
   glEnable(GL_BLEND);
-  transfer_function_texture_.Use(1);
   GetShaders()[0]->Use();
+  transfer_function_texture_.Use(2);
+  // TODO: Add shader observer
+  GetShaders()[0]->SetUniform("step_size",
+                              glm::vec3(1.0f / 256, 1.0f / 256, 1.0f / 256));
+  GetShaders()[0]->SetUniform("transfer_function",
+                              (int)transfer_function_texture_.GetHandler());
   DrawAll(render_target);
-  GetShaders()[0]->Stop();
   transfer_function_texture_.Stop();
+  GetShaders()[0]->Stop();
   glDisable(GL_BLEND);
 }
 
@@ -135,7 +135,8 @@ void VolumeRenderer::OnReceive(const IdentityView& id,
   if (message.contains(vr::kTextureNode) &&
       message.contains(vr::kTextureAction)) {
     if (message[vr::kTextureAction] == vr::kTextureCreate) {
-      transfer_function_texture_.SetHandler(message[vr::kTextureNode]);
+      transfer_function_texture_.SetHandler(
+          static_cast<unsigned int>(message[vr::kTextureNode]));
     } else {
       transfer_function_texture_.Clear();
     }
