@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
   tf::Register();
   auto window = Window::GetInstance({{1280, 720}, "Volume Rendering"});
   window->Init();
-  utils::InitOpenGLogging();
+ // utils::InitOpenGLogging();
   auto engine = utils::CreateEngineWithSceneUI(
       std::move(window), std::make_unique<VolumeRenderer>(),
       SceneUILayer::Create(

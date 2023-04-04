@@ -13,7 +13,8 @@ void ShaderEditorContext::SelectShader(
   if (selected_shader == selected_shader_) {
     return;
   }
-  if (selected_shader < 0 || selected_shader >= shaders.size()) {
+  if (selected_shader < 0 ||
+      selected_shader >= static_cast<int>(shaders.size())) {
     should_draw_fragment = false;
     should_draw_vertex = false;
     shader_ = nullptr;
@@ -63,7 +64,7 @@ void ShaderEditorContext::DrawUtilityMenu() {
     return;
   }
   if (last_error.error_occured) {
-    ImGui::Text(last_error.error_message.c_str());
+    ImGui::Text("%s", last_error.error_message.c_str());
   }
   if (ImGui::Button("Compile")) {
     last_error = shader_->ReCompile(

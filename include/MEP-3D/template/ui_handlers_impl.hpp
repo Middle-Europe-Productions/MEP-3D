@@ -24,7 +24,7 @@ inline int MakeHandlerInfo(int element) {
    public:                                                                     \
     void SetUp() override {}                                                   \
     void TearDown() override {}                                                \
-    virtual void Draw() {}                                                     \
+    virtual void Draw() override {}                                            \
     context_class* GetContext() { return context_; }                           \
     void RegisterContext(context_class* context) {                             \
       DCHECK(context);                                                         \
@@ -51,7 +51,7 @@ inline int MakeHandlerInfo(int element) {
         parser_map[node.first] = std::move(node.second);                       \
       }                                                                        \
       handlers_.clear();                                                       \
-      return std::move(parser_map);                                            \
+      return parser_map;                                                       \
     }                                                                          \
                                                                                \
    private:                                                                    \

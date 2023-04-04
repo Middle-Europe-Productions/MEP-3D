@@ -18,7 +18,6 @@ class PlatformDelegateMacos : public PlatformDelegate {
   MemorySnapshot GetMemorySnapshot() override;
   std::filesystem::path OpenFile(Window* window, FileFilter filter) override {
     DCHECK(window);
-    NSArray* URLs;
     NSOpenPanel* panel = [NSOpenPanel openPanel];
     [panel setCanChooseDirectories:NO];
     [panel setAllowsMultipleSelection:NO];
@@ -44,7 +43,7 @@ class PlatformDelegateMacos : public PlatformDelegate {
     return std::filesystem::path();
   }
 
-  std::filesystem::path SaveFile(Window* window, FileFilter filter) override {
+  std::filesystem::path SaveFile(Window*, FileFilter) override {
     return std::filesystem::path();
   }
 

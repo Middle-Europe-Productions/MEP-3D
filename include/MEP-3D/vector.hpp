@@ -2,6 +2,7 @@
 #define VECTOR_HPP
 
 #include <string.h>
+#include <cmath>
 
 namespace mep {
 template <typename T>

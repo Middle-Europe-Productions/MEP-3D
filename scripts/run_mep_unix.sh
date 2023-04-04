@@ -1,12 +1,28 @@
 #!/bin/bash
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-TARGET_BASE_DIR="$SCRIPT_DIR/../build/examples"
+SCRIPT_DIR=$(cd -- $(dirname "$0") && pwd)
+echo $SCRIPT_DIR
+PROJECT_NAME="Build"
+TARGET_BASE_DIR="$SCRIPT_DIR/../$PROJECT_NAME/examples"
 TARGET=""
 MODE=Debug
 
+project_generator() {
+    cmake -S $SCRIPT_DIR/.. -B $SCRIPT_DIR/../$PROJECT_NAME
+}
+
 while test $# -gt 0; do
     case "$1" in
+        -g|--generate)
+            project_generator;
+            echo "[MEP] Project generated"
+            shift
+        ;;
+        -r|--regenerate)
+            project_generator;
+            echo "[MEP] Project regenerated"
+            shift
+        ;;
         -m|--mode)
             shift
             echo "[MEP] Mode avalible on MSVC"
@@ -24,6 +40,11 @@ while test $# -gt 0; do
         ;;
     esac
 done
+
+if [ "$TARGET" == "" ]; then
+    echo "[MEP] No target specified, exiting."
+    exit 0
+fi
 
 if [ -z "$SCRIPT_DIR/$TARGET" ]; then
     echo "[MEP] Missing target!" 

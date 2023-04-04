@@ -12,6 +12,10 @@ struct CanvasConfig {
   Color line_color = White;
   Color point_color = White;
   float point_radius = 10.0f;
+  /* Point provided in correct order */
+  std::vector<Vec2f> control_points = {{0.0f, 0.0f},
+                                       {0.5f, 1.0f},
+                                       {1.0f, 0.0f}};
 };
 
 class PointCanvas {

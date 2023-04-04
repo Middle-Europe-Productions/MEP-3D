@@ -110,14 +110,14 @@ class SceneUILayerImGUI : public SceneUILayer {
  public:
   SceneUILayerImGUI(
       const std::string& runtime_configuration,
-      std::unordered_map<int, Parser::Callback> handlers = {},
+      mep::Parser::ParserHandlerMap handlers = {},
       Parser::Method handler_attach_method = Parser::Method::FillAndOverride) {
     if (!utils::Contains(handler_attach_method,
                          Parser::Method::DoNotUseDefault)) {
       InitDefaultHandler();
-      // menu_.MergeHandler(handlers, handler_attach_method);
+      menu_.MergeHandler(std::move(handlers), handler_attach_method);
     } else {
-      // menu_.SetHandler(handlers);
+      menu_.SetHandler(std::move(handlers));
     }
     menu_.Parse(runtime_configuration.c_str());
     LOG(INFO) << __FUNCTION__;
@@ -162,13 +162,14 @@ class SceneUILayerImGUI : public SceneUILayer {
 
 std::unique_ptr<SceneUILayer> SceneUILayer::Create(
     const std::string& runtime_configuration,
-    std::unordered_map<int, Parser::Callback> handlers,
+    mep::Parser::ParserHandlerMap handlers,
     Parser::Method handler_attach_method) {
   if (runtime_configuration.empty()) {
-    return std::make_unique<SceneUILayerImGUI>(kDefaultSceneRuntimeConfig,
-                                               handlers, handler_attach_method);
+    return std::make_unique<SceneUILayerImGUI>(
+        kDefaultSceneRuntimeConfig, std::move(handlers), handler_attach_method);
   }
   return std::make_unique<SceneUILayerImGUI>(runtime_configuration.c_str(),
-                                             handlers, handler_attach_method);
+                                             std::move(handlers),
+                                             handler_attach_method);
 }
 }  // namespace mep

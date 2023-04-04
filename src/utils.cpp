@@ -79,13 +79,13 @@ bool InitGlogFlag(const std::string& l_val, const std::string& r_val) {
   return false;
 }
 
-void GLAPIENTRY MessageCallback(GLenum source,
+void GLAPIENTRY MessageCallback(GLenum,
                                 GLenum type,
-                                GLuint id,
-                                GLenum severity,
-                                GLsizei length,
+                                GLuint,
+                                GLenum,
+                                GLsizei,
                                 const GLchar* message,
-                                const void* userParam) {
+                                const void*) {
   if (type == GL_DEBUG_TYPE_ERROR) {
     LOG(ERROR) << "[OpenGL] " << message;
   } else {
@@ -183,7 +183,7 @@ std::string utils::LoadFromFile(const std::string& file_path) {
 std::string utils::RandomString(std::size_t size) {
   std::string output;
   output.reserve(size);
-  for (int i = 0; i < size; ++i) {
+  for (std::size_t i = 0; i < size; ++i) {
     output += kAlphanum[rand() % (sizeof(kAlphanum) - 1)];
   }
   return output;

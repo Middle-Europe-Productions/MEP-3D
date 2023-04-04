@@ -6,7 +6,6 @@
 #include <MEP-3D/scene.hpp>
 #include <MEP-3D/template/ui_element.hpp>
 
-
 namespace mep {
 class SceneUILayer : public Layer, public SceneObserver {
  public:
@@ -15,7 +14,7 @@ class SceneUILayer : public Layer, public SceneObserver {
   Scene* GetScenePtr();
   static std::unique_ptr<SceneUILayer> Create(
       const std::string& runtime_configuration = "",
-      std::unordered_map<int, Parser::Callback> handlers = {},
+      mep::Parser::ParserHandlerMap handlers = {},
       Parser::Method handler_attach_method = Parser::Method::FillAndOverride);
   virtual ~SceneUILayer();
 

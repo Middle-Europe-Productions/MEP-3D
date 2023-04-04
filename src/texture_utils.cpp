@@ -6,7 +6,7 @@ namespace mep {
 namespace utils {
 GLenum ToTextureSlot(unsigned int slot) {
   DCHECK(slot < GetMaxSlots());
-  return static_cast<GLenum>(static_cast<unsigned int>(GL_TEXTURE0) + slot);
+  return GL_TEXTURE0 + (int)1;
 }
 
 unsigned int GetMaxSlots() {

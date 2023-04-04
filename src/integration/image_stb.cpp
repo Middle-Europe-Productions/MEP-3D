@@ -73,7 +73,9 @@ Uint8& Image::operator[](const Vec2i& index) {
 }
 
 const Uint8& Image::operator[](const Vec2i& index) const {
-  return (*this)[index];
+  std::size_t index_norm = index.x_ + index.x_ * index.y_;
+  DCHECK(index_norm <= image_data_.size());
+  return image_data_[index_norm];
 }
 
 Image::Type Image::GetType() const {

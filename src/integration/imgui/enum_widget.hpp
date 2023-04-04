@@ -21,9 +21,10 @@ class EnumWidget {
     Init();
   }
   void Draw() {
-    DCHECK(selected_ < nodes_.size() && selected_ >= -1);
+    DCHECK(selected_ < nodes_.size() &&
+           selected_ != std::numeric_limits<std::size_t>::max());
     if (ImGui::BeginCombo(id_name_.c_str(), nodes_[selected_].c_str())) {
-      for (int n = 0; n < nodes_.size(); n++)
+      for (std::size_t n = 0; n < nodes_.size(); n++)
         if (ImGui::Selectable(nodes_[n].c_str(), n == selected_)) {
           selected_ = n;
         }
@@ -43,9 +44,9 @@ class EnumWidget {
       nodes_.push_back(mep::ToString(start));
     }
   }
-  int selected_;
   int start_;
   int finish_;
+  std::size_t selected_;
   std::size_t size_;
   const std::string id_name_;
   std::vector<std::string> nodes_;

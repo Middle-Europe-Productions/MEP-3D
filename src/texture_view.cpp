@@ -9,7 +9,8 @@ TextureView::TextureView() : handler_(0) {}
 
 TextureView::TextureView(unsigned int handler) : handler_(handler) {}
 
-void TextureView::Use(unsigned int slot) {
+void TextureView::Use(unsigned int) {
+  // TODO: Fix the problem with texture slots
   glActiveTexture(GL_TEXTURE1);
   glBindTexture(GL_TEXTURE_2D, handler_);
 }

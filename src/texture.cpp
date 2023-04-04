@@ -24,13 +24,14 @@ bool Texture::Create() {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  return true;
 }
 
 bool Texture::Create(Color color) {
   if (!Create()) {
     return false;
   }
-  Update(color);
+  return Update(color);
 }
 
 bool Texture::Update(Color color) {
@@ -57,7 +58,7 @@ bool Texture::Create(const Image& image) {
   if (!Create()) {
     return false;
   }
-  Update(image);
+  return Update(image);
 }
 
 bool Texture::Update(const Image& image) {

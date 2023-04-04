@@ -63,9 +63,7 @@ bool PointCanvas::DrawAndNotify() {
 }
 
 void PointCanvas::Reset() {
-  control_points_.clear();
-  control_points_.push_back({0.0, 0.5});
-  control_points_.push_back({1.0, 0.5});
+  control_points_ = config_.control_points;
   selected_point_ = control_points_.end();
 }
 

@@ -254,7 +254,7 @@ set_target_properties(${MEP_LIBRARY_NAME} PROPERTIES FOLDER "MEP-3D")
 
 target_compile_options(${MEP_LIBRARY_NAME} PRIVATE
   $<$<CXX_COMPILER_ID:MSVC>:/W4>
-  $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic>
+  $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror -Wno-deprecated-declarations>
 )
 
 target_include_directories(${MEP_LIBRARY_NAME} PUBLIC ${INCLUDE_DIRECTORIES})
