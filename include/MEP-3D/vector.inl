@@ -108,6 +108,14 @@ constexpr T Vec3<T>::Length() const {
 }
 
 template <typename T>
+constexpr T Vec3<T>::Max() const {
+  return (std::max)({x_, y_, z_});
+}
+
+template <typename T>
+constexpr T Vec3<T>::Min() const {}
+
+template <typename T>
 inline std::ostream& operator<<(std::ostream& out, const Vec2<T>& in) {
   out << "\"Vec2\": { \"x\": " << in.x_ << ", \"y\":" << in.y_ << "}";
   return out;

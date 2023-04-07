@@ -30,6 +30,9 @@ class Window : public ObserverList<WindowObserver>, public RenderTarget {
   virtual Vec2i GetBufferSize() = 0;
   virtual float GetAspectRation() = 0;
   virtual void* GetNativeWindow() = 0;
+  virtual void UpdateWindowName(const std::string& name) = 0;
+  virtual void UpdateVSync(bool enabled) = 0;
+  virtual const WindowConfig& GetConfig() const = 0;
   virtual ~Window() = default;
   static std::unique_ptr<Window> GetInstance(WindowConfig config);
 };

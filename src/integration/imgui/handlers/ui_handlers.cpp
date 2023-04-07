@@ -151,7 +151,25 @@ UI_HANDLER(UI::Element, DrawCamera, SceneUILayer) {
   }
 }
 
-UI_HANDLER(UI::Element, DrawWindow, SceneUILayer) {
+struct WindowContext : public UI_HANDLER_BASE(SceneUILayer) {
+  void SetUp(mep::Scene* scene) override {
+    LOG(INFO) << __func__ << ", " << __LINE__;
+    const auto& config = scene->GetEngine()->GetWindow()->GetConfig();
+    vsync_ = config.use_vsync;
+  }
+  void DrawWindowOptions(mep::WindowPtr& window) {
+    const auto& config = window->GetConfig();
+    ImGui::Separator();
+    ImGui::Text("Settings");
+    ImGui::Checkbox("VSync", &vsync_);
+    if (vsync_ != config.use_vsync) {
+      window->UpdateVSync(vsync_);
+    }
+  }
+  bool vsync_;
+};
+
+UI_HANDLER_D(UI::Element, DrawWindow, SceneUILayer, WindowContext) {
   auto* context = GetContext();
   DCHECK(context);
   DCHECK(context->GetEngine());
@@ -159,6 +177,7 @@ UI_HANDLER(UI::Element, DrawWindow, SceneUILayer) {
   DCHECK(context->GetScenePtr());
   UI::Drawer::DrawWindowInterface(*context->GetEngine()->GetWindow(),
                                   *context->GetScenePtr());
+  DrawWindowOptions(context->GetEngine()->GetWindow());
 }
 
 UI_HANDLER(UI::Element, None, SceneUILayer) {

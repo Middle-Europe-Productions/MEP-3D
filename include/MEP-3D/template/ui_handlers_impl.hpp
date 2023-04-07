@@ -22,7 +22,7 @@ inline int MakeHandlerInfo(int element) {
 #define UI_CONTEXT(context_class)                                              \
   class UI_HANDLER_BASE(context_class) : public ParserHandler {                \
    public:                                                                     \
-    void SetUp() override {}                                                   \
+    void SetUp(mep::Scene*) override {}                                        \
     void TearDown() override {}                                                \
     virtual void Draw() override {}                                            \
     context_class* GetContext() { return context_; }                           \

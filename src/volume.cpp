@@ -7,33 +7,47 @@ namespace mep {
 namespace {
 constexpr int kChunkSize = 1024;
 constexpr long long kKiloByte = 1024;
-// unit cube vertices
-const std::vector<float> vertices = {-0.5f, -0.5f, -0.5f, 0.5f,  -0.5f, -0.5f,
-                                     0.5f,  0.5f,  -0.5f, -0.5f, 0.5f,  -0.5f,
-                                     -0.5f, -0.5f, 0.5f,  0.5f,  -0.5f, 0.5f,
-                                     0.5f,  0.5f,  0.5f,  -0.5f, 0.5f,  0.5f};
 
 // unit cube indices
 const std::vector<unsigned int> cubeIndices = {
     0, 5, 4, 5, 0, 1, 3, 7, 6, 3, 6, 2, 7, 4, 6, 6, 4, 5,
     2, 1, 3, 3, 1, 0, 3, 0, 7, 7, 0, 4, 6, 5, 2, 2, 5, 1};
+
+Vec3f BringToBase(const Vec3i& value) {
+  return Vec3f(static_cast<float>(value.x_) / static_cast<float>(value.Max()),
+               static_cast<float>(value.z_) / static_cast<float>(value.Max()),
+               static_cast<float>(value.y_) / static_cast<float>(value.Max()));
+}
 };  // namespace
 
-Volume::Volume() : Identity(kVolume) {
+Volume::Volume(Vec3i size) : Identity(kVolume), volume_size_(size) {
   active_.store(true, std::memory_order_release);
-  Mesh::Init(vertices, cubeIndices, true);
+  auto base = BringToBase(size);
+  const std::vector<float> vertices2 = {
+      -base.x_ / 2, -base.y_ / 2, -base.z_ / 2, base.x_ / 2,  -base.y_ / 2,
+      -base.z_ / 2, base.x_ / 2,  base.y_ / 2,  -base.z_ / 2, -base.x_ / 2,
+      base.y_ / 2,  -base.z_ / 2, -base.x_ / 2, -base.y_ / 2, base.z_ / 2,
+      base.x_ / 2,  -base.y_ / 2, base.z_ / 2,  base.x_ / 2,  base.y_ / 2,
+      base.z_ / 2,  -base.x_ / 2, base.y_ / 2,  base.z_ / 2};
+  Mesh::Init(vertices2, cubeIndices, true);
 }
 
-Volume::Volume(std::string_view name) : Identity(kVolume, name) {
+Volume::Volume(Vec3i size, std::string_view name)
+    : Identity(kVolume, name), volume_size_(size) {
   active_.store(true, std::memory_order_release);
-  Mesh::Init(vertices, cubeIndices, true);
+  auto base = BringToBase(size);
+  const std::vector<float> vertices2 = {
+      -base.x_ / 2, -base.y_ / 2, -base.z_ / 2, base.x_ / 2,  -base.y_ / 2,
+      -base.z_ / 2, base.x_ / 2,  base.y_ / 2,  -base.z_ / 2, -base.x_ / 2,
+      base.y_ / 2,  -base.z_ / 2, -base.x_ / 2, -base.y_ / 2, base.z_ / 2,
+      base.x_ / 2,  -base.y_ / 2, base.z_ / 2,  base.x_ / 2,  base.y_ / 2,
+      base.z_ / 2,  -base.x_ / 2, base.y_ / 2,  base.z_ / 2};
+  Mesh::Init(vertices2, cubeIndices, true);
 }
 
 void Volume::LoadFromFile(std::filesystem::path file_path,
-                          Vec3i size,
                           Texture3D::Type type) {
   type_ = type;
-  volume_size_ = size;
   UpdateStatus(Status::Waiting);
   ThreadPool::PostTaskWithCallback(
       Executors::Resource,

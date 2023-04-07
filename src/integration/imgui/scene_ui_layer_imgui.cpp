@@ -125,7 +125,7 @@ class SceneUILayerImGUI : public SceneUILayer {
   void OnAttach() override {
     ImGui::ApplyMepSceneStyle();
     ImGui::ApplyMepStyle();
-    menu_.SetUpHandlers();
+    menu_.SetUpHandlers(GetScenePtr());
   }
   void OnDetach() override { menu_.TearDownHandlers(); }
   void OnUpdate(float) override {}

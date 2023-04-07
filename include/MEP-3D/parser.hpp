@@ -35,7 +35,7 @@ class Parser {
   virtual void Draw();
   virtual void Parse(const std::string& json) = 0;
   virtual void Clear();
-  void SetUpHandlers();
+  void SetUpHandlers(mep::Scene* scene);
   void TearDownHandlers();
   Element ElementFromString(const std::string& element_name);
   virtual ~Parser();

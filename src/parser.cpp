@@ -75,11 +75,11 @@ void Parser::Clear() {
   }
 }
 
-void Parser::SetUpHandlers() {
+void Parser::SetUpHandlers(mep::Scene* scene) {
   VLOG(3) << __func__ << ", number of handlers: " << handler_map_.size();
   for (auto& node : handler_map_) {
     DCHECK(node.second);
-    node.second->SetUp();
+    node.second->SetUp(scene);
   }
 }
 

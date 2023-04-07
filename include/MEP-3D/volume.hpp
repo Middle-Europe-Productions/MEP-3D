@@ -17,10 +17,9 @@ class Volume : public Identity,
                public ResourceBase,
                public AsyncProgress {
  public:
-  Volume();
-  Volume(std::string_view name);
+  Volume(Vec3i size);
+  Volume(Vec3i size, std::string_view name);
   void LoadFromFile(std::filesystem::path file_path,
-                    Vec3i size,
                     Texture3D::Type type = Texture3D::Type::BYTE_8);
   void Draw(RenderTarget& render_target) override;
   Uint8* GetData();

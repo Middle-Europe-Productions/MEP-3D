@@ -319,6 +319,10 @@ bool Drawer::DrawVolume(Volume& volume) {
   if (status == Status::NotImplemented) {
     ImGui::Text("Volume module is not implemented!");
   } else {
+    ImGui::Text("Draw ");
+    ImGui::SameLine();
+    std::string id = "##should_render_model" + std::to_string(volume.GetId());
+    ImGui::Checkbox(id.c_str(), &volume.GetShouldDraw());
     ImGui::Text("Volume Type: %s", ToString(volume.GetType()).c_str());
     ImGui::Text("Volume Status: %s", ToString(status).c_str());
     ImGui::Text("Volume Dimentions: %i x %i x %i", volume.GetDimensions().x_,

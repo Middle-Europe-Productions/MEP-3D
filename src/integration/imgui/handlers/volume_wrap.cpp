@@ -20,8 +20,8 @@ VolumeWrap::VolumeWrap()
 
 template <typename Context>
 std::unique_ptr<Volume> VolumeWrap::Create(Context* context) {
-  std::unique_ptr<Volume> volume = std::make_unique<Volume>(display_name);
-  volume->LoadFromFile(buffer_path, size, enum_widget.GetCurrent());
+  std::unique_ptr<Volume> volume = std::make_unique<Volume>(size, display_name);
+  volume->LoadFromFile(buffer_path, enum_widget.GetCurrent());
   if (selected_shader_ != -1) {
     volume->Bind(context->GetScenePtr()->GetShaders()[selected_shader_].get());
   }

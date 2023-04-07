@@ -319,6 +319,18 @@ class GLFWWindowController : public Window {
 
   void* GetNativeWindow() override { return main_window_; }
 
+  void UpdateWindowName(const std::string& name) override {
+    glfwSetWindowTitle(main_window_, name.c_str());
+    config_.name = name;
+  }
+
+  void UpdateVSync(bool enabled) override {
+    glfwSwapInterval(enabled);
+    config_.use_vsync = enabled;
+  }
+
+  const WindowConfig& GetConfig() const override { return config_; }
+
   ~GLFWWindowController() override {
     LOG(INFO) << "Destroying window!";
 #ifdef MEP_ENGINE_USE_IMGUI

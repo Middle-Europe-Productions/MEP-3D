@@ -22,7 +22,7 @@ class EnumWidget {
   }
   void Draw() {
     DCHECK(selected_ < nodes_.size() &&
-           selected_ != std::numeric_limits<std::size_t>::max());
+           selected_ != (std::numeric_limits<std::size_t>::max)());
     if (ImGui::BeginCombo(id_name_.c_str(), nodes_[selected_].c_str())) {
       for (std::size_t n = 0; n < nodes_.size(); n++)
         if (ImGui::Selectable(nodes_[n].c_str(), n == selected_)) {

@@ -1,8 +1,7 @@
 #ifndef VECTOR_HPP
 #define VECTOR_HPP
 
-#include <string.h>
-#include <cmath>
+#include <string>
 
 namespace mep {
 template <typename T>
@@ -36,6 +35,8 @@ struct Vec3 {
   constexpr Vec3<T>& operator/(const Vec3& x);
   constexpr bool operator==(const Vec3& x) const;
   constexpr T Length() const;
+  constexpr T Max() const;
+  constexpr T Min() const;
   T x_;
   T y_;
   T z_;

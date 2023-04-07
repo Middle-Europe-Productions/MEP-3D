@@ -225,7 +225,7 @@ class TransferFunctionController : public mep::UI_HANDLER_BASE(SceneUILayer),
         mep::IdentityView(std::nullopt, vr::kVolumeRenderer, std::nullopt),
         message));
   }
-  void SetUp() override {
+  void SetUp(mep::Scene* scene) override {
     LoadFromMemory(kParaviewCoolWarm, sizeof(kParaviewCoolWarm),
                    "Paraview Cool Warm");
     LoadFromMemory(kIceFire, sizeof(kIceFire), "Ice Fire");
