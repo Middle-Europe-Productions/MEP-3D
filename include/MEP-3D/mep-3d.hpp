@@ -34,6 +34,7 @@
 #include <MEP-3D/utils.hpp>
 #include <MEP-3D/utils_engine.hpp>
 #include <MEP-3D/vector.hpp>
+#include <MEP-3D/version.hpp>
 #include <MEP-3D/volume.hpp>
 #include <MEP-3D/window.hpp>
 #include <MEP-3D/window_observer.hpp>

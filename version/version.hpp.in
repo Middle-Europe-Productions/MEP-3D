@@ -1,0 +1,8 @@
+#ifndef MEP_VERSION_H
+#define MEP_VERSION_H
+#define MEP_MAJOR @major@
+#define MEP_MINOR @minor@
+#define MEP_PATCH @patch@
+#define MEP_SUFFIX "@suffix@"
+#define MEP_FULL_VERSION "@major@.@minor@.@patch@.@suffix@"
+#endif /* FOOBAR_VERSION_H_ */

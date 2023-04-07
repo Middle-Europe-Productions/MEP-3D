@@ -26,6 +26,7 @@ mep_set_option(MEP_BUILD_EXAMPLES TRUE BOOL "TRUE to include MEP examples")
 
 add_subdirectory(third-party/)
 add_subdirectory(src/)
+add_subdirectory(version/)
 if(MEP_BUILD_EXAMPLES)
     add_subdirectory(examples/)
 endif()
