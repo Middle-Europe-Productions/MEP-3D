@@ -25,12 +25,16 @@ void Texture3D::Create(const Uint8* data, Vec3i size, Type type) {
 
   VLOG(2) << "Transferring texture to gpu " << ToString();
   if (type == Type::BYTE_8) {
+    VLOG(3) << __func__ << ", "
+            << "BYTE8";
     glTexImage3D(GL_TEXTURE_3D, 0, GL_R8, size.x_, size.y_, size.z_, 0, GL_RED,
                  GL_UNSIGNED_BYTE, data);
 
   } else {
+    VLOG(3) << __func__ << ", "
+            << "BYTE16";
     glTexImage3D(GL_TEXTURE_3D, 0, GL_R16, size.x_, size.y_, size.z_, 0, GL_RED,
-                 GL_UNSIGNED_BYTE, data);
+                 GL_UNSIGNED_SHORT, data);
   }
   glBindTexture(GL_TEXTURE_3D, 0);
 }
