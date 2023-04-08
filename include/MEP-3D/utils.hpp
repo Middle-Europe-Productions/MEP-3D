@@ -20,6 +20,7 @@ glm::vec3 AxisToGlm(Axis axis);
 float DegToRadians(float degress);
 float RadiansToDeg(float radians);
 std::string LoadFromFile(const std::string& file_path);
+bool SaveToFile(const std::string& file_path, const std::string& content);
 std::string RandomString(std::size_t size);
 template <typename Type>
 inline Type Clamp(Type value, Type upper, Type lower) {

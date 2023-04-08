@@ -180,6 +180,22 @@ std::string utils::LoadFromFile(const std::string& file_path) {
                      std::istreambuf_iterator<char>());
 }
 
+bool utils::SaveToFile(const std::string& file_path,
+                       const std::string& content) {
+  if (file_path == "") {
+    return false;
+  }
+  std::ofstream out;
+  out.open(file_path, std::ofstream::out | std::ofstream::trunc);
+  if (!out.is_open()) {
+    LOG(ERROR) << "Unable to open file " << file_path;
+    return false;
+  }
+  out << content;
+  out.close();
+  return true;
+}
+
 std::string utils::RandomString(std::size_t size) {
   std::string output;
   output.reserve(size);

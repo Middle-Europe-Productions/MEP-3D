@@ -46,14 +46,30 @@ void ShaderEditorContext::DrawShader() {
     ImGui::Text("Please select shader");
     return;
   }
-  ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
+  ImGuiTabBarFlags tab_bar_flags =
+      ImGuiTabBarFlags_FittingPolicyScroll | ImGuiTabBarFlags_Reorderable;
   if (ImGui::BeginTabBar("Type", tab_bar_flags)) {
-    if (should_draw_fragment && ImGui::BeginTabItem("Vertex")) {
+    if (should_draw_fragment &&
+        ImGui::BeginTabItem("Vertex", nullptr,
+                            vertex_changed_ ? ImGuiTabItemFlags_UnsavedDocument
+                                            : ImGuiTabItemFlags_None)) {
+      if (eval_vertex_change && editor_[0].IsTextChanged()) {
+        vertex_changed_ = true;
+      }
       editor_[0].Render("Vertex");
+      eval_vertex_change = true;
       ImGui::EndTabItem();
     }
-    if (should_draw_vertex && ImGui::BeginTabItem("Fragment")) {
+    if (should_draw_vertex &&
+        ImGui::BeginTabItem("Fragment", nullptr,
+                            fragment_changed_
+                                ? ImGuiTabItemFlags_UnsavedDocument
+                                : ImGuiTabItemFlags_None)) {
+      if (eval_fragment_change && editor_[1].IsTextChanged()) {
+        fragment_changed_ = true;
+      }
       editor_[1].Render("Fragment");
+      eval_fragment_change = true;
       ImGui::EndTabItem();
     }
     ImGui::EndTabBar();
@@ -67,25 +83,57 @@ void ShaderEditorContext::DrawUtilityMenu() {
     ImGui::Text("%s", last_error.error_message.c_str());
   }
   if (ImGui::Button("Compile")) {
-    last_error = shader_->ReCompile(
-        editor_[0].GetText(), should_draw_fragment ? editor_[1].GetText() : "");
-    if (last_error.error_occured) {
-      if (last_error.fragment_error != "") {
-        VLOG(3) << "Error occured in fragment shader";
-        TranslateErrorToMap(fragment_markers, last_error.fragment_error);
-      }
-      if (last_error.vertex_error != "") {
-        VLOG(3) << "Error occured in vertex shader";
-        TranslateErrorToMap(vertex_markers, last_error.vertex_error);
-      }
-    } else {
-      fragment_markers.clear();
-      vertex_markers.clear();
+    if (!Compile()) {
+      LOG(WARNING) << "Compilation failed!";
     }
-    UpdateMargers();
+  }
+  const auto& status = shader_->GetShaderStatus();
+  if (status.created_from_file) {
+    ImGui::SameLine();
+    if (ImGui::Button("Save")) {
+      if (vertex_changed_ || fragment_changed_) {
+        if (!Compile()) {
+          LOG(ERROR) << "Unable to save uncompiled shader";
+          return;
+        }
+      }
+      if (vertex_changed_) {
+        LOG(INFO) << "Saving vertex shader";
+        utils::SaveToFile(status.vertex_path.value_or(""),
+                          status.vertex_code.value_or(""));
+        vertex_changed_ = false;
+      }
+      if (fragment_changed_) {
+        LOG(INFO) << "Saving fragment shader";
+        utils::SaveToFile(status.fragment_path.value_or(""),
+                          status.fragment_code.value_or(""));
+        fragment_changed_ = false;
+      }
+    }
   }
 }
-void ShaderEditorContext::UpdateMargers() {
+
+bool ShaderEditorContext::Compile() {
+  last_error = shader_->ReCompile(
+      editor_[0].GetText(), should_draw_fragment ? editor_[1].GetText() : "");
+  if (last_error.error_occured) {
+    if (last_error.fragment_error != "") {
+      VLOG(3) << "Error occured in fragment shader";
+      TranslateErrorToMap(fragment_markers, last_error.fragment_error);
+    }
+    if (last_error.vertex_error != "") {
+      VLOG(3) << "Error occured in vertex shader";
+      TranslateErrorToMap(vertex_markers, last_error.vertex_error);
+    }
+  } else {
+    fragment_markers.clear();
+    vertex_markers.clear();
+  }
+  UpdateMarkers();
+  return !last_error.error_occured;
+}
+
+void ShaderEditorContext::UpdateMarkers() {
   editor_[0].SetErrorMarkers(vertex_markers);
   editor_[1].SetErrorMarkers(fragment_markers);
 }

@@ -12,14 +12,20 @@ class ShaderEditorContext : public UI_HANDLER_BASE(SceneUILayer) {
                     std::vector<std::unique_ptr<Shader>>& shaders);
   void DrawShader();
   void DrawUtilityMenu();
-  void UpdateMargers();
+  void UpdateMarkers();
   void TranslateErrorToMap(TextEditor::ErrorMarkers& error_marker,
                            const std::string& message);
+  bool Compile();
 
  protected:
   int selected_shader_ = -1;
   bool should_draw_vertex = false;
   bool should_draw_fragment = false;
+
+  bool eval_vertex_change = false;
+  bool eval_fragment_change = false;
+  bool vertex_changed_ = false;
+  bool fragment_changed_ = false;
   // TextEditor
   TextEditor editor_[2];
   TextEditor::ErrorMarkers fragment_markers;
