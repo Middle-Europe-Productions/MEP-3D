@@ -185,6 +185,13 @@ class TransferFunctionController : public mep::UI_HANDLER_BASE(SceneUILayer),
       UpdateColorMap();
     }
   }
+  std::vector<mep::Point>::const_iterator MoveToNextAval(
+      std::vector<mep::Point>::const_iterator iter) {
+    do {
+      iter++;
+    } while (!iter->status);
+    return iter;
+  }
 
   void UpdateColorMap() {
     auto points_it = canvas_.GetPoints().begin();
@@ -193,15 +200,17 @@ class TransferFunctionController : public mep::UI_HANDLER_BASE(SceneUILayer),
     DCHECK(canvas_.GetPoints().size() >= 2);
     for (std::size_t i = 0; i < pixels_count; i++) {
       float x = static_cast<float>(i) / pixels_count;
-      auto points_it_upper = points_it + 1;
-      if (x > points_it_upper->x_) {
-        ++points_it;
-        ++points_it_upper;
+      auto points_it_upper = MoveToNextAval(points_it);
+      if (x > points_it_upper->position.x_) {
+        points_it = MoveToNextAval(points_it);
+        points_it_upper = points_it;
+        points_it_upper = MoveToNextAval(points_it_upper);
       }
       float alpha_value =
-          points_it->y_ + (points_it_upper->y_ - points_it->y_) /
-                              (points_it_upper->x_ - points_it->x_) *
-                              (x - points_it->x_);
+          points_it->position.y_ +
+          (points_it_upper->position.y_ - points_it->position.y_) /
+              (points_it_upper->position.x_ - points_it->position.x_) *
+              (x - points_it->position.x_);
       image[{(int)i * 4 + 3, 0}] = static_cast<Uint8>(alpha_value * 255.f);
     }
     ChangeImage(selected_color_map_);

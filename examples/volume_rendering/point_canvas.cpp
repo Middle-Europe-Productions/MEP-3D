@@ -17,8 +17,8 @@ Vec2f GetActualPosition(Vec2f pos, Vec2f view, Vec2f offset) {
   return (pos * view) + offset;
 }
 
-bool CompareFunction(const Vec2f& x, const Vec2f& y) {
-  return x.x_ < y.x_;
+bool CompareFunction(const Point& x, const Point& y) {
+  return x.position.x_ < y.position.x_;
 }
 
 };  // namespace
@@ -51,14 +51,17 @@ bool PointCanvas::DrawAndNotify() {
   std::vector<ImVec2> transformed_points_position_;
   for (const auto& pt : control_points_) {
     ImVec2 actual_position =
-        ToImVec2(GetActualPosition(pt, view_scale, view_offset));
+        ToImVec2(GetActualPosition(pt.position, view_scale, view_offset));
     transformed_points_position_.push_back(actual_position);
-    draw_list->AddCircleFilled(actual_position, config_.point_radius,
-                               config_.point_color.ABGR());
   }
   draw_list->AddPolyline(transformed_points_position_.data(),
                          (int)transformed_points_position_.size(),
                          config_.line_color, false, 2.f);
+  std::size_t pos = 0;
+  for (const auto& pt : control_points_) {
+    draw_list->AddCircleFilled(transformed_points_position_[pos++],
+                               config_.point_radius, pt.color.ABGR());
+  }
   draw_list->PopClipRect();
   return points_changed;
 }
@@ -68,7 +71,7 @@ void PointCanvas::Reset() {
   selected_point_ = control_points_.end();
 }
 
-const std::vector<mep::Vec2f>& PointCanvas::GetPoints() const {
+const std::vector<Point>& PointCanvas::GetPoints() const {
   return control_points_;
 }
 
@@ -87,8 +90,8 @@ bool PointCanvas::EvaluateItemDragged(const Vec2f& view, const Vec2f& offset) {
   Vec2f normalized_mouse_pos = utils::Normalize(clipped_position, view, offset);
   const auto element_finder = [&view, &offset, &clipped_position,
                                radius =
-                                   config_.point_radius](const Vec2f& point) {
-    Vec2f actual_position = GetActualPosition(point, view, offset);
+                                   config_.point_radius](const Point& point) {
+    Vec2f actual_position = GetActualPosition(point.position, view, offset);
     float distance = (actual_position - clipped_position).Length();
     return radius >= distance;
   };
@@ -97,31 +100,37 @@ bool PointCanvas::EvaluateItemDragged(const Vec2f& view, const Vec2f& offset) {
       if (selected_point_ != control_points_.end()) {
         if ((selected_point_ == control_points_.begin() ||
              selected_point_ == control_points_.end() - 1) &&
-            selected_point_->y_ == normalized_mouse_pos.y_) {
+            selected_point_->position.y_ == normalized_mouse_pos.y_) {
           return false;
         }
-        if (*selected_point_ == normalized_mouse_pos) {
+        if (selected_point_->position == normalized_mouse_pos) {
           return false;
         }
-        *selected_point_ = normalized_mouse_pos;
+        if (!selected_point_->status) {
+          selected_point_->status = true;
+          selected_point_->color = config_.point_color;
+        }
+        selected_point_->position = normalized_mouse_pos;
 
         if (selected_point_ + 1 != control_points_.end() &&
-            selected_point_->x_ == (selected_point_ + 1)->x_) {
+            selected_point_->position.x_ ==
+                (selected_point_ + 1)->position.x_) {
           control_points_.erase(selected_point_ + 1);
           selected_point_ = std::find_if(control_points_.begin(),
                                          control_points_.end(), element_finder);
         }
         if (selected_point_ != control_points_.begin() &&
-            selected_point_->x_ == (selected_point_ - 1)->x_) {
+            selected_point_->position.x_ ==
+                (selected_point_ - 1)->position.x_) {
           control_points_.erase(selected_point_ - 1);
           selected_point_ = std::find_if(control_points_.begin(),
                                          control_points_.end(), element_finder);
         }
 
         if (selected_point_ == control_points_.begin()) {
-          selected_point_->x_ = 0.0;
+          selected_point_->position.x_ = 0.0;
         } else if (selected_point_ == control_points_.end() - 1) {
-          selected_point_->x_ = 1.0;
+          selected_point_->position.x_ = 1.0;
         }
         SortPoints();
         return true;
@@ -136,7 +145,8 @@ bool PointCanvas::EvaluateItemDragged(const Vec2f& view, const Vec2f& offset) {
                                    control_points_.end(), element_finder);
     // we add the element on right click
     if (selected_point_ == control_points_.end()) {
-      control_points_.push_back(normalized_mouse_pos);
+      control_points_.push_back(
+          {normalized_mouse_pos, true, config_.point_color});
       selected_point_ = control_points_.end();
       SortPoints();
       return true;
@@ -145,7 +155,12 @@ bool PointCanvas::EvaluateItemDragged(const Vec2f& view, const Vec2f& offset) {
         selected_point_ == control_points_.end() - 1) {
       return false;
     }
-    control_points_.erase(selected_point_);
+    if (!selected_point_->status) {
+      control_points_.erase(selected_point_);
+    } else {
+      selected_point_->status = false;
+      selected_point_->color = config_.point_color_on_disabled;
+    }
     selected_point_ = control_points_.end();
     SortPoints();
     return true;

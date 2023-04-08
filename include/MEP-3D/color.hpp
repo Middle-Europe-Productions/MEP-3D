@@ -36,8 +36,10 @@ struct Color {
 
 constexpr Color Black = Color(0, 0, 0, 255);
 constexpr Color White = Color(255, 255, 255, 255);
-constexpr Color Blue = Color(0, 255, 0, 255);
-constexpr Color Green = Color(0, 0, 255, 255);
+constexpr Color Green = Color(0, 255, 0, 255);
+constexpr Color Blue = Color(0, 0, 255, 255);
+constexpr Color Grey = Color(128, 128, 128, 255);
+constexpr Color DarkGrey = Color(64, 64, 64, 255);
 constexpr Color Red = Color(255, 0, 0, 255);
 
 inline std::ostream& operator<<(std::ostream& out, const Color& color) {
