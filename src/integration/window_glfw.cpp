@@ -427,16 +427,18 @@ void GLFWWindowController::OnWindowResizeEventHandler(GLFWwindow* window,
   glfwGetFramebufferSize(master_window->main_window_,
                          &master_window->buffer_size.x_,
                          &master_window->buffer_size.y_);
-  LOG(INFO) << __FUNCTION__
-            << ", buffer size changed [x: " << master_window->buffer_size.x_
-            << ", y: " << master_window->buffer_size.y_ << "]";
+  VLOG(5) << __FUNCTION__
+          << ", buffer size changed [x: " << master_window->buffer_size.x_
+          << ", y: " << master_window->buffer_size.y_ << "]";
   glViewport(0, 0, master_window->buffer_size.x_,
              master_window->buffer_size.y_);
-  if (!master_window->GetView()) {
-    LOG(ERROR) << "You did not bind view to window";
-  } else {
-    master_window->GetView()->UpdateAspectRation(
-        master_window->GetAspectRation());
+  if (width > 0 && height > 0) {
+    if (!master_window->GetView()) {
+      LOG(ERROR) << "You did not bind view to window";
+    } else {
+      master_window->GetView()->UpdateAspectRation(
+          master_window->GetAspectRation());
+    }
   }
   Vec2i size{width, height};
   master_window->ForAllObservers(
