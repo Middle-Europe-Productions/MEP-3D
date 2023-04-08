@@ -140,6 +140,17 @@ bool PointCanvas::EvaluateItemDragged(const Vec2f& view, const Vec2f& offset) {
       }
     }
   }
+  if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Delete))) {
+    selected_point_ = std::find_if(control_points_.begin(),
+                                   control_points_.end(), element_finder);
+    if (selected_point_ == control_points_.begin() ||
+        selected_point_ == control_points_.end() - 1) {
+      return false;
+    }
+    control_points_.erase(selected_point_);
+    selected_point_ = control_points_.end();
+    SortPoints();
+  }
   if (right_released) {
     selected_point_ = std::find_if(control_points_.begin(),
                                    control_points_.end(), element_finder);
@@ -156,13 +167,12 @@ bool PointCanvas::EvaluateItemDragged(const Vec2f& view, const Vec2f& offset) {
       return false;
     }
     if (!selected_point_->status) {
-      control_points_.erase(selected_point_);
+      selected_point_->status = true;
+      selected_point_->color = config_.point_color;
     } else {
       selected_point_->status = false;
       selected_point_->color = config_.point_color_on_disabled;
     }
-    selected_point_ = control_points_.end();
-    SortPoints();
     return true;
   } else if (left_released) {
     selected_point_ = control_points_.end();
