@@ -32,6 +32,7 @@ bool PointCanvas::DrawAndNotify() {
 
   ImVec2 canvas_pos = ImGui::GetCursorScreenPos();
   ImDrawList* draw_list = ImGui::GetWindowDrawList();
+  canvas_size[1] = config_.canvas_size_y;
   draw_list->PushClipRect(canvas_pos, ImVec2(canvas_pos[0] + canvas_size[0],
                                              canvas_pos[1] + canvas_size[1]));
 
