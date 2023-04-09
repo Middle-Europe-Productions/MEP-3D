@@ -18,6 +18,12 @@ else()
     mep_set_option(MEP_USE_ASSIMP TRUE BOOL "TRUE to use Open Asset Import Library for model processing")
 endif()
 
+if(NOT CMAKE_BUILD_TYPE)
+    message(WARNING  "[MEP] Could not find CMAKE_BUILD_TYPE")
+  set(CMAKE_BUILD_TYPE Release)
+endif()
+
+mep_set_option(MEP_TARGET_PROJECT "ALL" STRING "ALL when all examples should build, NONE when no examples should build, <target> otherwise")
 mep_set_option(MEP_USE_STB TRUE BOOL "TRUE to use stb_image for image processing")
 mep_set_option(MEP_STANDALONE_APP FALSE BOOL "TRUE when building a standalone application")
 mep_set_option(MEP_USE_IMGUI TRUE BOOL "TRUE to use ImGui library for debug output")

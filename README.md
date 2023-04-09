@@ -1,8 +1,8 @@
 <a href="url"><img src="https://github.com/Middle-Europe-Productions/MEP/blob/master/docs/mepdoc.png" align="center" height="159" width="392" ></a>
 
-## MEP-3D
+# MEP-3D
 
-### How to start?
+## How to start?
 
 Install git
 ```sh
@@ -20,13 +20,46 @@ Macos:
 brew install cmake
 ```
 
-#### Preaparing build
+### Preaparing build
+Creating a project:
+```sh
+cmake . --preset <project>
+```
+Build a project:
+
 Goto project directory.
 ```sh
-cmake -S . -B build/
+cmake --build --preset "<project>"
+```
+### Volume Rendering project:
+#### Windows:
+Creating project:
+```sh
+// Listing all of the presets:
+cmake --list-presets
+// Debug:
+cmake . --preset volume-rendering-msvc-d
+// Release:
+cmake . --preset volume-rendering-msvc
+```
+Building project:
+```sh
+// Listing all of the build presets:
+cmake --build --list-presets
+// Debug:
+cmake --build --preset "volume-rendering-msvc-d"
+// Release:
+cmake --build --preset "volume-rendering-msvc"
 ```
 
-#### Building scripts
+### Versioning
+Versioning consists of:
+* major - Major engine release version
+* minor - Project release number
+* patch - Project patch version
+* suffix - Project suffix
+
+### Building scripts - Deprecated
 * Using Unix build script
 ```sh
 ./build/examples/run_mep_unix.sh -t/--target <target> <flags>
@@ -42,7 +75,7 @@ Open the visual studio developer console or set environment variables.
 cd scripts
 run_mep_msvc.bat -t/--target <target> -m/--mode <mode=Debug> <flags>
 ```
-### Flags
+## Flags
 Mep engine allows default chromium flags, for example:
 ```sh
 -v=2
@@ -51,14 +84,14 @@ or
 ```
 For more info please check this link [link](https://github.com/google/glog).
 
-### Features
+## Features
 The engine allows runtime features. They can be toggled by defines in the build system, during the program runtime, or through the command line.
 Example:
 ```sh
 --feature:use-engine-data-monitor=true
 ```
 
-#### Available tools
+### Available tools
 * Window creation using GLFW
 * Projection view
 * Mesh handler with UV
@@ -68,23 +101,23 @@ Example:
 * Camera with build-in key input handling
 * Inter-layer communication (ILC) -  a mechanism that allows communication between layers using the JSON interface.
 
-### Avalible lightning
+## Avalible lightning
 
-#### Phong lightning
+### Phong lightning
 The supported lighting model is Phong lighting. It consists of three types of lightning applied to a given object.
 * Ambient light - simulation of a light bouncing from another object.
 * Diffuse light - simulates from off of light following the angle of light.
 * Specular light - relays on a user's position. It is a simulation of a direct reflection of a light coming to the viewer's eye.
 
-#### Type of light supperted in the engine:
+### Type of light supperted in the engine:
     * Directional light
     * Point light
     * Stop light
 
-#### Model loading
+### Model loading
 The engine currently supports assimp library as its main object loader.
 
-#### Build in thread pool
+### Build in thread pool
 Objects are always loaded in the dedicated resource thread pool.
 
 

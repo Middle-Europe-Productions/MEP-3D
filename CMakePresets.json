@@ -1,0 +1,106 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 23,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "debug",
+      "hidden": true,
+      "binaryDir": "${sourceDir}/build/debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "release",
+      "hidden": true,
+      "binaryDir": "${sourceDir}/build/release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name":"windows",
+      "hidden": true,
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "msvc-debug",
+      "displayName": "Default Windows debug config",
+      "generator": "Visual Studio 17 2022",
+      "inherits": ["debug", "windows"]
+    },
+    {
+      "name": "msvc",
+      "displayName": "Default Windows config",
+      "generator": "Visual Studio 17 2022",
+      "inherits": ["release", "windows"]
+    },
+    {
+      "name": "volume-rendering-msvc-d",
+      "displayName": "Debug config specific for Volume Rendering project",
+      "inherits": ["msvc-debug"],
+      "binaryDir": "${sourceDir}/build/vr-debug",
+      "cacheVariables": {
+        "MEP_USE_ASSIMP":false,
+        "WITH_GTEST":false,
+        "WITH_GFLAGS":false,
+        "MEP_TARGET_PROJECT":"volume-rendering"
+      }
+    },
+    {
+      "name": "volume-rendering-msvc",
+      "displayName": "Config specific for Volume Rendering project",
+      "inherits": ["msvc"],
+      "binaryDir": "${sourceDir}/build/vr-release",
+      "cacheVariables": {
+        "MEP_USE_ASSIMP":false,
+        "WITH_GTEST":false,
+        "WITH_GFLAGS":false,
+        "MEP_TARGET_PROJECT":"volume-rendering"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "default-msvc",
+      "hidden": true,
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "volume-rendering-msvc-d",
+      "configurePreset": "volume-rendering-msvc-d",
+      "configuration":"Debug",
+      "inherits":["default-msvc"]
+    },
+    {
+      "name": "volume-rendering-msvc",
+      "configurePreset": "volume-rendering-msvc",
+      "configuration":"Release",
+      "inherits":["default-msvc"]
+    },    
+    {
+      "name": "generic-msvc-d",
+      "configurePreset": "msvc-debug",
+      "configuration":"Debug",
+      "inherits":["default-msvc"]
+    },    
+    {
+      "name": "generic-msvc",
+      "configurePreset": "msvc",
+      "configuration":"Release",
+      "inherits":["default-msvc"]
+    }
+  ]
+}
