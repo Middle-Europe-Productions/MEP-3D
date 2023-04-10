@@ -33,8 +33,10 @@ bool PointCanvas::DrawAndNotify() {
   ImVec2 canvas_pos = ImGui::GetCursorScreenPos();
   ImDrawList* draw_list = ImGui::GetWindowDrawList();
   canvas_size[1] = config_.canvas_size_y;
-  draw_list->PushClipRect(canvas_pos, ImVec2(canvas_pos[0] + canvas_size[0],
-                                             canvas_pos[1] + canvas_size[1]));
+  draw_list->PushClipRect(
+      canvas_pos,
+      ImVec2(canvas_pos[0] + canvas_size[0], canvas_pos[1] + canvas_size[1]),
+      true);
 
   const Vec2f view_scale(canvas_size.x, -canvas_size.y);
   const Vec2f view_offset(canvas_pos.x, canvas_pos.y + canvas_size.y);
