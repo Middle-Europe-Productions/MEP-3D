@@ -115,18 +115,14 @@ bool PointCanvas::EvaluateItemDragged(const Vec2f& view, const Vec2f& offset) {
         selected_point_->position = normalized_mouse_pos;
 
         if (selected_point_ + 1 != control_points_.end() &&
-            selected_point_->position.x_ ==
+            selected_point_->position.x_ >=
                 (selected_point_ + 1)->position.x_) {
-          control_points_.erase(selected_point_ + 1);
-          selected_point_ = std::find_if(control_points_.begin(),
-                                         control_points_.end(), element_finder);
+          selected_point_->position.x_ = (selected_point_ + 1)->position.x_;
         }
         if (selected_point_ != control_points_.begin() &&
-            selected_point_->position.x_ ==
+            selected_point_->position.x_ <=
                 (selected_point_ - 1)->position.x_) {
-          control_points_.erase(selected_point_ - 1);
-          selected_point_ = std::find_if(control_points_.begin(),
-                                         control_points_.end(), element_finder);
+          selected_point_->position.x_ = (selected_point_ - 1)->position.x_;
         }
 
         if (selected_point_ == control_points_.begin()) {
