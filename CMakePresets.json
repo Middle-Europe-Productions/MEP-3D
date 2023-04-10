@@ -44,10 +44,20 @@
       "inherits": ["release", "windows"]
     },
     {
-      "name": "volume-rendering-msvc-d",
-      "displayName": "Debug config specific for Volume Rendering project",
-      "inherits": ["msvc-debug"],
-      "binaryDir": "${sourceDir}/build/vr-debug",
+      "name": "ninja-debug",
+      "displayName": "Ninja cross platform compiler debug config",
+      "generator": "Ninja Multi-Config",
+      "inherits": ["debug"]
+    },
+    {
+      "name": "ninja",
+      "displayName": "Ninja cross platform compiler config",
+      "generator": "Ninja Multi-Config",
+      "inherits": ["release"]
+    },
+    {
+      "name": "volume-rendering",
+      "hidden": true,
       "cacheVariables": {
         "MEP_USE_ASSIMP":false,
         "WITH_GTEST":false,
@@ -56,16 +66,28 @@
       }
     },
     {
+      "name": "volume-rendering-msvc-d",
+      "displayName": "Debug config specific for Volume Rendering project with msvc compiler",
+      "inherits": ["msvc-debug", "volume-rendering"],
+      "binaryDir": "${sourceDir}/build/vr-debug"
+    },
+    {
       "name": "volume-rendering-msvc",
-      "displayName": "Config specific for Volume Rendering project",
-      "inherits": ["msvc"],
-      "binaryDir": "${sourceDir}/build/vr-release",
-      "cacheVariables": {
-        "MEP_USE_ASSIMP":false,
-        "WITH_GTEST":false,
-        "WITH_GFLAGS":false,
-        "MEP_TARGET_PROJECT":"volume-rendering"
-      }
+      "displayName": "Config specific for Volume Rendering project with msvc compiler",
+      "inherits": ["msvc", "volume-rendering"],
+      "binaryDir": "${sourceDir}/build/vr-release"
+    },
+    {
+      "name": "volume-rendering-ninja-d",
+      "displayName": "Debug config specific for Volume Rendering project with Ninja compiler",
+      "inherits": ["ninja-debug", "volume-rendering"],
+      "binaryDir": "${sourceDir}/build/vr-debug"
+    },
+    {
+      "name": "volume-rendering-ninja",
+      "displayName": "Config specific for Volume Rendering project with Ninja compiler",
+      "inherits": ["ninja", "volume-rendering"],
+      "binaryDir": "${sourceDir}/build/vr-release"
     }
   ],
   "buildPresets": [
@@ -101,6 +123,26 @@
       "configurePreset": "msvc",
       "configuration":"Release",
       "inherits":["default-msvc"]
+    },
+    {
+      "name": "volume-rendering-ninja-d",
+      "configurePreset": "volume-rendering-ninja-d",
+      "configuration":"Debug"
+    },
+    {
+      "name": "volume-rendering-ninja",
+      "configurePreset": "volume-rendering-ninja",
+      "configuration":"Release"
+    },    
+    {
+      "name": "generic-ninja-d",
+      "configurePreset": "ninja-debug",
+      "configuration":"Debug"
+    },    
+    {
+      "name": "generic-ninja",
+      "configurePreset": "ninja",
+      "configuration":"Release"
     }
   ]
 }

@@ -256,7 +256,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "Release")
 message(STATUS "[MEP] Detected release target")
 target_compile_options(${MEP_LIBRARY_NAME} PRIVATE
   $<$<CXX_COMPILER_ID:MSVC>:/W4 /GL /O2 /DNDEBUG>
-  $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror -Wno-deprecated-declarations>
+  $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-O3 -Wall -Wextra -Wpedantic -Werror -Wno-deprecated-declarations>
 )
 else()
 message(STATUS "[MEP] Detected debug target")

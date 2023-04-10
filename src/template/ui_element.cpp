@@ -22,6 +22,7 @@ std::string ToString(Element element) {
     default:
       NOTREACHED();
   }
+  return "";
 }
 
 int ElementData::GetElementCount() {

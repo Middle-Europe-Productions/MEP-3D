@@ -13,7 +13,7 @@ uniform vec3 eye_position;            // camera position
 uniform vec3 step_size;               // ray step size
 
 // constants
-const int MAX_SAMPLES = 200;  // total samples for each ray march step
+const int MAX_SAMPLES = 400;  // total samples for each ray march step
 const vec3 texMin = vec3(0);  // minimum texture access coordinate
 const vec3 texMax = vec3(1);  // maximum texture access coordinate
 const float OPACITY_FACTOR = 0.05;
