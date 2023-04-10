@@ -1,6 +1,6 @@
 mep_project(volume_rendering)
 
-add_executable(${PROJECT_NAME} main.cpp
+add_mep_executable(${PROJECT_NAME} main.cpp
   transfer_function.hpp
   transfer_function.cpp
   point_canvas.hpp
