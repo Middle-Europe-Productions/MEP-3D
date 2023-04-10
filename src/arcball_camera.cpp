@@ -58,7 +58,6 @@ void ArcballCamera::Update(float) {
 
     view_matrix_ = glm::lookAt(Get(CameraVariables::Position), lookat_position_,
                                world_up_);
-    LOG(INFO) << "Camera: " << ToString();
   });
 }
 
