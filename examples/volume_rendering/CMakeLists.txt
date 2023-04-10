@@ -1,5 +1,13 @@
 mep_project(volume_rendering)
 
+file(
+  GLOB_RECURSE RC "${PROJECT_SOURCE_DIR}/runtime_configurations/*"
+)
+
+file(
+  GLOB_RECURSE SHADERS "${PROJECT_SOURCE_DIR}/shaders/*"
+)
+
 add_mep_executable(${PROJECT_NAME} main.cpp
   transfer_function.hpp
   transfer_function.cpp
@@ -8,23 +16,15 @@ add_mep_executable(${PROJECT_NAME} main.cpp
   volume_renderer.hpp
   volume_renderer.cpp
   common.hpp
+  ${RC}
+  ${SHADERS}
 )
 
 target_link_libraries(${PROJECT_NAME} PUBLIC mep-3d)
 
-file(
-  COPY
-  ${PROJECT_SOURCE_DIR}/runtime_configurations
-  DESTINATION
-  ${MEP_OUTPUT_DIR}/${PROJECT_NAME}
-)
+copy_mep_resource("${RC}" "runtime_configurations")
 
-file(
-  COPY
-  ${PROJECT_SOURCE_DIR}/shaders
-  DESTINATION
-  ${MEP_OUTPUT_DIR}/${PROJECT_NAME}
-)
+copy_mep_resource("${SHADERS}" "shaders")
 
 set_target_properties(${PROJECT_NAME} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY
   ${MEP_OUTPUT_DIR}/${PROJECT_NAME}
