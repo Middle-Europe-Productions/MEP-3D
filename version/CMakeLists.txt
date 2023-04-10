@@ -5,7 +5,7 @@ set(MEP_VERSION_HEADER_IN ${CMAKE_SOURCE_DIR}/version/version.hpp.in)
 if(GIT_EXECUTABLE)
     get_filename_component(MEP_VERSION_HEADER_IN_DIR ${MEP_VERSION_HEADER_IN} DIRECTORY)
     execute_process(
-        COMMAND ${GIT_EXECUTABLE} describe --tags
+        COMMAND ${GIT_EXECUTABLE} describe --tags --abbrev=0
         WORKING_DIRECTORY ${MEP_VERSION_HEADER_IN_DIR}
         OUTPUT_VARIABLE GIT_DESCRIBE_VERSION
         RESULT_VARIABLE GIT_DESCRIBE_ERROR_CODE
