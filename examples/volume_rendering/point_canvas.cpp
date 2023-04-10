@@ -142,6 +142,7 @@ bool PointCanvas::EvaluateItemDragged(const Vec2f& view, const Vec2f& offset) {
     selected_point_ = std::find_if(control_points_.begin(),
                                    control_points_.end(), element_finder);
     if (selected_point_ == control_points_.begin() ||
+        selected_point_ == control_points_.end() ||
         selected_point_ == control_points_.end() - 1) {
       return false;
     }
