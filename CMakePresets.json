@@ -66,6 +66,14 @@
       }
     },
     {
+      "name": "volume-rendering-x86",
+      "hidden": true,
+      "inherits": ["volume-rendering"],
+      "cacheVariables": {
+        "CMAKE_OSX_ARCHITECTURES": "x86_64"
+      }
+    },
+    {
       "name": "volume-rendering-msvc-d",
       "displayName": "Debug config specific for Volume Rendering project with msvc compiler",
       "inherits": ["msvc-debug", "volume-rendering"],
@@ -87,6 +95,18 @@
       "name": "volume-rendering-ninja",
       "displayName": "Config specific for Volume Rendering project with Ninja compiler",
       "inherits": ["ninja", "volume-rendering"],
+      "binaryDir": "${sourceDir}/build/vr-release"
+    },
+    {
+      "name": "volume-rendering-ninja-x86-d",
+      "displayName": "Debug config specific for Volume Rendering project with Ninja compiler for x86 architecture",
+      "inherits": ["ninja-debug", "volume-rendering-x86"],
+      "binaryDir": "${sourceDir}/build/vr-debug"
+    },
+    {
+      "name": "volume-rendering-ninja-x86",
+      "displayName": "Config specific for Volume Rendering project with Ninja compiler for x86 architecture",
+      "inherits": ["ninja", "volume-rendering-x86"],
       "binaryDir": "${sourceDir}/build/vr-release"
     }
   ],
@@ -133,7 +153,17 @@
       "name": "volume-rendering-ninja",
       "configurePreset": "volume-rendering-ninja",
       "configuration":"Release"
-    },    
+    },
+    {
+      "name": "volume-rendering-ninja-x86-d",
+      "configurePreset": "volume-rendering-ninja-x86-d",
+      "configuration":"Debug"
+    },
+    {
+      "name": "volume-rendering-ninja-x86",
+      "configurePreset": "volume-rendering-ninja-x86",
+      "configuration":"Release"
+    },
     {
       "name": "generic-ninja-d",
       "configurePreset": "ninja-debug",
