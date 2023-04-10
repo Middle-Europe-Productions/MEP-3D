@@ -149,6 +149,7 @@ bool PointCanvas::EvaluateItemDragged(const Vec2f& view, const Vec2f& offset) {
     control_points_.erase(selected_point_);
     selected_point_ = control_points_.end();
     SortPoints();
+    return true;
   }
   if (right_released) {
     selected_point_ = std::find_if(control_points_.begin(),
