@@ -17,6 +17,7 @@ struct Vec2 {
   constexpr Vec2<T>& operator/(const Vec2& x);
   constexpr bool operator==(const Vec2& x) const;
   constexpr T Length() const;
+  std::string ToString() const;
   T x_;
   T y_;
 };
@@ -38,6 +39,7 @@ struct Vec3 {
   constexpr T Length() const;
   constexpr T Max() const;
   constexpr T Min() const;
+  std::string ToString() const;
   T x_;
   T y_;
   T z_;

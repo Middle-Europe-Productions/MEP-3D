@@ -48,6 +48,7 @@ class ArcballCamera : public CameraBase {
   void OnWindowResizeEvent(Vec2i size) override;
   void OnEventStatusChanged(bool) override;
   float GetDistance() const;
+  std::string ToString() const override;
 
  private:
   glm::vec3 GetViewDir() const;

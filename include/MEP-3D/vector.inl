@@ -113,7 +113,22 @@ constexpr T Vec3<T>::Max() const {
 }
 
 template <typename T>
-constexpr T Vec3<T>::Min() const {}
+constexpr T Vec3<T>::Min() const {
+  return (std::min)({x_, y_, z_});
+}
+
+template <typename T>
+std::string Vec2<T>::ToString() const {
+  return "\"Vec3\": { \"x\": " + std::to_string(x_) +
+         ", \"y\":" + std::to_string(y_) + "}";
+}
+
+template <typename T>
+std::string Vec3<T>::ToString() const {
+  return "\"Vec2\": { \"x\": " + std::to_string(x_) +
+         ", \"y\":" + std::to_string(y_) + ", \"x\":" + std::to_string(z_) +
+         "}";
+}
 
 template <typename T>
 inline std::ostream& operator<<(std::ostream& out, const Vec2<T>& in) {
@@ -124,7 +139,7 @@ inline std::ostream& operator<<(std::ostream& out, const Vec2<T>& in) {
 template <typename T>
 inline std::ostream& operator<<(std::ostream& out, const Vec3<T>& in) {
   out << "\"Vec3\": { \"x\": " << in.x_ << ", \"y\":" << in.y_
-      << ", \"x\":" << in.z_ << "}";
+      << ", \"z\":" << in.z_ << "}";
   return out;
 }
 

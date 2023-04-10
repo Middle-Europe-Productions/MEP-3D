@@ -11,6 +11,9 @@ template <typename T>
 int sgn(T val) {
   return (T(0) < val) - (val < T(0));
 }
+bool IsNormalizable(const glm::vec3& vec) {
+  return !(vec[0] == vec[1] && vec[1] == vec[2] && vec[2] == vec[0]);
+}
 };  // namespace
 
 ArcballCamera::ArcballCamera(const ArcballCameraConfig& config,
@@ -22,6 +25,7 @@ ArcballCamera::ArcballCamera(const ArcballCameraConfig& config,
   world_up_ = config.start_up;
   screen_size_ = config.initial_viewport_size;
   move_speed_ = config.move_speed;
+  view_matrix_ = glm::mat4(0.0);
 }
 
 void ArcballCamera::Update(float) {
@@ -39,18 +43,22 @@ void ArcballCamera::Update(float) {
     }
 
     glm::mat4x4 roatation_matrix_x(1.0f);
-    roatation_matrix_x = glm::rotate(roatation_matrix_x, angle_x, world_up_);
+    if (IsNormalizable(world_up_)) {
+      roatation_matrix_x = glm::rotate(roatation_matrix_x, angle_x, world_up_);
+    }
     position = (roatation_matrix_x * (position - pivot)) + pivot;
 
     glm::mat4x4 rotation_matrix_y(1.0f);
-    rotation_matrix_y =
-        glm::rotate(rotation_matrix_y, angle_y, GetRightVector());
-
-    Set(CameraVariables::Position,
-        rotation_matrix_y * (position - pivot) + pivot);
+    auto right_vec = GetRightVector();
+    if (IsNormalizable(right_vec)) {
+      rotation_matrix_y = glm::rotate(rotation_matrix_y, angle_y, right_vec);
+      Set(CameraVariables::Position,
+          rotation_matrix_y * (position - pivot) + pivot);
+    }
 
     view_matrix_ = glm::lookAt(Get(CameraVariables::Position), lookat_position_,
                                world_up_);
+    LOG(INFO) << "Camera: " << ToString();
   });
 }
 
@@ -99,6 +107,15 @@ glm::vec3 ArcballCamera::GetRightVector() const {
 
 float ArcballCamera::GetDistance() const {
   return glm::length(world_up_ - lookat_position_);
+}
+
+std::string ArcballCamera::ToString() const {
+  return std::string(
+      "\"arcball_camera\": { \n\"Position\": " +
+      glm::to_string(Get(CameraVariables::Position)) + ", \n" +
+      "\"view_matrix\": " + glm::to_string(view_matrix_) + ", \n" +
+      "\"lookat_position\": " + glm::to_string(lookat_position_) + ", \n" +
+      "\"world_up\": " + glm::to_string(world_up_) + ", \n");
 }
 
 }  // namespace mep
