@@ -142,7 +142,8 @@ class TransferFunctionController : public mep::UI_HANDLER_BASE(SceneUILayer),
                       std::size_t size,
                       const std::string& name) {
     int w, h, n;
-    uint8_t* img_data = stbi_load_from_memory(data, size, &w, &h, &n, 4);
+    uint8_t* img_data =
+        stbi_load_from_memory(data, static_cast<int>(size), &w, &h, &n, 4);
     auto img = std::vector<uint8_t>(img_data, img_data + w * 1 * 4);
     stbi_image_free(img_data);
     auto image = mep::Image(name.c_str());

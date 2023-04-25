@@ -239,9 +239,12 @@ class GLFWWindowController : public Window {
       glfwTerminate();
       return false;
     }
-    glfwGetFramebufferSize(main_window_, &buffer_size.x_, &buffer_size.y_);
-    LOG(INFO) << __FUNCTION__ << ", buffer initialized [x: " << buffer_size.x_
-              << ", y: " << buffer_size.y_ << "]";
+    glfwGetFramebufferSize(main_window_,
+                           reinterpret_cast<int*>(&config_.buffer_size.x_),
+                           reinterpret_cast<int*>(&config_.buffer_size.y_));
+    LOG(INFO) << __FUNCTION__
+              << ", buffer initialized [x: " << config_.buffer_size.x_
+              << ", y: " << config_.buffer_size.y_ << "]";
     glfwMakeContextCurrent(main_window_);
     glfwSwapInterval(config_.use_vsync);
 
@@ -278,7 +281,7 @@ class GLFWWindowController : public Window {
     }
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
-    glViewport(0, 0, buffer_size.x_, buffer_size.y_);
+    glViewport(0, 0, config_.buffer_size.x_, config_.buffer_size.y_);
     glfwSetWindowUserPointer(main_window_, this);
     init_ = true;
     return true;
@@ -308,13 +311,19 @@ class GLFWWindowController : public Window {
 
   void FinishLoop() override { glfwSwapBuffers(main_window_); }
 
-  Vec2i GetSize() override { return config_.size; }
+  Vec2u GetSize() override { return config_.size; }
 
-  Vec2i GetBufferSize() override { return buffer_size; }
+  Vec2u GetBufferSize() override { return config_.buffer_size; }
+
+  Vec2u GetWindowBufferSize() override {
+    int x = 0, y = 0;
+    glfwGetFramebufferSize(main_window_, &x, &y);
+    return {static_cast<unsigned int>(x), static_cast<unsigned int>(y)};
+  }
 
   float GetAspectRation() override {
-    return static_cast<float>(buffer_size.x_) /
-           static_cast<float>(buffer_size.y_);
+    return static_cast<float>(config_.buffer_size.x_) /
+           static_cast<float>(config_.buffer_size.y_);
   }
 
   void* GetNativeWindow() override { return main_window_; }
@@ -327,6 +336,36 @@ class GLFWWindowController : public Window {
   void UpdateVSync(bool enabled) override {
     glfwSwapInterval(enabled);
     config_.use_vsync = enabled;
+  }
+
+  void UpdateAutoResize(bool enabled) override {
+    VLOG_IF(1, config_.automated_resize != enabled)
+        << "Disabling automated window resize";
+    config_.automated_resize = enabled;
+  }
+
+  void SetBufferSize(Vec2u size) override {
+    if (config_.buffer_size != size) {
+      config_.buffer_size = size;
+      VLOG(9) << "Updating window size: " << size;
+      glViewport(config_.buffer_position.x_, config_.buffer_position.y_,
+                 config_.buffer_size.x_, config_.buffer_size.y_);
+      GetView()->UpdateAspectRation(GetAspectRation());
+      ForAllObservers(
+          [&size](WindowObserver* obs) { obs->OnWindowResizeEvent(size); });
+    }
+  }
+
+  void SetBufferPosition(Vec2u pos) override {
+    if (config_.buffer_position != pos) {
+      config_.buffer_position = pos;
+      VLOG(9) << "Updating window position: " << pos;
+      glViewport(config_.buffer_position.x_, config_.buffer_position.y_,
+                 config_.buffer_size.x_, config_.buffer_size.y_);
+      GetView()->UpdateAspectRation(GetAspectRation());
+      ForAllObservers(
+          [&pos](WindowObserver* obs) { obs->OnWindowPositionEvent(pos); });
+    }
   }
 
   const WindowConfig& GetConfig() const override { return config_; }
@@ -348,7 +387,6 @@ class GLFWWindowController : public Window {
   Key exception_;
   GLFWwindow* main_window_;
   WindowConfig config_;
-  Vec2i buffer_size;
 
   void InitCallbacks() {
     glfwSetKeyCallback(main_window_, OnKeyEventHandler);
@@ -424,21 +462,26 @@ void GLFWWindowController::OnWindowResizeEventHandler(GLFWwindow* window,
                                                       int height) {
   GLFWWindowController* master_window =
       static_cast<GLFWWindowController*>(glfwGetWindowUserPointer(window));
-  glfwGetFramebufferSize(master_window->main_window_,
-                         &master_window->buffer_size.x_,
-                         &master_window->buffer_size.y_);
-  VLOG(5) << __FUNCTION__
-          << ", buffer size changed [x: " << master_window->buffer_size.x_
-          << ", y: " << master_window->buffer_size.y_ << "]";
-  glViewport(0, 0, master_window->buffer_size.x_,
-             master_window->buffer_size.y_);
+  if (!master_window->config_.automated_resize) {
+    VLOG(9) << "Automated resize disabled ignoring " << __func__;
+    return;
+  }
+  glfwGetFramebufferSize(
+      master_window->main_window_,
+      reinterpret_cast<int*>(&master_window->config_.buffer_size.x_),
+      reinterpret_cast<int*>(&master_window->config_.buffer_size.y_));
+  VLOG(5) << __FUNCTION__ << ", buffer size changed [x: "
+          << master_window->config_.buffer_size.x_
+          << ", y: " << master_window->config_.buffer_size.y_ << "]";
+  glViewport(0, 0, master_window->config_.buffer_size.x_,
+             master_window->config_.buffer_size.y_);
   if (width > 0 && height > 0) {
     if (!master_window->GetView()) {
       LOG(ERROR) << "You did not bind view to window";
-    } else {
-      master_window->GetView()->UpdateAspectRation(
-          master_window->GetAspectRation());
+      return;
     }
+    master_window->GetView()->UpdateAspectRation(
+        master_window->GetAspectRation());
   }
   Vec2i size{width, height};
   master_window->ForAllObservers(

@@ -15,8 +15,8 @@ const std::vector<unsigned int> cubeIndices = {
 
 Vec3f BringToBase(const Vec3i& value) {
   return Vec3f(static_cast<float>(value.x_) / static_cast<float>(value.Max()),
-               static_cast<float>(value.z_) / static_cast<float>(value.Max()),
-               static_cast<float>(value.y_) / static_cast<float>(value.Max()));
+               static_cast<float>(value.y_) / static_cast<float>(value.Max()),
+               static_cast<float>(value.z_) / static_cast<float>(value.Max()));
 }
 };  // namespace
 
@@ -147,6 +147,7 @@ void Volume::TransformToTexture() {
   texture_->Create(data_.data(), volume_size_, type_);
   Bind(texture_.get());
   DCHECK(texture_->IsValid());
+  ClearVolume();
   UpdateStatus(Status::Avalible);
 }
 

@@ -46,6 +46,7 @@ class ArcballCamera : public CameraBase {
   glm::mat4 GetViewMatrix() const override;
   void OnMouseEvent(MouseEvent event) override;
   void OnWindowResizeEvent(Vec2i size) override;
+  void OnWindowPositionEvent(Vec2i pos) override;
   void OnEventStatusChanged(bool) override;
   float GetDistance() const;
   std::string ToString() const override;

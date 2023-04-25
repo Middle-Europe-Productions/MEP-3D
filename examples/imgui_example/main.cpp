@@ -132,6 +132,7 @@ class BenchmarkLayer final : public Scene, private WindowObserver {
   }
   void OnMouseEvent(MouseEvent event) override {}
   void OnWindowResizeEvent(Vec2i size) override {}
+  void OnWindowPositionEvent(Vec2i pos) override {}
   void OnEventStatusChanged(bool events_blocked) override {}
 
  private:

@@ -7,6 +7,7 @@
 #include <MEP-3D/template/util_common_draw.hpp>
 #include <MEP-3D/utils.hpp>
 
+#include <imgui_internal.h>
 #include "imgui_addons.hpp"
 #include "parser_imgui.hpp"
 
@@ -141,11 +142,18 @@ class SceneUILayerImGUI : public SceneUILayer {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
-    ImGui::Begin("Dockspace", NULL, kDockspaceWindowFlags);
     ImGui::PopStyleVar(3);
-    ImGui::DockSpace(ImGui::GetID("master_dockspace"), ImVec2(0.0f, 0.0f),
-                     ImGuiDockNodeFlags_PassthruCentralNode);
-    ImGui::End();
+    auto id = ImGui::DockSpaceOverViewport(
+        viewport, ImGuiDockNodeFlags_PassthruCentralNode);
+    ImGuiDockNode* node = ImGui::DockBuilderGetCentralNode(id);
+
+    auto& window = GetEngine()->GetWindow();
+    window->SetBufferSize({static_cast<unsigned int>(node->Size.x),
+                           static_cast<unsigned int>(node->Size.y)});
+    window->SetBufferPosition(
+        {static_cast<unsigned int>(node->Pos.x - viewport->Pos.x),
+         static_cast<unsigned int>(window->GetWindowBufferSize().y_ -
+                                   node->Size.y)});
     menu_.Draw();
   }
   void InitDefaultHandler() {

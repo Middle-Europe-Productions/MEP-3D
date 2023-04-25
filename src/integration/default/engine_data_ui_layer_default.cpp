@@ -15,6 +15,7 @@ class EngineDataUILayerDefault : public EngineDataUILayer {
   void OnKeyEvent(KeyEvent event) override {}
   void OnMouseEvent(MouseEvent event) override {}
   void OnWindowResizeEvent(Vec2i size) override {}
+  void OnWindowPositionEvent(Vec2i pos) override {}
   void OnEventStatusChanged(bool events_blocked) override {}
   bool ShouldIgnoreLayer() const { return true; }
   virtual ~EngineDataUILayerDefault() {

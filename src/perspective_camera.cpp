@@ -102,6 +102,8 @@ void PerspectiveCamera::OnMouseEvent(MouseEvent event) {
 
 void PerspectiveCamera::OnWindowResizeEvent(Vec2i) {}
 
+void PerspectiveCamera::OnWindowPositionEvent(Vec2i pos) {}
+
 void PerspectiveCamera::OnEventStatusChanged(bool events_blocked) {
   if (events_blocked == true) {
     ResetCameraControls();

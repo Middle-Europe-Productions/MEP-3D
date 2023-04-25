@@ -10,6 +10,7 @@
 #include "volume_wrap.hpp"
 
 #include <imgui.h>
+#include <imgui_internal.h>
 
 namespace mep {
 namespace {

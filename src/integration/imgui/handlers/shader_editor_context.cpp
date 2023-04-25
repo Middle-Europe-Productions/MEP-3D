@@ -151,7 +151,7 @@ void ShaderEditorContext::TranslateErrorToMap(
     std::smatch match = *i;
     int position = 0;
     int line = 0;
-    std::string message = "";
+    std::string message;
     VLOG(5) << "Match found " << match.begin()->str();
     for (auto x = match.begin() + 1; x != match.end(); x++) {
       if (position == 0) {

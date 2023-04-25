@@ -72,7 +72,7 @@ class BenchmarkLayer final : public Layer {
         shader_(shader),
         triangles_count_(triangles_count) {}
   void OnAttach() override {
-    for (int i = 0; i < triangles_count_; i++) {
+    for (unsigned int i = 0; i < triangles_count_; i++) {
       triangles_.emplace_back(std::make_unique<Pyramid>(
           Vec3f{static_cast<float>(triangles_count_ % 10 * 10.f), 1.0f,
                 static_cast<float>(i + 10)}));
@@ -147,7 +147,7 @@ class MainLayer : private WindowObserver, public Layer {
 
     point_light_fact->MakeAndBind(std::make_unique<PointLight>(
         AmbientConfig{Color(255, 0, 0), 0.5f},
-        PointConfig{Vec3f{1.0f, 1.0f, 1.0f}, 1, 1, 0.001}, 0.5f));
+        PointConfig{Vec3f{1.0f, 1.0f, 1.0f}, 1, 1, 0.001f}, 0.5f));
     point_light_fact->MakeAndBind(std::make_unique<PointLight>(
         AmbientConfig{Color(0, 0, 255), 0.5f},
         PointConfig{Vec3f{-1.0f, 1.0f, -1.0f}, 1, 1, 0}, 0.8f));
@@ -182,21 +182,21 @@ class MainLayer : private WindowObserver, public Layer {
     model[0].Bind(plain_tex.get());
     model[0].Transform(0.0, 1.0, 1.0);
     model[0].Rotate(-90, Axis::X);
-    model[0].Scale(0.1, 0.1, 0.1);
+    model[0].Scale(0.1f, 0.1f, 0.1f);
 
     model[1].Load("models/heart.obj");
     model[1].Bind(&shader_);
     model[1].Bind(plain_tex.get());
     model[1].Transform(3.0, 1.0, 1.0);
     model[1].Rotate(-90, Axis::X);
-    model[1].Scale(0.1, 0.1, 0.1);
+    model[1].Scale(0.1f, 0.1f, 0.1f);
 
     model[2].Load("models/heart.obj");
     model[2].Bind(&shader_);
     model[2].Bind(plain_tex.get());
     model[2].Transform(6.0, 1.0, 1.0);
     model[2].Rotate(-90, Axis::X);
-    model[2].Scale(0.1, 0.1, 0.1);
+    model[2].Scale(0.1f, 0.1f, 0.1f);
   }
   virtual void OnDetach(){};
   virtual void OnUpdate(float time_delta) {
@@ -264,6 +264,7 @@ class MainLayer : private WindowObserver, public Layer {
   void OnWindowResizeEvent(Vec2i size) override {
     LOG(INFO) << "Window resize, x: " << size.x_ << ", y: " << size.y_;
   }
+  void OnWindowPositionEvent(Vec2i pos) override {}
   void OnEventStatusChanged(bool events_blocked) override {}
   ~MainLayer() override {}
 

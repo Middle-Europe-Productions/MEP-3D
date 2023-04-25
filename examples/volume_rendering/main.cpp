@@ -20,7 +20,7 @@ int main(int argc, char* argv[]) {
       {{1280, 720},
        std::string("Volume Rendering ") + std::string(MEP_FULL_VERSION)});
   window->Init();
-  // utils::InitOpenGLogging();
+  utils::InitOpenGLogging();
   auto engine = utils::CreateEngineWithSceneUI(
       std::move(window), std::make_unique<VolumeRenderer>(),
       SceneUILayer::Create(

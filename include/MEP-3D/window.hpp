@@ -14,6 +14,9 @@ struct WindowConfig {
   Vec2u size;
   std::string name;
   bool use_vsync = true;
+  Vec2u buffer_position = {0, 0};
+  Vec2u buffer_size = {0, 0};
+  bool automated_resize = true;
 };
 
 class Window : public ObserverList<WindowObserver>, public RenderTarget {
@@ -26,12 +29,16 @@ class Window : public ObserverList<WindowObserver>, public RenderTarget {
   virtual void Clear(Color color = Black) = 0;
   virtual void StartLoop() = 0;
   virtual void FinishLoop() = 0;
-  virtual Vec2i GetSize() = 0;
-  virtual Vec2i GetBufferSize() = 0;
+  virtual Vec2u GetSize() = 0;
+  virtual Vec2u GetBufferSize() = 0;
+  virtual Vec2u GetWindowBufferSize() = 0;
   virtual float GetAspectRation() = 0;
   virtual void* GetNativeWindow() = 0;
   virtual void UpdateWindowName(const std::string& name) = 0;
   virtual void UpdateVSync(bool enabled) = 0;
+  virtual void UpdateAutoResize(bool enabled) = 0;
+  virtual void SetBufferSize(Vec2u size) = 0;
+  virtual void SetBufferPosition(Vec2u size) = 0;
   virtual const WindowConfig& GetConfig() const = 0;
   virtual ~Window() = default;
   static std::unique_ptr<Window> GetInstance(WindowConfig config);

@@ -190,7 +190,8 @@ Parser::ParserNode* ParserImGui::ParseSceneItem(nlohmann::json& json_data,
         node->return_code = value;
       } else if (value.is_string()) {
         node->return_code = UI::ElementData::IdFromString(value);
-        DCHECK(node->return_code != static_cast<int>(UI::Element::Unknown));
+        DCHECK(node->return_code != static_cast<int>(UI::Element::Unknown))
+            << "\"return\": " << value;
       } else {
         LOG(ERROR) << "Unknown return type";
         delete node;

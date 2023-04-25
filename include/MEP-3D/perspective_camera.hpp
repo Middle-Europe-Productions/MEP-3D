@@ -57,6 +57,7 @@ class PerspectiveCamera : public CameraBase {
   glm::mat4 GetViewMatrix() const override;
   void OnMouseEvent(MouseEvent event) override;
   void OnWindowResizeEvent(Vec2i) override;
+  void OnWindowPositionEvent(Vec2i pos) override;
   void OnEventStatusChanged(bool events_blocked) override;
   std::string ToString() const override;
 

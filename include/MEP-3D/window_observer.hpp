@@ -11,6 +11,7 @@ class WindowObserver : public Observer {
   virtual void OnKeyEvent(KeyEvent event) = 0;
   virtual void OnMouseEvent(MouseEvent event) = 0;
   virtual void OnWindowResizeEvent(Vec2i size) = 0;
+  virtual void OnWindowPositionEvent(Vec2i pos) = 0;
   virtual void OnEventStatusChanged(bool events_blocked) = 0;
   virtual ~WindowObserver() = default;
 };
