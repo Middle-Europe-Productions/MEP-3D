@@ -20,7 +20,8 @@ Vec3f BringToBase(const Vec3i& value) {
 }
 };  // namespace
 
-Volume::Volume(Vec3i size) : Identity(kVolume), volume_size_(size) {
+Volume::Volume(Vec3i size, bool keep_volume_cached)
+    : Identity(kVolume), volume_size_(size), keep_cached_(keep_volume_cached) {
   active_.store(true, std::memory_order_release);
   auto base = BringToBase(size);
   const std::vector<float> vertices2 = {
@@ -32,8 +33,10 @@ Volume::Volume(Vec3i size) : Identity(kVolume), volume_size_(size) {
   Mesh::Init(vertices2, cubeIndices, true);
 }
 
-Volume::Volume(Vec3i size, std::string_view name)
-    : Identity(kVolume, name), volume_size_(size) {
+Volume::Volume(Vec3i size, std::string_view name, bool keep_volume_cached)
+    : Identity(kVolume, name),
+      volume_size_(size),
+      keep_cached_(keep_volume_cached) {
   active_.store(true, std::memory_order_release);
   auto base = BringToBase(size);
   const std::vector<float> vertices2 = {
@@ -43,6 +46,18 @@ Volume::Volume(Vec3i size, std::string_view name)
       base.x_ / 2,  -base.y_ / 2, base.z_ / 2,  base.x_ / 2,  base.y_ / 2,
       base.z_ / 2,  -base.x_ / 2, base.y_ / 2,  base.z_ / 2};
   Mesh::Init(vertices2, cubeIndices, true);
+}
+
+void Volume::UpdateVolumeFromMemory() {
+  DCHECK(GetStatus() == Status::Avalible);
+  UpdateStatus(Status::Uninitialized);
+}
+
+void Volume::LoadFromMemory(std::vector<Uint8> data, Texture3D::Type type) {
+  UpdateStatus(Status::Loading);
+  type_ = type;
+  data_ = std::move(data);
+  UpdateStatus(Status::Uninitialized);
 }
 
 void Volume::LoadFromFile(std::filesystem::path file_path,
@@ -100,18 +115,12 @@ void Volume::Draw(RenderTarget& render_target) {
   Mesh::Draw(render_target);
 }
 
-Uint8* Volume::GetData() {
-  if (GetStatus() != Status::Uninitialized) {
-    return nullptr;
-  }
-  return data_.data();
+std::vector<Uint8>& Volume::GetData() {
+  return data_;
 }
 
-const Uint8* Volume::GetData() const {
-  if (GetStatus() != Status::Uninitialized) {
-    return nullptr;
-  }
-  return data_.data();
+const std::vector<Uint8>& Volume::GetData() const {
+  return data_;
 }
 
 bool Volume::IsActive() const {
@@ -142,12 +151,15 @@ void Volume::ClearVolume() {
 
 void Volume::TransformToTexture() {
   DCHECK(GetStatus() == Status::Uninitialized);
+  LOG(INFO) << __func__;
   DCHECK(data_.size() > 0);
   texture_ = std::make_unique<Texture3D>();
   texture_->Create(data_.data(), volume_size_, type_);
   Bind(texture_.get());
   DCHECK(texture_->IsValid());
-  ClearVolume();
+  if (!keep_cached_) {
+    ClearVolume();
+  }
   UpdateStatus(Status::Avalible);
 }
 
