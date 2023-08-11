@@ -11,7 +11,7 @@ if(GIT_EXECUTABLE)
         RESULT_VARIABLE GIT_DESCRIBE_ERROR_CODE
         OUTPUT_STRIP_TRAILING_WHITESPACE
     )
-    string(REGEX MATCH "([0-9]+)\\.([0-9]+)\\.([0-9]+).?(.*)?" match_result "${GIT_DESCRIBE_VERSION}")
+    string(REGEX MATCH "([0-9]+)\\.([0-9]+)\\.([0-9]+)(.*)?" match_result "${GIT_DESCRIBE_VERSION}")
     set(major "${CMAKE_MATCH_1}")
     set(minor "${CMAKE_MATCH_2}")
     set(patch "${CMAKE_MATCH_3}")
@@ -20,7 +20,7 @@ if(GIT_EXECUTABLE)
     if(NOT GIT_DESCRIBE_ERROR_CODE)
         set(MEP_VERSION ${GIT_DESCRIBE_VERSION})
     endif()
-    message("[MEP] Detected version: ${major}.${minor}.${patch}.${suffix}")
+    message("[MEP] Detected version: ${major}.${minor}.${patch}${suffix}")
 endif()
 
 if(NOT DEFINED MEP_VERSION)
