@@ -10,13 +10,13 @@ class EngineDataUILayerDefault : public EngineDataUILayer {
   }
   void OnAttach() override {}
   void OnDetach() override {}
-  void OnUpdate(float time_delta) override {}
-  void OnDraw(RenderTarget& render_target) override {}
-  void OnKeyEvent(KeyEvent event) override {}
-  void OnMouseEvent(MouseEvent event) override {}
-  void OnWindowResizeEvent(Vec2i size) override {}
-  void OnWindowPositionEvent(Vec2i pos) override {}
-  void OnEventStatusChanged(bool events_blocked) override {}
+  void OnUpdate(float) override {}
+  void OnDraw(RenderTarget&) override {}
+  void OnKeyEvent(KeyEvent) override {}
+  void OnMouseEvent(MouseEvent) override {}
+  void OnWindowResizeEvent(Vec2i) override {}
+  void OnWindowPositionEvent(Vec2i) override {}
+  void OnEventStatusChanged(bool) override {}
   bool ShouldIgnoreLayer() const { return true; }
   virtual ~EngineDataUILayerDefault() {
     if (GetEngine() && GetEngine()->GetWindow())

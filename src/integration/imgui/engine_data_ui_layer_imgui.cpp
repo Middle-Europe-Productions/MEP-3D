@@ -49,7 +49,7 @@ class EngineDataUILayerImGUI : public EngineDataUILayer {
   }
   void OnMouseEvent(MouseEvent) override {}
   void OnWindowResizeEvent(Vec2i) override {}
-  void OnWindowPositionEvent(Vec2i pos) override {}
+  void OnWindowPositionEvent(Vec2i) override {}
   void OnEventStatusChanged(bool) override {}
 
  private:

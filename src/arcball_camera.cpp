@@ -94,7 +94,7 @@ void ArcballCamera::OnWindowResizeEvent(Vec2i size) {
   screen_size_ = size;
 }
 
-void ArcballCamera::OnWindowPositionEvent(Vec2i pos) {}
+void ArcballCamera::OnWindowPositionEvent(Vec2i) {}
 
 void ArcballCamera::OnEventStatusChanged(bool) {}
 
