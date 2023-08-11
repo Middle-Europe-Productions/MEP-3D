@@ -2,38 +2,31 @@
 #### MSVC (Windows):
 Creating project:
 ```sh
-// Listing all of the presets:
-cmake --list-presets
 // Debug:
+// Creating project:
 cmake . --preset volume-rendering-msvc-d
-// Release:
-cmake . --preset volume-rendering-msvc
-```
-Building project:
-```sh
-// Listing all of the build presets:
-cmake --build --list-presets
-// Debug:
+// Building:
 cmake --build --preset "volume-rendering-msvc-d"
+
 // Release:
+// Creating project:
+cmake . --preset volume-rendering-msvc
+// Building:
 cmake --build --preset "volume-rendering-msvc"
 ```
+
 #### Ninja (cross-platform):
 Creating project:
 ```sh
-// Listing all of the presets:
-cmake --list-presets
 // Debug:
+// Creating project:
 cmake . --preset volume-rendering-ninja-d
-// Release:
-cmake . --preset volume-rendering-ninja
-```
-Building project:
-```sh
-// Listing all of the build presets:
-cmake --build --list-presets
-// Debug:
+// Building:
 cmake --build --preset "volume-rendering-ninja-d"
+
 // Release:
+// Creating project:
+cmake . --preset volume-rendering-ninja
+// Building:
 cmake --build --preset "volume-rendering-ninja"
 ```

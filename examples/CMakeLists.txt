@@ -58,12 +58,7 @@ endmacro()
 
 if (NOT (MEP_TARGET_PROJECT STREQUAL "NONE"))
 if (MEP_TARGET_PROJECT STREQUAL "ALL")
-add_subdirectory(imgui_example)
-add_subdirectory(simple_example/)
-add_subdirectory(imgui_custom_scene/)
-add_subdirectory(camera_example/)
-add_subdirectory(shader_example/)
-add_subdirectory(volume_rendering)
+  message(STATUS "This project supports only the volume rendering target")
 endif()
 # Release targets
 if (MEP_TARGET_PROJECT STREQUAL "volume-rendering")
